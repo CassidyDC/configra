@@ -37,5 +37,6 @@ export default function render(project) {
   }
 
   lines.push("", "[*.md]", "trim_trailing_whitespace = false", "");
+
   return { files: { ".editorconfig": lines.join("\n") } };
 }

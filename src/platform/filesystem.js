@@ -65,6 +65,7 @@ export async function safePath(root, relative) {
 
   for (const segment of path.relative(resolvedRoot, target).split(path.sep)) {
     cursor = path.join(cursor, segment);
+
     try {
       const actual = await fs.realpath(cursor);
 
@@ -141,6 +142,7 @@ export async function write(root, relative, content) {
 
   if (content === null) {
     await fs.unlink(target);
+
     return;
   }
 
@@ -152,6 +154,7 @@ export async function write(root, relative, content) {
     const handle = await fs.open(temporary, "wx");
 
     created = true;
+
     try {
       await handle.writeFile(content);
     } finally {

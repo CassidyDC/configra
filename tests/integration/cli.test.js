@@ -134,6 +134,7 @@ for (const layout of ["nested", "workspaces"]) {
     const children = ["packages/a", "packages/b", "packages/a/sub"];
 
     await put(root, "package.json", { name: "root", private: true, workspaces: ["packages/*", "packages/a/sub"] });
+
     for (const child of [...children, "packages/unselected"])
       await put(root, `${child}/package.json`, { name: child.replaceAll("/", "-") });
 

@@ -31,6 +31,7 @@ for (const project of ["wordpress-plugin", "wordpress-theme"]) {
 
       assert.deepEqual(manifest.workspaces, ["packages/*"]);
       assert.equal(manifest.scripts.test, "echo keep");
+
       if (layout !== "single") {
         assert.match(await read(root, "eslint.config.mjs"), /packages\/example\/\*\*/);
         assert.match(await read(root, ".prettierignore"), /packages\/example\/\*\*/);

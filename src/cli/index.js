@@ -70,11 +70,13 @@ export async function run(
 
     if (values.version) {
       io.out(JSON.parse(await readFile(new URL("../../package.json", import.meta.url), "utf8")).version);
+
       return 0;
     }
 
     if (values.help || !positionals.length) {
       io.out(help);
+
       return 0;
     }
 
@@ -87,6 +89,7 @@ export async function run(
       const { packageGraph } = await import("../generator/package-graph.js");
 
       io.out(JSON.stringify(await packageGraph(root, { packages: [], layout: "single" }), null, 2));
+
       return 0;
     }
 
@@ -108,6 +111,7 @@ export async function run(
 
     if (values.standard) {
       selections.standards = { ...selections.standards };
+
       for (const standard of values.standard) {
         const parts = standard.split("=");
 
@@ -143,6 +147,7 @@ export async function run(
     );
   } catch (error) {
     io.error(error.message);
+
     return 1;
   }
 }

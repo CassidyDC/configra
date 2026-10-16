@@ -25,6 +25,7 @@ export async function temporary(t) {
   const root = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "cdctool-test-")));
 
   t.after(() => fs.rm(root, { recursive: true, force: true }));
+
   return root;
 }
 

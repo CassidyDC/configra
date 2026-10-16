@@ -68,6 +68,7 @@ const selectionFields = ["project", "languages", "capabilities", "standards", "t
  */
 export function normalizeRequest(input = {}) {
   validateSelection(input, [...selectionFields, "version", "layout", "packages"]);
+
   if (input.version !== undefined && input.version !== 1) throw new Error("Unsupported selection schema version");
 
   const layout = input.layout ?? "single";
@@ -78,6 +79,7 @@ export function normalizeRequest(input = {}) {
 
   request.version = 1;
   request.layout = layout;
+
   if (!Array.isArray(request.packages)) throw new Error("packages must be an array");
 
   request.packages = request.packages
@@ -85,6 +87,7 @@ export function normalizeRequest(input = {}) {
       if (typeof item === "string") return { path: relativePath(item) };
 
       validateSelection(item, [...selectionFields, "path"]);
+
       return { ...item, path: relativePath(item.path) };
     })
     .sort((a, b) => a.path.localeCompare(b.path));

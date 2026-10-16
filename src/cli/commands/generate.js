@@ -27,6 +27,7 @@ export async function generate(root, selections, options, io) {
   if (options.json && options.dryRun) io.out(JSON.stringify(proposal, null, 2));
   else if (!options.json) {
     io.out(`${options.dryRun ? "Dry run: " : ""}${proposal.changes.length} proposed change(s)`);
+
     for (const change of proposal.changes)
       io.out(`  ${change.content === null ? "remove" : change.before === null ? "create" : "update"} ${change.path}`);
 

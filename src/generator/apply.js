@@ -29,6 +29,7 @@ export async function apply(
 
   for (const [name, snapshot] of Object.entries(plan.snapshots)) {
     await safePath(plan.root, name);
+
     if (hash(await read(plan.root, name)) !== snapshot)
       throw new Error(`Project changed after planning: ${name}. No files were written; run again.`);
   }
@@ -39,11 +40,13 @@ export async function apply(
       result.applied.push(change.path);
     } catch (error) {
       result.failed.push({ path: change.path, error: error.message });
+
       return result;
     }
   }
 
   result.generated = true;
+
   if (install) {
     for (const operation of plan.installations) {
       const runner = execute ?? (operation.ecosystem === "npm" ? npmInstall : composerInstall);
@@ -56,6 +59,7 @@ export async function apply(
       }
 
       result.installations.push(installed);
+
       if (!installed.success) result.failed.push({ ...installed, phase: "installation" });
     }
   }

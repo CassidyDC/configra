@@ -200,6 +200,7 @@ export async function plan(resolved) {
       mergeContribution(contribution, tools[id].render(project));
 
     contributions.set(project.path, contribution);
+
     for (const id of project.tools)
       for (const name of tools[id].alternatives ?? []) alternatives.set(join(project.path, name), id);
 
@@ -297,6 +298,7 @@ export async function plan(resolved) {
 
   for (const name of [...new Set([...desired.keys(), ...Object.keys(previous.files)])].sort()) {
     relativePath(name);
+
     if ([STATE, SELECTIONS].includes(name)) throw new Error(`Invalid managed state entry: ${name}`);
 
     const before = await read(root, name);
@@ -386,6 +388,7 @@ export async function plan(resolved) {
       }
 
       after = equal(next, existing) ? before : await formatted(name, json(next));
+
       if (entry) state.files[name] = { kind: "json", entries };
     } else if ((entry?.kind ?? old?.kind) === "lines") {
       const existing = before?.split(/\r?\n/) ?? [];
@@ -396,6 +399,7 @@ export async function plan(resolved) {
       while (kept.at(-1) === "") kept.pop();
 
       after = [...kept, ...lines.filter((line) => !kept.includes(line))].join("\n") + "\n";
+
       if (entry)
         state.files[name] = {
           kind: "lines",
@@ -405,6 +409,7 @@ export async function plan(resolved) {
       if (before === after) after = before;
     } else {
       after = await formatted(name, entry?.content ?? null);
+
       if (before !== after && before !== null && (!old || hash(before) !== old.hash))
         conflict("File contains existing or edited content");
 
@@ -424,6 +429,7 @@ export async function plan(resolved) {
     const before = await read(root, name);
 
     snapshots[name] = hash(before);
+
     if (before !== null) {
       conflicts.push({
         path: name,
