@@ -1,5 +1,11 @@
 import { json, patterns, hook } from "../shared.js";
 
+/**
+ * Render a flat ESLint configuration for the selected standard and capabilities.
+ *
+ * @param {import("../../../contracts.js").PackageContext} project Resolved settings and package ownership.
+ * @returns {import("../../../contracts.js").ToolContribution} Proposed configuration and tool requirements.
+ */
 export default function render(project) {
   const wordpress = project.standards.javascript.id === "wordpress";
   const react = project.capabilities.includes("react");

@@ -4,6 +4,11 @@ import { readFile } from "node:fs/promises";
 import { init } from "./commands/init.js";
 import { update } from "./commands/update.js";
 
+/**
+ * Usage text shared by explicit help and invocations without a command.
+ *
+ * @constant {string}
+ */
 const help = `CassidyDC Toolset
 Usage: cdctool <init|update|discover> [options]
 
@@ -24,6 +29,13 @@ Usage: cdctool <init|update|discover> [options]
   --help, --version      Show help or version
 `;
 
+/**
+ * Parse CLI arguments, dispatch a workflow, and translate failures into readable diagnostics.
+ *
+ * @param {string[]} [argv=process.argv.slice(2)] Arguments excluding the Node executable and script path.
+ * @param {import("../contracts.js").CliIO} [io] Output callbacks; defaults to process stdout and stderr.
+ * @returns {Promise<number>} Zero on success, one on failure, or two for dry-run conflicts.
+ */
 export async function run(
   argv = process.argv.slice(2),
   io = { out: (value) => process.stdout.write(value + "\n"), error: (value) => process.stderr.write(value + "\n") },

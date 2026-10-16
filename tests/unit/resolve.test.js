@@ -4,6 +4,13 @@ import { normalizeRequest, resolve } from "../../src/generator/resolve.js";
 import { temporary, put } from "../helpers.js";
 import { packageGraph } from "../../src/generator/package-graph.js";
 
+/**
+ * Create selected child manifests and resolve a request against its discovered package graph.
+ *
+ * @param {import("node:test").TestContext} t Owning test context.
+ * @param {import("../../src/contracts.js").ProjectInput} input Selections under test.
+ * @returns {Promise<import("../../src/contracts.js").ResolvedProject>} Effective settings for assertions.
+ */
 async function resolved(t, input) {
   const root = await temporary(t);
   const request = normalizeRequest(input);

@@ -1,5 +1,12 @@
 import { spawn } from "node:child_process";
 
+/**
+ * Execute a dependency operation without a shell and report spawn or exit failures as results.
+ *
+ * @param {import("../contracts.js").InstallationOperation} operation Prepared executable, arguments, and working directory.
+ * @param {import("../contracts.js").ProcessOptions} [options={}] Child-process output routing.
+ * @returns {Promise<import("../contracts.js").InstallationResult>} Completion status with operation context.
+ */
 export function execute(operation, { stdio = "inherit" } = {}) {
   return new Promise((resolve) => {
     const child = spawn(operation.command, operation.args, { cwd: operation.cwd, stdio, shell: false });
@@ -8,4 +15,10 @@ export function execute(operation, { stdio = "inherit" } = {}) {
   });
 }
 
+/**
+ * Quote a value as one POSIX shell argument, including embedded apostrophes.
+ *
+ * @param {unknown} value Value converted to text before quoting.
+ * @returns {string} Single-quoted, shell-safe argument.
+ */
 export const quote = (value) => "'" + String(value).replaceAll("'", "'\"'\"'") + "'";

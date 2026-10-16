@@ -2,10 +2,29 @@ import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 import { projects, tools } from "../../components/registry.js";
 
-/** Prompt modules only collect structured selections; they never write project files. */
+/**
+ * Collect structured project selections without writing any project files.
+ *
+ * @param {import("../../contracts.js").ProjectInput} [defaults={}] Initial or saved selections.
+ * @returns {Promise<import("../../contracts.js").ProjectInput>} Answers ready for request normalization.
+ * @throws {Error} If the selected project identifier is unsupported.
+ */
 export async function collect(defaults = {}) {
   const prompt = createInterface({ input: stdin, output: stdout });
+  /**
+   * Ask one question, retaining the fallback when the answer is empty.
+   *
+   * @param {string} label Prompt description.
+   * @param {string} fallback Default answer.
+   * @returns {Promise<string>} Trimmed answer or the supplied fallback.
+   */
   const ask = async (label, fallback) => (await prompt.question(`${label} [${fallback}]: `)).trim() || fallback;
+  /**
+   * Normalize a comma-separated answer into nonempty selection values.
+   *
+   * @param {string} value Answer text.
+   * @returns {string[]} Trimmed values in answer order.
+   */
   const split = (value) =>
     value
       .split(",")

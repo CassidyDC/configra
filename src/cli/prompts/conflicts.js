@@ -1,7 +1,12 @@
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 
-/** Returns an explicit conflict decision without applying any changes. */
+/**
+ * Collect an explicit replacement decision without applying any project changes.
+ *
+ * @param {import("../../contracts.js").GenerationConflict[]} conflicts Reported conflicts requiring a decision.
+ * @returns {Promise<boolean>} Whether the user explicitly approved replacement.
+ */
 export async function decide(conflicts) {
   const prompt = createInterface({ input: stdin, output: stdout });
   try {

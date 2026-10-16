@@ -3,6 +3,12 @@ import path from "node:path";
 import { directories, read, readJson, safePath, hash } from "../platform/filesystem.js";
 import { workspacePatterns, matchesWorkspace } from "../platform/npm.js";
 
+/**
+ * Find the nearest enclosing Git repository, including worktree .git files.
+ *
+ * @param {string} root Absolute directory at which to start searching.
+ * @returns {Promise<string|null>} Enclosing Git directory root, or null when none exists.
+ */
 async function gitBoundary(root) {
   let cursor = root;
   while (true) {
@@ -18,8 +24,20 @@ async function gitBoundary(root) {
   }
 }
 
+/**
+ * Discover manifests and WordPress child candidates without selecting packages.
+ *
+ * @param {string} root Absolute project boundary.
+ * @returns {Promise<import("../contracts.js").PackageCandidate[]>} Candidates and independent Git boundaries.
+ */
 export async function discover(root) {
   const candidates = [];
+  /**
+   * Accumulate candidates below one directory, stopping at independent Git repositories.
+   *
+   * @param {string} relative Project-relative directory to inspect.
+   * @returns {Promise<void>} Completes after descendants have been inspected.
+   */
   async function visit(relative) {
     const manifests = [];
     for (const name of ["package.json", "composer.json", "pyproject.toml"]) {
@@ -43,6 +61,14 @@ export async function discover(root) {
   return candidates;
 }
 
+/**
+ * Build selected package relationships separately from workspace membership and Git ownership.
+ *
+ * @param {string} root Existing project directory; canonicalized before discovery.
+ * @param {Pick<import("../contracts.js").ProjectRequest, "packages"|"layout">} request Package selections and layout.
+ * @returns {Promise<import("../contracts.js").PackageGraph>} Ownership graph and manifest preconditions.
+ * @throws {Error} If selected packages are invalid, cross Git boundaries, or are unregistered workspaces.
+ */
 export async function packageGraph(root, request) {
   root = await fs.realpath(root);
   const patterns = await workspacePatterns(root);

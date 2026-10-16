@@ -1,4 +1,12 @@
 import { json } from "../shared.js";
+/**
+ * Serialize combined package checks into one Git-root hook configuration.
+ *
+ * @param {import("../../../contracts.js").PackageContext} project Resolved settings and package ownership.
+ * @param {object} [options={}] Combined contributions supplied by the planner.
+ * @param {import("../../../contracts.js").HookRequirement[]} [options.hooks=[]] Git-relative staged checks.
+ * @returns {import("../../../contracts.js").ToolContribution} Proposed configuration and tool requirements.
+ */
 export default function render(project, { hooks = [] } = {}) {
   const commands = Object.fromEntries(
     hooks.map((item) => [

@@ -1,6 +1,15 @@
 import { projects, capabilities, standards, tools } from "../components/registry.js";
 import { relativePath } from "../platform/filesystem.js";
 
+/**
+ * Validate selection identifiers, remove duplicates, and return a stable ordering.
+ *
+ * @param {unknown} value Untrusted selection list.
+ * @param {string} label Selection category used in diagnostics.
+ * @param {string[]} allowed Supported identifiers.
+ * @returns {string[]} Unique sorted identifiers.
+ * @throws {Error} If the value is not a supported identifier list.
+ */
 function list(value, label, allowed) {
   if (!Array.isArray(value) || value.some((item) => typeof item !== "string" || !allowed.includes(item))) {
     throw new Error(`Unsupported ${label}; choose from ${allowed.join(", ")}`);
@@ -8,6 +17,14 @@ function list(value, label, allowed) {
   return [...new Set(value)].sort();
 }
 
+/**
+ * Validate selection object fields and formatting override shapes.
+ *
+ * @param {unknown} input Untrusted selection object.
+ * @param {string[]} allowed Accepted field names for this selection level.
+ * @returns {void}
+ * @throws {Error} If the object contains unknown fields or invalid option shapes.
+ */
 function validateSelection(input, allowed) {
   if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("Selections must be a JSON object");
   for (const key of Object.keys(input)) if (!allowed.includes(key)) throw new Error(`Unknown selection: ${key}`);
@@ -20,8 +37,20 @@ function validateSelection(input, allowed) {
       if (!["indentStyle", "indentSize", "endOfLine", "printWidth"].includes(key))
         throw new Error(`Unsupported formatting option: ${key}`);
 }
+/**
+ * Selection fields shared by root requests and child package overrides.
+ *
+ * @constant {string[]}
+ */
 const selectionFields = ["project", "languages", "capabilities", "standards", "tools", "formatting"];
 
+/**
+ * Apply request defaults and normalize child paths without resolving component defaults.
+ *
+ * @param {import("../contracts.js").ProjectInput} [input={}] CLI, prompt, or saved selections.
+ * @returns {import("../contracts.js").ProjectRequest} Versioned, normalized request.
+ * @throws {Error} If the schema, layout, package paths, or selections are invalid.
+ */
 export function normalizeRequest(input = {}) {
   validateSelection(input, [...selectionFields, "version", "layout", "packages"]);
   if (input.version !== undefined && input.version !== 1) throw new Error("Unsupported selection schema version");
@@ -49,6 +78,14 @@ export function normalizeRequest(input = {}) {
   );
 }
 
+/**
+ * Resolve one package against project defaults, standards, capabilities, and overrides.
+ *
+ * @param {import("../contracts.js").Selections} selection Effective selections before component resolution.
+ * @param {import("../contracts.js").PackageNode} node Selected package ownership information.
+ * @returns {import("../contracts.js").ResolvedPackage} Validated effective package settings.
+ * @throws {Error} If a component or formatting combination is unsupported.
+ */
 function resolvePackage(selection, node) {
   const project = Object.hasOwn(projects, selection.project) ? projects[selection.project] : undefined;
   if (!project) throw new Error(`Unsupported project: ${selection.project}`);
@@ -132,6 +169,13 @@ function resolvePackage(selection, node) {
   };
 }
 
+/**
+ * Resolve selected packages in parent-before-child order while applying explicit inheritance.
+ *
+ * @param {import("../contracts.js").ProjectRequest} request Normalized root and child selections.
+ * @param {import("../contracts.js").PackageGraph} graph Selected package ownership graph.
+ * @returns {import("../contracts.js").ResolvedProject} Effective settings for all selected packages.
+ */
 export function resolve(request, graph) {
   request = normalizeRequest(request);
   const root = resolvePackage(request, graph.packages[0]);

@@ -1,3 +1,8 @@
+/**
+ * WordPress baseline and formatting defaults for php.
+ *
+ * @type {import("../../../contracts.js").StandardDefinition}
+ */
 export default {
   id: "wordpress",
   language: "php",

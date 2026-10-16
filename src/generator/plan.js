@@ -9,12 +9,51 @@ import * as single from "./layouts/single.js";
 import * as nested from "./layouts/nested.js";
 import * as workspaces from "./layouts/workspaces.js";
 
+/**
+ * Generation ownership metadata filename, separate from editable selections.
+ *
+ * @constant {string}
+ */
 const STATE = ".cassidydc-toolset-state.json";
+/**
+ * Versioned project selection filename.
+ *
+ * @constant {string}
+ */
 const SELECTIONS = ".cassidydc-toolset.json";
+/**
+ * Compare values using their serialized JSON representation.
+ *
+ * @param {unknown} a First value.
+ * @param {unknown} b Second value.
+ * @returns {boolean} Whether serialization produces the same content.
+ */
 const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+/**
+ * Recognize non-null objects while excluding arrays.
+ *
+ * @param {unknown} value Candidate value.
+ * @returns {boolean} Whether the value has an object shape.
+ */
 const object = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+/**
+ * Join package-relative filenames using portable manifest path separators.
+ *
+ * @param {string} root Project-relative package path.
+ * @param {string} name Package-relative filename.
+ * @returns {string} Combined project-relative filename.
+ */
 const join = (root, name) => path.posix.join(root, name);
 
+/**
+ * Flatten managed JSON leaves into keys encoding their complete property paths.
+ *
+ * @param {Object<string, import("../contracts.js").JsonValue>} value Structured managed entries.
+ * @param {string[]} [prefix=[]] Ancestor property names.
+ * @param {Object<string, import("../contracts.js").JsonValue>} [result={}] Accumulator mutated during traversal.
+ * @returns {Object<string, import("../contracts.js").JsonValue>} Leaf values keyed by JSON-encoded property paths.
+ * @throws {Error} If a property name could modify object prototypes.
+ */
 function leaves(value, prefix = [], result = {}) {
   for (const [key, child] of Object.entries(value)) {
     if (["__proto__", "prototype", "constructor"].includes(key)) throw new Error(`Unsupported manifest key: ${key}`);
@@ -23,9 +62,25 @@ function leaves(value, prefix = [], result = {}) {
   }
   return result;
 }
+/**
+ * Read a nested manifest entry without requiring every ancestor to exist.
+ *
+ * @param {object} value Manifest or configuration object.
+ * @param {string[]} keys Ordered property path.
+ * @returns {unknown} Existing entry, or undefined for a missing path.
+ */
 function get(value, keys) {
   return keys.reduce((current, key) => current?.[key], value);
 }
+/**
+ * Set or remove a managed manifest leaf, creating object ancestors as necessary.
+ *
+ * @param {object} value Target manifest object; mutated in place.
+ * @param {string[]} keys Nonempty property path.
+ * @param {unknown} next Replacement value; undefined removes the leaf.
+ * @returns {void}
+ * @throws {Error} If an ancestor key could modify object prototypes.
+ */
 function set(value, keys, next) {
   let current = value;
   for (const key of keys.slice(0, -1)) {
@@ -37,6 +92,14 @@ function set(value, keys, next) {
   else current[keys.at(-1)] = next;
 }
 
+/**
+ * Combine one tool contribution into the accumulator and reject competing values.
+ *
+ * @param {Required<import("../contracts.js").ToolContribution>} target Mutable accumulated contributions.
+ * @param {import("../contracts.js").ToolContribution} contribution New renderer output.
+ * @returns {void}
+ * @throws {Error} If two tools contribute different values for the same entry.
+ */
 function mergeContribution(target, contribution) {
   for (const key of ["files", "scripts", "npm", "composer", "jsonFiles", "lines", "composerSettings"]) {
     for (const [name, value] of Object.entries(contribution[key] ?? {})) {
@@ -47,6 +110,11 @@ function mergeContribution(target, contribution) {
   }
   target.hooks.push(...(contribution.hooks ?? []));
 }
+/**
+ * Create independent accumulators for every supported contribution category.
+ *
+ * @returns {Required<import("../contracts.js").ToolContribution>} Empty mutable contribution collections.
+ */
 const empty = () => ({
   files: {},
   scripts: {},
@@ -58,7 +126,13 @@ const empty = () => ({
   hooks: [],
 });
 
-/** Reads project state and renders a complete proposal without writing. */
+/**
+ * Read project state and render a complete proposal without writing project files.
+ *
+ * @param {import("../contracts.js").ResolvedProject} resolved Effective package settings and ownership.
+ * @returns {Promise<import("../contracts.js").GenerationPlan>} Changes, conflicts, diagnostics, and installation operations.
+ * @throws {Error} If state, manifests, paths, or combined contributions are invalid.
+ */
 export async function plan(resolved) {
   const { graph, request } = resolved;
   const root = graph.root;
@@ -154,6 +228,13 @@ export async function plan(resolved) {
       installations.push(composerInstallation(root, project.path));
     }
   }
+  /**
+   * Format supported generated content using the owning package's selected Prettier settings.
+   *
+   * @param {string} name Project-relative output filename.
+   * @param {string|null} content Proposed content, or null for a deletion.
+   * @returns {Promise<string|null>} Formatted content, unchanged unsupported content, or null.
+   */
   async function formatted(name, content) {
     if (content === null || !/\.(?:[cm]?js|jsonc?|ya?ml|md)$/.test(name)) return content;
     const owner = [...contexts]
@@ -177,6 +258,12 @@ export async function plan(resolved) {
     if (old && !["file", "json", "lines"].includes(old.kind)) throw new Error(`Invalid generation state for ${name}`);
     const entry = desired.get(name);
     let after;
+    /**
+     * Record a conflict against the file currently being planned.
+     *
+     * @param {string} reason Explanation of the conflicting content.
+     * @returns {number} New conflict count.
+     */
     const conflict = (reason) => conflicts.push({ path: name, reason });
     if ((entry?.kind ?? old?.kind) === "json") {
       let existing;

@@ -5,6 +5,11 @@ import path from "node:path";
 import { apply } from "../../src/generator/apply.js";
 import { temporary, put, read, readJson, proposal, generate } from "../helpers.js";
 
+/**
+ * Shared standalone WordPress plugin selection used by generation tests.
+ *
+ * @type {import("../../src/contracts.js").ProjectInput}
+ */
 const plugin = { project: "wordpress-plugin" };
 
 test("standalone plugin generates self-contained files and repeat generation has no changes", async (t) => {

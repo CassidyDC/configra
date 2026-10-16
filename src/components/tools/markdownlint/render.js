@@ -1,4 +1,10 @@
 import { json, hook } from "../shared.js";
+/**
+ * Render Markdown checks and exclusions scoped to the owning package.
+ *
+ * @param {import("../../../contracts.js").PackageContext} project Resolved settings and package ownership.
+ * @returns {import("../../../contracts.js").ToolContribution} Proposed configuration and tool requirements.
+ */
 export default function render(project) {
   return {
     files: {

@@ -2,6 +2,13 @@ import path from "node:path";
 import { readJson } from "./filesystem.js";
 import { execute } from "./process.js";
 
+/**
+ * Read and validate npm workspace declarations without modifying the manifest.
+ *
+ * @param {string} root Absolute workspace registration root.
+ * @returns {Promise<string[]>} Declared workspace paths and glob patterns.
+ * @throws {Error} If the manifest or workspace declaration has an unsupported shape.
+ */
 export async function workspacePatterns(root) {
   const manifest = await readJson(root, "package.json", {});
   const patterns = manifest.workspaces?.packages ?? manifest.workspaces ?? [];
@@ -11,6 +18,13 @@ export async function workspacePatterns(root) {
   return patterns;
 }
 
+/**
+ * Match a package path against ordered workspace inclusions and exclusions.
+ *
+ * @param {string} relative Project-relative package directory.
+ * @param {string[]} patterns Declared workspace patterns, including negations.
+ * @returns {boolean} Whether the path remains included after exclusions and later explicit inclusions.
+ */
 export function matchesWorkspace(relative, patterns) {
   const includes = [];
   let excludes = [];
@@ -34,6 +48,15 @@ export function matchesWorkspace(relative, patterns) {
   );
 }
 
+/**
+ * Prepare a dependency installation scoped to the owning package or exact workspace name.
+ *
+ * @param {string} root Absolute project root.
+ * @param {string} packagePath Project-relative dependency owner.
+ * @param {boolean} [workspace=false] Whether npm workspace installation semantics apply.
+ * @param {string} [workspaceName] Exact registered workspace name for a child package.
+ * @returns {import("../contracts.js").InstallationOperation} Prepared npm operation; no process is executed.
+ */
 export function installation(root, packagePath, workspace = false, workspaceName) {
   return {
     ecosystem: "npm",
@@ -46,4 +69,9 @@ export function installation(root, packagePath, workspace = false, workspaceName
     cwd: workspace ? root : path.resolve(root, packagePath),
   };
 }
+/**
+ * Execute a prepared npm operation through the shared process adapter.
+ *
+ * @type {typeof import("./process.js").execute}
+ */
 export const install = execute;

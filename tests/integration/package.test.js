@@ -5,6 +5,11 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { temporary, put, read } from "../helpers.js";
 
+/**
+ * Absolute repository root used to pack the distributable npm artifact.
+ *
+ * @constant {string}
+ */
 const repository = fileURLToPath(new URL("../../", import.meta.url));
 
 test("packed npm artifact runs independently and locates module-relative templates", async (t) => {

@@ -15,6 +15,11 @@ import { importX } from "eslint-plugin-import-x";
 
 const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url));
 
+/**
+ * Repository lint rules for implementation files, tests, and executable entry points.
+ *
+ * @type {import("eslint").Linter.Config[]}
+ */
 export default defineConfig([
   includeIgnoreFile(gitignorePath, "Imported .gitignore patterns"),
   globalIgnores(["**/*.min.js", "docs"]),

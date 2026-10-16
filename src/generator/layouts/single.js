@@ -1,3 +1,10 @@
+/**
+ * Add local exclusions and workspace lookup information to a resolved package.
+ *
+ * @param {import("../../contracts.js").ResolvedPackage & {descendants: string[]}} project Package and selected descendants.
+ * @param {import("../../contracts.js").ResolvedProject} resolved Complete resolution and ownership graph.
+ * @returns {import("../../contracts.js").PackageContext} Renderer context for this package.
+ */
 export function context(project, resolved) {
   return {
     ...project,
@@ -23,6 +30,13 @@ export function context(project, resolved) {
   };
 }
 
+/**
+ * Compose local tool checks without child-package delegation.
+ *
+ * @param {import("../../contracts.js").PackageContext} project Package ownership and layout context.
+ * @param {import("../../contracts.js").ToolContribution} contribution Combined scripts and requirements.
+ * @returns {Object<string, string>} Local and aggregate npm scripts.
+ */
 export function scripts(project, contribution) {
   const result = { ...contribution.scripts };
   const checks = Object.keys(result)
@@ -32,4 +46,10 @@ export function scripts(project, contribution) {
   if (checks.length) result.lint = "npm run lint:local";
   return result;
 }
+/**
+ * Keep dependency declarations owned by the package that requires them.
+ *
+ * @param {import("../../contracts.js").ResolvedPackage} project Owning package.
+ * @returns {string} Project-relative dependency owner path.
+ */
 export const dependencyOwner = (project) => project.path;

@@ -14,6 +14,12 @@ Definitions contain no installation or project filesystem effects. Use an
 `alternatives` array for configuration filenames that would compete with the
 generated file; the planner reports their removal as a conflict.
 
+Document the exported metadata with a description and
+`@type {import("../../../contracts.js").ToolDefinition}`. Add JSDoc descriptions,
+`@param`, and `@returns` tags to renderer functions and named helpers. Reference
+shared types from `src/contracts.js` for package context and tool contributions;
+document validation errors with `@throws` where applicable.
+
 ## Rendering
 
 Export a renderer accepting resolved package settings and returning any of these

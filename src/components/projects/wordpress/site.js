@@ -1,3 +1,8 @@
+/**
+ * Defaults and child discovery hints for a WordPress wp-content project.
+ *
+ * @type {import("../../../contracts.js").ProjectDefinition}
+ */
 export default {
   id: "wordpress-site",
   languages: [

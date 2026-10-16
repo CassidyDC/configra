@@ -64,6 +64,9 @@ npm run lint:docs
 npm run check
 ```
 
+Component definitions, named functions, and reusable helpers use JSDoc. Shared
+internal structures are documented in `src/contracts.js`.
+
 - [Architecture](docs/architecture.md)
 - [Adding a tool](docs/adding-a-tool.md)
 - [Generated projects and update behavior](docs/generated-projects.md)

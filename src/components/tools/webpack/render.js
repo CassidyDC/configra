@@ -1,4 +1,10 @@
 import { readFileSync } from "node:fs";
+/**
+ * Render the packaged build template with selected Babel presets and entry extension.
+ *
+ * @param {import("../../../contracts.js").PackageContext} project Resolved settings and package ownership.
+ * @returns {import("../../../contracts.js").ToolContribution} Proposed configuration and tool requirements.
+ */
 export default function render(project) {
   const npm = {
     webpack: "^5.0.0",

@@ -38,14 +38,34 @@ import renderVscode from "./tools/vscode/render.js";
 import webpack from "./tools/webpack/definition.js";
 import renderWebpack from "./tools/webpack/render.js";
 
+/**
+ * Supported project defaults indexed by stable component identifier.
+ *
+ * @type {Object<string, import("../contracts.js").ProjectDefinition>}
+ */
 export const projects = Object.fromEntries([node, php, python, site, plugin, theme].map((item) => [item.id, item]));
+/**
+ * Explicitly registered optional language capabilities.
+ *
+ * @type {Object<string, import("../contracts.js").CapabilityDefinition>}
+ */
 export const capabilities = { react, typescript };
+/**
+ * Supported standards indexed first by language and then standard identifier.
+ *
+ * @type {Object<string, Object<string, import("../contracts.js").StandardDefinition>>}
+ */
 export const standards = {
   javascript: { community: jsCommunity, wordpress: jsWordpress },
   css: { community: cssCommunity, wordpress: cssWordpress },
   php: { community: phpCommunity, wordpress: phpWordpress },
   python: { community: pythonCommunity },
 };
+/**
+ * Supported tool metadata and pure renderer implementations.
+ *
+ * @type {Object<string, import("../contracts.js").ToolIntegration>}
+ */
 export const tools = {
   editorconfig: { ...editorconfig, render: renderEditorconfig },
   gitignore: { ...gitignore, render: renderGitignore },

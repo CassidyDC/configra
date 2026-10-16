@@ -1,3 +1,8 @@
+/**
+ * Default development tools and source paths for a general PHP package.
+ *
+ * @type {import("../../contracts.js").ProjectDefinition}
+ */
 export default {
   id: "php",
   languages: [

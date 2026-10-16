@@ -3,6 +3,16 @@ import { packageGraph } from "../../generator/package-graph.js";
 import { plan } from "../../generator/plan.js";
 import { apply } from "../../generator/apply.js";
 
+/**
+ * Resolve selections, present a proposal, and optionally apply it and install dependencies.
+ *
+ * @param {string} root Existing absolute project directory.
+ * @param {import("../../contracts.js").ProjectInput} selections Input selections or update overrides.
+ * @param {import("../../contracts.js").CommandOptions} options Non-persisted workflow controls.
+ * @param {import("../../contracts.js").CliIO} io Output callbacks.
+ * @returns {Promise<number>} CLI completion status.
+ * @throws {Error} If selections, discovery, planning, or application preflight are invalid.
+ */
 export async function generate(root, selections, options, io) {
   const request = normalizeRequest(selections);
   const graph = await packageGraph(root, request);

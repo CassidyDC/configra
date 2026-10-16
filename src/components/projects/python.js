@@ -1,3 +1,8 @@
+/**
+ * Supported editor and documentation tools for a Python package.
+ *
+ * @type {import("../../contracts.js").ProjectDefinition}
+ */
 export default {
   id: "python",
   languages: [

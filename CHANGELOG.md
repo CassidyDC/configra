@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
+- Document component definitions, named functions, and shared internal contracts with JSDoc types.
+
 - Implement configurable project generation with explicit project, language, capability, standard, and tool selections.
 - Add standalone, nested-package, and registered npm workspace layouts with package-scoped checks and root hook ownership.
 - Add dry-run previews, saved selections, safe updates, conflict detection, and optional npm and Composer installation.

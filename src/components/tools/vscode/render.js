@@ -1,3 +1,9 @@
+/**
+ * Contribute editor settings and additive extension recommendations.
+ *
+ * @param {import("../../../contracts.js").PackageContext} project Resolved settings and package ownership.
+ * @returns {import("../../../contracts.js").ToolContribution} Proposed configuration and tool requirements.
+ */
 export default function render(project) {
   const recommendations = ["editorconfig.editorconfig"];
   if (project.tools.includes("eslint")) recommendations.push("dbaeumer.vscode-eslint");

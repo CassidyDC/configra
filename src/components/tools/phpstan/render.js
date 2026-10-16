@@ -1,4 +1,10 @@
 import { json } from "../shared.js";
+/**
+ * Render PHP static analysis settings and optional WordPress integration.
+ *
+ * @param {import("../../../contracts.js").PackageContext} project Resolved settings and package ownership.
+ * @returns {import("../../../contracts.js").ToolContribution} Proposed configuration and tool requirements.
+ */
 export default function render(project) {
   const wordpress = project.environment === "wordpress";
   const composer = { "phpstan/phpstan": "^2.0" };

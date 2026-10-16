@@ -2,7 +2,14 @@ import { read, write, hash, safePath } from "../platform/filesystem.js";
 import { install as npmInstall } from "../platform/npm.js";
 import { install as composerInstall } from "../platform/composer.js";
 
-/** Preflight every path before writing; state is written last, installations run afterward. */
+/**
+ * Validate every precondition, write generation state last, and optionally install dependencies.
+ *
+ * @param {import("../contracts.js").GenerationPlan} plan Complete proposal with captured file snapshots.
+ * @param {import("../contracts.js").ApplyOptions} [options={}] Conflict, installation, and adapter controls.
+ * @returns {Promise<import("../contracts.js").ApplyResult>} Applied paths and distinct write or installation failures.
+ * @throws {Error} If conflicts are unresolved or project files changed before application.
+ */
 export async function apply(
   plan,
   { force = false, install = false, execute, writeFile = write, stdio = "inherit" } = {},

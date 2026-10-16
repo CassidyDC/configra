@@ -1,3 +1,8 @@
+/**
+ * Stylelint standard baseline and formatting defaults for css.
+ *
+ * @type {import("../../../contracts.js").StandardDefinition}
+ */
 export default {
   id: "community",
   language: "css",

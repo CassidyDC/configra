@@ -1,6 +1,12 @@
 import { options } from "./options.js";
 import { json, hook } from "../shared.js";
 
+/**
+ * Render formatter settings and exclusions consistent with resolved formatting.
+ *
+ * @param {import("../../../contracts.js").PackageContext} project Resolved settings and package ownership.
+ * @returns {import("../../../contracts.js").ToolContribution} Proposed configuration and tool requirements.
+ */
 export default function render(project) {
   const wordpress = project.standards.javascript?.id === "wordpress";
   const config = options(project);
