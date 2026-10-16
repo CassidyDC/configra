@@ -61,6 +61,7 @@ export async function generate(root, selections, options, io) {
         ? `Generated successfully (${result.applied.length} changed files).`
         : `Generation stopped after ${result.applied.length} file changes.`,
     );
+
     for (const failure of result.failed)
       io.error(
         `${failure.phase === "installation" ? "Installation failed after successful generation" : "Write failed"}: ${failure.path ?? failure.command}: ${failure.error ?? failure.code ?? failure.signal}`,

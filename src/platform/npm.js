@@ -44,6 +44,7 @@ export function matchesWorkspace(relative, patterns) {
       .replace(/^\.?\/+/, "")
       .replace(/\/$/, "")
       .replaceAll("\\", "/");
+
     if (bangs % 2) excludes.push(pattern);
     else {
       excludes = excludes.filter((excluded) => !path.matchesGlob(pattern, excluded));

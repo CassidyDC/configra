@@ -266,6 +266,7 @@ export async function plan(resolved) {
         kind: "json",
         content: { "require-dev": contribution.composer, ...contribution.composerSettings },
       });
+
       installations.push(composerInstallation(root, project.path));
     }
   }
@@ -355,6 +356,7 @@ export async function plan(resolved) {
             wanted = [
               ...new Set([...(current ?? []).filter((item) => !(prior[key] ?? []).includes(item)), ...(wanted ?? [])]),
             ];
+
             if (entries[key])
               entries[key] = entries[key].filter(
                 (item) => (prior[key] ?? []).includes(item) || !(current ?? []).includes(item),
@@ -427,6 +429,7 @@ export async function plan(resolved) {
         path: name,
         reason: `Competing ${tool} configuration; replacement requires removing this file`,
       });
+
       changes.push({ path: name, before: hash(before), content: null });
     }
   }

@@ -50,6 +50,7 @@ test("config and argument selections produce equivalent requests", async (t) => 
     capabilities: ["react", "typescript"],
     tools: ["editorconfig", "eslint"],
   });
+
   const config = run(root, "init", "--config", "selections.json", "--dry-run", "--json");
 
   const flags = run(
@@ -227,6 +228,7 @@ test("real process failures remain machine-readable after successful generation"
       command,
       `#!${process.execPath}\nconsole.log('simulated ${command} failure'); process.exitCode = 7;\n`,
     );
+
     await fs.chmod(path.join(commands, command), 0o755);
 
     const result = spawnSync(

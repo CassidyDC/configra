@@ -18,6 +18,7 @@ for (const project of ["wordpress-plugin", "wordpress-theme"]) {
         workspaces: ["packages/*"],
         scripts: { test: "echo keep" },
       });
+
       await put(root, child + "/package.json", { name: "example" });
       const selection =
         layout === "single" ? { project } : { project: "wordpress-site", layout, packages: [{ path: child, project }] };
@@ -80,6 +81,7 @@ test("root hooks route staged files by package ownership", async (t) => {
     layout: "nested",
     packages: [{ path: "plugins/child", project: "wordpress-plugin" }],
   });
+
   const hooks = yaml(await read(root, "lefthook.yml"))["pre-commit"].commands;
 
   assert(hooks[".:eslint"].exclude.includes("plugins/child/**"));

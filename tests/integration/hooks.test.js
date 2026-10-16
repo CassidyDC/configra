@@ -21,6 +21,7 @@ test("Lefthook routes real staged paths once to their owning packages", async (t
     layout: "nested",
     packages: children.map((path) => ({ path })),
   });
+
   const expected = ["root file.js", "plugins/a/child.js", "plugins/a/sub/deep.js", "plugins/b/child.js"];
 
   for (const name of expected) await put(root, name, "// staged\n");
@@ -35,6 +36,7 @@ test("Lefthook routes real staged paths once to their owning packages", async (t
       executable,
       `#!/usr/bin/env node\nrequire('node:fs').appendFileSync(${JSON.stringify(log)}, JSON.stringify({ cwd: process.cwd(), files: process.argv.slice(2) }) + '\\n');\n`,
     );
+
     await fs.chmod(path.join(root, executable), 0o755);
   }
 
