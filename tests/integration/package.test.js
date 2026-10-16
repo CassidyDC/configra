@@ -1,5 +1,5 @@
 /**
- * npm Package Integration Tests
+ * npm Package Integration Test
  * @file Offline npm artifact installation and packaged CLI and template integration coverage.
  */
 

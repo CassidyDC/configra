@@ -1,5 +1,5 @@
 /**
- * Git Hook Integration Tests
+ * Git Hook Integration Test
  * @file Lefthook integration coverage for staged-file routing and package ownership.
  */
 
