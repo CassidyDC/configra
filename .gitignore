@@ -3,6 +3,7 @@
 # Ignore development directories
 /node_modules
 /vendor
+/~test-server
 
 # Ignore development files
 docs/TODO.md
