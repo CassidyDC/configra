@@ -1,4 +1,5 @@
 /**
+ * PHPStan Tool Definition
  * @file PHPStan integration metadata, supported operations, and configuration ownership.
  */
 

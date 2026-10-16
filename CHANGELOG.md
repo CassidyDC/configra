@@ -1,4 +1,8 @@
-<!-- Release history and notable changes to CassidyDC Toolset. -->
+<!--
+Changelog
+
+Release history and notable changes to CassidyDC Toolset.
+-->
 
 # Changelog
 
@@ -19,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add automated CLI, generation, safety, layout, and packed-artifact validation.
 
 ## Changed
+
+- Add descriptive titles to file documentation headers throughout the repository.
 
 - Declare imported JSDoc types once per file with local aliases for readable annotations.
 

@@ -1,4 +1,8 @@
-<!-- Overview of the generation pipeline, internal contracts, and package ownership. -->
+<!--
+Toolset Architecture
+
+Overview of the generation pipeline, internal contracts, and package ownership.
+-->
 
 # Architecture
 

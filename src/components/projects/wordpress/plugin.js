@@ -1,4 +1,5 @@
 /**
+ * WordPress Plugin Project Defaults
  * @file Default languages, tools, and source paths for WordPress plugins.
  */
 

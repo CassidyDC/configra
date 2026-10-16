@@ -1,4 +1,5 @@
 /**
+ * PHP Parallel Lint Tool Definition
  * @file PHP Parallel Lint integration metadata, supported operations, and configuration ownership.
  */
 

@@ -1,4 +1,5 @@
 /**
+ * WordPress Site Project Defaults
  * @file WordPress site defaults and child-package discovery hints.
  */
 

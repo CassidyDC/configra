@@ -1,4 +1,5 @@
 /**
+ * ESLint Configuration Generation
  * @file ESLint configuration, dependencies, and checks for selected JavaScript capabilities.
  */
 

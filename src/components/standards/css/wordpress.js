@@ -1,4 +1,5 @@
 /**
+ * WordPress CSS Standard
  * @file WordPress CSS standard settings and shared formatting defaults.
  */
 

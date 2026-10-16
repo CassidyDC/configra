@@ -1,4 +1,5 @@
 /**
+ * Prettier Configuration
  * @file Repository Prettier configuration and structured-data formatting overrides.
  */
 

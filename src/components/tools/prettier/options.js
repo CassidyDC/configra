@@ -1,4 +1,5 @@
 /**
+ * Prettier Options
  * @file Prettier options derived from resolved standards and shared formatting choices.
  */
 

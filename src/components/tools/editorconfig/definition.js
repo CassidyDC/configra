@@ -1,4 +1,5 @@
 /**
+ * EditorConfig Tool Definition
  * @file EditorConfig integration metadata, supported operations, and configuration ownership.
  */
 

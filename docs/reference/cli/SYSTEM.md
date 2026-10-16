@@ -1,4 +1,8 @@
-<!-- Reference description of the original CLI system design. -->
+<!--
+CLI System Design Reference
+
+Reference description of the original CLI system design.
+-->
 
 # CassidyDC Toolsets System Design
 

@@ -1,4 +1,5 @@
 /**
+ * TypeScript Capability
  * @file TypeScript capability metadata for source extensions and ESLint integration.
  */
 

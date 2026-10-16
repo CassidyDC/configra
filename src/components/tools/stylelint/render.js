@@ -1,4 +1,5 @@
 /**
+ * Stylelint Configuration Generation
  * @file Stylelint configuration and dependencies for the selected CSS standard.
  */
 

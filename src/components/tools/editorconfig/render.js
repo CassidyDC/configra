@@ -1,4 +1,5 @@
 /**
+ * EditorConfig Configuration Generation
  * @file EditorConfig generation from shared and language-specific formatting choices.
  */
 

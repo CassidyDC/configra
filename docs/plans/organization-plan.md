@@ -1,4 +1,8 @@
-<!-- Reference directory organization plan for the toolset implementation. -->
+<!--
+Toolset Organization Plan
+
+Reference directory organization plan for the toolset implementation.
+-->
 
 # Organization Plan
 

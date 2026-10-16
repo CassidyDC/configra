@@ -1,4 +1,5 @@
 /**
+ * Initialize Projects
  * @file CLI initialization command backed by the shared generation workflow.
  */
 

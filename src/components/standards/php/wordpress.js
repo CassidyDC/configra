@@ -1,4 +1,5 @@
 /**
+ * WordPress PHP Standard
  * @file WordPress PHP standard settings and shared formatting defaults.
  */
 

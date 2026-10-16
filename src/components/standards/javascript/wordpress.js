@@ -1,4 +1,5 @@
 /**
+ * WordPress JavaScript Standard
  * @file WordPress JavaScript standard settings and shared formatting defaults.
  */
 

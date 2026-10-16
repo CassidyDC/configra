@@ -1,4 +1,5 @@
 /**
+ * VS Code Tool Definition
  * @file VS Code integration metadata, supported operations, and configuration ownership.
  */
 

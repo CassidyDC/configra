@@ -1,4 +1,5 @@
 /**
+ * Python Dependency Installation
  * @file Explicit rejection of Python dependency installation without a supported environment manager.
  */
 

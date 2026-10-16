@@ -1,4 +1,8 @@
-<!-- Reference proposal comparing repository and generated-project structures. -->
+<!--
+Repository and Generated Project Organization Plan
+
+Reference proposal comparing repository and generated-project structures.
+-->
 
 # Two recommended structures for CassidyDC Toolset
 

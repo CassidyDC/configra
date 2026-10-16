@@ -1,4 +1,5 @@
 /**
+ * PHP CodeSniffer Configuration Generation
  * @file PHP CodeSniffer rules and Composer requirements for the selected coding standard.
  */
 

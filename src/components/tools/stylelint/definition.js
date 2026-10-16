@@ -1,4 +1,5 @@
 /**
+ * Stylelint Tool Definition
  * @file Stylelint integration metadata, supported operations, and configuration ownership.
  */
 

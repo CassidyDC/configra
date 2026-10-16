@@ -1,4 +1,5 @@
 /**
+ * Plan File Generation
  * @file Generation proposals, configuration merging, ownership tracking, and conflict detection.
  */
 

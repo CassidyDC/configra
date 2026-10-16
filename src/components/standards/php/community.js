@@ -1,4 +1,5 @@
 /**
+ * Community PHP Standard
  * @file PSR-12 PHP standard settings and shared formatting defaults.
  */
 

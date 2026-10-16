@@ -1,4 +1,5 @@
 /**
+ * ESLint Tool Definition
  * @file ESLint integration metadata, supported operations, and configuration ownership.
  */
 

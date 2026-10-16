@@ -1,4 +1,5 @@
 /**
+ * ESLint Configuration
  * @file Repository ESLint configuration for JavaScript linting.
  *
  * @author CassidyDC <info@cassidydc.com>

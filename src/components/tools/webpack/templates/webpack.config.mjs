@@ -1,4 +1,5 @@
 /**
+ * Webpack Configuration Template
  * @file Editable Webpack configuration template with entry and Babel-preset placeholders.
  */
 

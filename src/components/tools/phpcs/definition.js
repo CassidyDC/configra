@@ -1,4 +1,5 @@
 /**
+ * PHP CodeSniffer Tool Definition
  * @file PHP CodeSniffer integration metadata, supported operations, and configuration ownership.
  */
 

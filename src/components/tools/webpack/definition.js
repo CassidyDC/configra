@@ -1,4 +1,5 @@
 /**
+ * Webpack Tool Definition
  * @file Webpack integration metadata, supported operations, and configuration ownership.
  */
 

@@ -1,4 +1,5 @@
 /**
+ * Composer Dependency Installation
  * @file Composer dependency operation planning and execution for selected PHP packages.
  */
 

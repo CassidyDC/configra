@@ -1,4 +1,5 @@
 /**
+ * Prettier Configuration Generation
  * @file Prettier configuration, ignore patterns, and formatting checks for resolved packages.
  */
 

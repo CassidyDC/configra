@@ -1,4 +1,8 @@
-<!-- CassidyDC Toolset overview, installation, usage, and development guidance. -->
+<!--
+CassidyDC Toolset
+
+CassidyDC Toolset overview, installation, usage, and development guidance.
+-->
 
 # CassidyDC Toolset
 
@@ -65,6 +69,9 @@ npm run lint:scripts
 npm run lint:docs
 npm run check
 ```
+
+File documentation headers include a descriptive title directly above the `@file`
+tag, or above the description in other comment formats.
 
 Component definitions, named functions, and reusable helpers use JSDoc. Shared
 internal structures are documented in `src/contracts.js`; imported types use local

@@ -1,4 +1,5 @@
 /**
+ * Webpack Configuration Generation
  * @file Webpack configuration generation with selected Babel presets and source extensions.
  */
 

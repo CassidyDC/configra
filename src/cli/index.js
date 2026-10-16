@@ -1,4 +1,5 @@
 /**
+ * CLI Command Dispatch
  * @file CLI argument parsing, command dispatch, help output, and exit-status handling.
  */
 

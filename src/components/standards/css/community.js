@@ -1,4 +1,5 @@
 /**
+ * Community CSS Standard
  * @file Community CSS standard settings and shared formatting defaults.
  */
 

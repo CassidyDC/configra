@@ -1,4 +1,5 @@
 /**
+ * Component Registry
  * @file Explicit registry of supported projects, capabilities, standards, and tool integrations.
  */
 

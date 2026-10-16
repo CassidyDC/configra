@@ -1,4 +1,5 @@
 /**
+ * Generate Files
  * @file Shared CLI workflow for planning, reporting, and applying project configuration.
  */
 

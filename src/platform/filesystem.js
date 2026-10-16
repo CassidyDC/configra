@@ -1,4 +1,5 @@
 /**
+ * Filesystem Operations
  * @file Boundary-safe filesystem access, content hashing, and atomic file replacement.
  */
 

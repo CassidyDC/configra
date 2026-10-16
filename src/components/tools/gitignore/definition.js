@@ -1,4 +1,5 @@
 /**
+ * Git Ignore Tool Definition
  * @file Git ignore integration metadata, supported operations, and configuration ownership.
  */
 

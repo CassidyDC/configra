@@ -1,4 +1,5 @@
 /**
+ * React Capability
  * @file React capability metadata for JSX support and ESLint integration.
  */
 

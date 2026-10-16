@@ -1,4 +1,5 @@
 /**
+ * Markdownlint Configuration Generation
  * @file Package-scoped Markdownlint configuration and documentation checks.
  */
 

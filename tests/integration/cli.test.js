@@ -1,4 +1,5 @@
 /**
+ * CLI Integration Tests
  * @file CLI integration coverage for generation, saved selections, linting, and process failures.
  */
 

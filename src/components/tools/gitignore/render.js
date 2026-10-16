@@ -1,4 +1,5 @@
 /**
+ * Git Ignore Configuration Generation
  * @file Git ignore contributions for project languages and selected tools.
  */
 

@@ -1,4 +1,5 @@
 /**
+ * Standalone Package Layout
  * @file Shared package context and local scripts for standalone project layouts.
  */
 

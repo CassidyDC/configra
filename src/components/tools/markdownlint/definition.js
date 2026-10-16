@@ -1,4 +1,5 @@
 /**
+ * Markdownlint Tool Definition
  * @file Markdownlint integration metadata, supported operations, and configuration ownership.
  */
 

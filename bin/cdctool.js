@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 /**
+ * CassidyDC Toolset CLI
  * @file Executable entry point for the CassidyDC Toolset CLI.
  * @module cdctool
  */

@@ -1,4 +1,5 @@
 /**
+ * Project Selection Prompts
  * @file Interactive collection of project, language, tool, and package selections.
  */
 

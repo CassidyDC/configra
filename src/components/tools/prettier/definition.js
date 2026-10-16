@@ -1,4 +1,5 @@
 /**
+ * Prettier Tool Definition
  * @file Prettier integration metadata, supported operations, and configuration ownership.
  */
 

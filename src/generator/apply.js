@@ -1,4 +1,5 @@
 /**
+ * Apply Generated Files
  * @file Generation preflight, managed file writes, and optional dependency installation.
  */
 

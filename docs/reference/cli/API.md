@@ -1,4 +1,8 @@
-<!-- Reference CLI syntax examples from the original API design. -->
+<!--
+CLI API Reference
+
+Reference CLI syntax examples from the original API design.
+-->
 
 # CassidyDC Toolsets API
 

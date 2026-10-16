@@ -1,4 +1,5 @@
 /**
+ * Resolve Project Selections
  * @file Selection validation, project inheritance, and resolved package configuration.
  */
 

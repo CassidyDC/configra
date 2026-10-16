@@ -1,4 +1,5 @@
 /**
+ * Shared Tool Helpers
  * @file Shared serialization, file-pattern, and staged-hook helpers for tool renderers.
  */
 

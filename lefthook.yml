@@ -1,3 +1,4 @@
+# Git Hook Configuration
 # Repository Git hooks for staged linting and formatting.
 
 pre-commit:

@@ -1,4 +1,5 @@
 /**
+ * PHP Parallel Lint Configuration Generation
  * @file PHP syntax-check dependencies, scripts, and staged-file checks.
  */
 

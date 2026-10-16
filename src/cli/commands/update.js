@@ -1,4 +1,5 @@
 /**
+ * Update Projects
  * @file CLI update command that merges saved selections with explicit overrides.
  */
 

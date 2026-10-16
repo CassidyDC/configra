@@ -1,4 +1,5 @@
 /**
+ * npm Workspace Layout
  * @file Package dependency ownership and workspace script delegation for npm layouts.
  */
 

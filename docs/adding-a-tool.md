@@ -1,4 +1,8 @@
-<!-- Contributor guide to implementing and registering a tool integration. -->
+<!--
+Adding a Tool
+
+Contributor guide to implementing and registering a tool integration.
+-->
 
 # Adding a tool
 

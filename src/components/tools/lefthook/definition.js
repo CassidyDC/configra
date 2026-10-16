@@ -1,4 +1,5 @@
 /**
+ * Lefthook Tool Definition
  * @file Lefthook integration metadata, supported operations, and configuration ownership.
  */
 

@@ -1,4 +1,8 @@
-<!-- Usage examples and expected output for generated project configurations. -->
+<!--
+Generated Projects
+
+Usage examples and expected output for generated project configurations.
+-->
 
 # Generated projects
 

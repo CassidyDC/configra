@@ -1,4 +1,5 @@
 /**
+ * Configuration Conflict Prompts
  * @file Interactive confirmation of generated configuration replacements.
  */
 

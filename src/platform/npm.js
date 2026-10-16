@@ -1,4 +1,5 @@
 /**
+ * npm Dependency Installation
  * @file npm workspace matching and package-scoped dependency installation operations.
  */
 

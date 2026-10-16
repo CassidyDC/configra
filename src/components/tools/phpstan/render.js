@@ -1,4 +1,5 @@
 /**
+ * PHPStan Configuration Generation
  * @file PHPStan analysis configuration and optional WordPress integration.
  */
 

@@ -1,4 +1,5 @@
 /**
+ * Community JavaScript Standard
  * @file Community JavaScript standard settings and shared formatting defaults.
  */
 

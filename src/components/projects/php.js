@@ -1,4 +1,5 @@
 /**
+ * PHP Project Defaults
  * @file Default languages, tools, and source paths for PHP packages.
  */
 

@@ -1,4 +1,5 @@
 /**
+ * VS Code Configuration Generation
  * @file VS Code editor settings and additive extension recommendations.
  */
 
