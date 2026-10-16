@@ -7,6 +7,10 @@ import { spawnSync } from "node:child_process";
 import { temporary, put, read, readJson } from "../helpers.js";
 
 /**
+ * @typedef {import("node:child_process").SpawnSyncReturns<string>} CliProcessResult
+ */
+
+/**
  * Absolute executable path used by CLI subprocess integration tests.
  *
  * @constant {string}
@@ -17,7 +21,7 @@ const executable = fileURLToPath(new URL("../../bin/cdctool.js", import.meta.url
  *
  * @param {string} root Absolute fixture project root.
  * @param {...string} args CLI command and options before the fixture directory flag.
- * @returns {import("node:child_process").SpawnSyncReturns<string>} Captured process output and completion status.
+ * @returns {CliProcessResult} Captured process output and completion status.
  */
 const run = (root, ...args) => spawnSync(process.execPath, [executable, ...args, "--cwd", root], { encoding: "utf8" });
 

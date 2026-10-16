@@ -3,10 +3,14 @@ import { stdin, stdout } from "node:process";
 import { projects, tools } from "../../components/registry.js";
 
 /**
+ * @typedef {import("../../contracts.js").ProjectInput} ProjectInput
+ */
+
+/**
  * Collect structured project selections without writing any project files.
  *
- * @param {import("../../contracts.js").ProjectInput} [defaults={}] Initial or saved selections.
- * @returns {Promise<import("../../contracts.js").ProjectInput>} Answers ready for request normalization.
+ * @param {ProjectInput} [defaults={}] Initial or saved selections.
+ * @returns {Promise<ProjectInput>} Answers ready for request normalization.
  * @throws {Error} If the selected project identifier is unsupported.
  */
 export async function collect(defaults = {}) {

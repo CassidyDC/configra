@@ -6,9 +6,13 @@ import { apply } from "../../src/generator/apply.js";
 import { temporary, put, read, readJson, proposal, generate } from "../helpers.js";
 
 /**
+ * @typedef {import("../../src/contracts.js").ProjectInput} ProjectInput
+ */
+
+/**
  * Shared standalone WordPress plugin selection used by generation tests.
  *
- * @type {import("../../src/contracts.js").ProjectInput}
+ * @type {ProjectInput}
  */
 const plugin = { project: "wordpress-plugin" };
 

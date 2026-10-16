@@ -1,12 +1,19 @@
 import { readJson } from "../../platform/filesystem.js";
 import { generate } from "./generate.js";
+
+/**
+ * @typedef {import("../../contracts.js").ProjectInput} ProjectInput
+ * @typedef {import("../../contracts.js").CommandOptions} CommandOptions
+ * @typedef {import("../../contracts.js").CliIO} CliIO
+ */
+
 /**
  * Merge explicit overrides with saved selections and run the generation workflow.
  *
  * @param {string} root Existing absolute project directory.
- * @param {import("../../contracts.js").ProjectInput} selections Input selections or update overrides.
- * @param {import("../../contracts.js").CommandOptions} options Non-persisted workflow controls.
- * @param {import("../../contracts.js").CliIO} io Output callbacks.
+ * @param {ProjectInput} selections Input selections or update overrides.
+ * @param {CommandOptions} options Non-persisted workflow controls.
+ * @param {CliIO} io Output callbacks.
  * @returns {Promise<number>} CLI completion status.
  * @throws {Error} If saved selections are absent or invalid.
  */

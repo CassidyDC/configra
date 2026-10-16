@@ -14,11 +14,26 @@ Definitions contain no installation or project filesystem effects. Use an
 `alternatives` array for configuration filenames that would compete with the
 generated file; the planner reports their removal as a conflict.
 
-Document the exported metadata with a description and
-`@type {import("../../../contracts.js").ToolDefinition}`. Add JSDoc descriptions,
-`@param`, and `@returns` tags to renderer functions and named helpers. Reference
-shared types from `src/contracts.js` for package context and tool contributions;
-document validation errors with `@throws` where applicable.
+Declare imported JSDoc types once per file using local aliases, then reference
+those names in metadata annotations, parameters, and return values:
+
+```js
+/**
+ * @typedef {import("../../../contracts.js").ToolDefinition} ToolDefinition
+ */
+
+/**
+ * Tool metadata and configuration ownership.
+ * @type {ToolDefinition}
+ */
+export default {
+  // Tool metadata fields.
+};
+```
+
+Add descriptions, `@param`, and `@returns` tags to renderer functions and named
+helpers. Use aliases for shared package context and tool contribution types from
+`src/contracts.js`; document validation errors with `@throws` where applicable.
 
 ## Rendering
 

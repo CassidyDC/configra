@@ -1,10 +1,16 @@
 import { quote } from "../../../platform/process.js";
 import { hook } from "../shared.js";
+
+/**
+ * @typedef {import("../../../contracts.js").PackageContext} PackageContext
+ * @typedef {import("../../../contracts.js").ToolContribution} ToolContribution
+ */
+
 /**
  * Contribute PHP syntax-check dependencies, scripts, and staged-file checks.
  *
- * @param {import("../../../contracts.js").PackageContext} project Resolved settings and package ownership.
- * @returns {import("../../../contracts.js").ToolContribution} Proposed configuration and tool requirements.
+ * @param {PackageContext} project Resolved settings and package ownership.
+ * @returns {ToolContribution} Proposed configuration and tool requirements.
  */
 export default function render(project) {
   const excludes = project.excludes.map((pattern) => pattern.replace(/^\*\*\//, "").replace(/\/\*\*$/, ""));

@@ -1,9 +1,15 @@
 import { xml, hook } from "../shared.js";
+
+/**
+ * @typedef {import("../../../contracts.js").PackageContext} PackageContext
+ * @typedef {import("../../../contracts.js").ToolContribution} ToolContribution
+ */
+
 /**
  * Render the selected PHP coding standard and its Composer requirements.
  *
- * @param {import("../../../contracts.js").PackageContext} project Resolved settings and package ownership.
- * @returns {import("../../../contracts.js").ToolContribution} Proposed configuration and tool requirements.
+ * @param {PackageContext} project Resolved settings and package ownership.
+ * @returns {ToolContribution} Proposed configuration and tool requirements.
  */
 export default function render(project) {
   const standard = project.standards.php.settings.ruleset;

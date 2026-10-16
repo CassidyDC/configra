@@ -7,9 +7,18 @@ import { plan } from "../src/generator/plan.js";
 import { apply } from "../src/generator/apply.js";
 
 /**
+ * @typedef {import("node:test").TestContext} TestContext
+ * @typedef {import("../src/contracts.js").JsonValue} JsonValue
+ * @typedef {import("../src/contracts.js").ProjectInput} ProjectInput
+ * @typedef {import("../src/contracts.js").GenerationPlan} GenerationPlan
+ * @typedef {import("../src/contracts.js").ApplyOptions} ApplyOptions
+ * @typedef {import("../src/contracts.js").ApplyResult} ApplyResult
+ */
+
+/**
  * Create a canonical temporary project and register cleanup with the test context.
  *
- * @param {import("node:test").TestContext} t Owning test context.
+ * @param {TestContext} t Owning test context.
  * @returns {Promise<string>} Canonical absolute temporary directory.
  */
 export async function temporary(t) {
@@ -45,15 +54,15 @@ export const read = (root, name) => fs.readFile(path.join(root, name), "utf8");
  *
  * @param {string} root Absolute fixture root.
  * @param {string} name Fixture-relative filename.
- * @returns {Promise<import("../src/contracts.js").JsonValue>} Parsed fixture value.
+ * @returns {Promise<JsonValue>} Parsed fixture value.
  */
 export const readJson = async (root, name) => JSON.parse(await read(root, name));
 /**
  * Build a complete generation proposal for an isolated fixture project.
  *
  * @param {string} root Absolute fixture project root.
- * @param {import("../src/contracts.js").ProjectInput} [input={}] Project selections.
- * @returns {Promise<import("../src/contracts.js").GenerationPlan>} Proposal without applying writes.
+ * @param {ProjectInput} [input={}] Project selections.
+ * @returns {Promise<GenerationPlan>} Proposal without applying writes.
  */
 export async function proposal(root, input = {}) {
   const request = normalizeRequest(input);
@@ -63,9 +72,9 @@ export async function proposal(root, input = {}) {
  * Plan and apply generation to an isolated fixture project.
  *
  * @param {string} root Absolute fixture project root.
- * @param {import("../src/contracts.js").ProjectInput} [input={}] Project selections.
- * @param {import("../src/contracts.js").ApplyOptions} [options={}] Application controls and adapter overrides.
- * @returns {Promise<{planned: import("../src/contracts.js").GenerationPlan, result: import("../src/contracts.js").ApplyResult}>} Proposal and application result.
+ * @param {ProjectInput} [input={}] Project selections.
+ * @param {ApplyOptions} [options={}] Application controls and adapter overrides.
+ * @returns {Promise<{planned: GenerationPlan, result: ApplyResult}>} Proposal and application result.
  */
 export async function generate(root, input = {}, options = {}) {
   const planned = await proposal(root, input);

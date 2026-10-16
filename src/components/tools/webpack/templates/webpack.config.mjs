@@ -1,9 +1,13 @@
 import { fileURLToPath } from "node:url";
 
 /**
+ * @typedef {import("webpack").Configuration} WebpackConfiguration
+ */
+
+/**
  * Editable Webpack build configuration with module-relative source and output paths.
  *
- * @type {import("webpack").Configuration}
+ * @type {WebpackConfiguration}
  */
 export default {
   entry: fileURLToPath(new URL("./__ENTRY__", import.meta.url)),

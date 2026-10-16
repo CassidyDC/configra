@@ -1,7 +1,11 @@
 /**
+ * @typedef {import("../../contracts.js").ProjectDefinition} ProjectDefinition
+ */
+
+/**
  * Supported editor and documentation tools for a Python package.
  *
- * @type {import("../../contracts.js").ProjectDefinition}
+ * @type {ProjectDefinition}
  */
 export default {
   id: "python",

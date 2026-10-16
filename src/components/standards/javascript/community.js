@@ -1,7 +1,11 @@
 /**
+ * @typedef {import("../../../contracts.js").StandardDefinition} StandardDefinition
+ */
+
+/**
  * ESLint recommended baseline and formatting defaults for javascript.
  *
- * @type {import("../../../contracts.js").StandardDefinition}
+ * @type {StandardDefinition}
  */
 export default {
   id: "community",

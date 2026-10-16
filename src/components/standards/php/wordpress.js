@@ -1,7 +1,11 @@
 /**
+ * @typedef {import("../../../contracts.js").StandardDefinition} StandardDefinition
+ */
+
+/**
  * WordPress baseline and formatting defaults for php.
  *
- * @type {import("../../../contracts.js").StandardDefinition}
+ * @type {StandardDefinition}
  */
 export default {
   id: "wordpress",

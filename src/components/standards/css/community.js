@@ -1,7 +1,11 @@
 /**
+ * @typedef {import("../../../contracts.js").StandardDefinition} StandardDefinition
+ */
+
+/**
  * Stylelint standard baseline and formatting defaults for css.
  *
- * @type {import("../../../contracts.js").StandardDefinition}
+ * @type {StandardDefinition}
  */
 export default {
   id: "community",

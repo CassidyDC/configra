@@ -4,12 +4,18 @@ import { plan } from "../../generator/plan.js";
 import { apply } from "../../generator/apply.js";
 
 /**
+ * @typedef {import("../../contracts.js").ProjectInput} ProjectInput
+ * @typedef {import("../../contracts.js").CommandOptions} CommandOptions
+ * @typedef {import("../../contracts.js").CliIO} CliIO
+ */
+
+/**
  * Resolve selections, present a proposal, and optionally apply it and install dependencies.
  *
  * @param {string} root Existing absolute project directory.
- * @param {import("../../contracts.js").ProjectInput} selections Input selections or update overrides.
- * @param {import("../../contracts.js").CommandOptions} options Non-persisted workflow controls.
- * @param {import("../../contracts.js").CliIO} io Output callbacks.
+ * @param {ProjectInput} selections Input selections or update overrides.
+ * @param {CommandOptions} options Non-persisted workflow controls.
+ * @param {CliIO} io Output callbacks.
  * @returns {Promise<number>} CLI completion status.
  * @throws {Error} If selections, discovery, planning, or application preflight are invalid.
  */

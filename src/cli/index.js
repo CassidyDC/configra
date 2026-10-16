@@ -5,6 +5,10 @@ import { init } from "./commands/init.js";
 import { update } from "./commands/update.js";
 
 /**
+ * @typedef {import("../contracts.js").CliIO} CliIO
+ */
+
+/**
  * Usage text shared by explicit help and invocations without a command.
  *
  * @constant {string}
@@ -33,7 +37,7 @@ Usage: cdctool <init|update|discover> [options]
  * Parse CLI arguments, dispatch a workflow, and translate failures into readable diagnostics.
  *
  * @param {string[]} [argv=process.argv.slice(2)] Arguments excluding the Node executable and script path.
- * @param {import("../contracts.js").CliIO} [io] Output callbacks; defaults to process stdout and stderr.
+ * @param {CliIO} [io] Output callbacks; defaults to process stdout and stderr.
  * @returns {Promise<number>} Zero on success, one on failure, or two for dry-run conflicts.
  */
 export async function run(

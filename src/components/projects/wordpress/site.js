@@ -1,7 +1,11 @@
 /**
+ * @typedef {import("../../../contracts.js").ProjectDefinition} ProjectDefinition
+ */
+
+/**
  * Defaults and child discovery hints for a WordPress wp-content project.
  *
- * @type {import("../../../contracts.js").ProjectDefinition}
+ * @type {ProjectDefinition}
  */
 export default {
   id: "wordpress-site",

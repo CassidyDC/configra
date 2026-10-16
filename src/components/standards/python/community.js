@@ -1,7 +1,11 @@
 /**
+ * @typedef {import("../../../contracts.js").StandardDefinition} StandardDefinition
+ */
+
+/**
  * PEP 8 baseline and formatting defaults for python.
  *
- * @type {import("../../../contracts.js").StandardDefinition}
+ * @type {StandardDefinition}
  */
 export default {
   id: "community",

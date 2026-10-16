@@ -65,7 +65,8 @@ npm run check
 ```
 
 Component definitions, named functions, and reusable helpers use JSDoc. Shared
-internal structures are documented in `src/contracts.js`.
+internal structures are documented in `src/contracts.js`; imported types use local
+aliases declared once per file.
 
 - [Architecture](docs/architecture.md)
 - [Adding a tool](docs/adding-a-tool.md)

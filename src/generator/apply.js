@@ -3,11 +3,17 @@ import { install as npmInstall } from "../platform/npm.js";
 import { install as composerInstall } from "../platform/composer.js";
 
 /**
+ * @typedef {import("../contracts.js").GenerationPlan} GenerationPlan
+ * @typedef {import("../contracts.js").ApplyOptions} ApplyOptions
+ * @typedef {import("../contracts.js").ApplyResult} ApplyResult
+ */
+
+/**
  * Validate every precondition, write generation state last, and optionally install dependencies.
  *
- * @param {import("../contracts.js").GenerationPlan} plan Complete proposal with captured file snapshots.
- * @param {import("../contracts.js").ApplyOptions} [options={}] Conflict, installation, and adapter controls.
- * @returns {Promise<import("../contracts.js").ApplyResult>} Applied paths and distinct write or installation failures.
+ * @param {GenerationPlan} plan Complete proposal with captured file snapshots.
+ * @param {ApplyOptions} [options={}] Conflict, installation, and adapter controls.
+ * @returns {Promise<ApplyResult>} Applied paths and distinct write or installation failures.
  * @throws {Error} If conflicts are unresolved or project files changed before application.
  */
 export async function apply(

@@ -3,7 +3,7 @@
  *
  * @author CassidyDC <info@cassidydc.com>
  * @see https://eslint.org/docs/latest/use/configure/configuration-files
- * @type {import("eslint").Linter.Config[]}
+ * @type {ESLintConfig[]}
  * @version 1.0.0
  */
 
@@ -13,12 +13,16 @@ import { defineConfig, globalIgnores, includeIgnoreFile } from "eslint/config";
 import { fileURLToPath, URL } from "node:url";
 import { importX } from "eslint-plugin-import-x";
 
+/**
+ * @typedef {import("eslint").Linter.Config} ESLintConfig
+ */
+
 const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url));
 
 /**
  * Repository lint rules for implementation files, tests, and executable entry points.
  *
- * @type {import("eslint").Linter.Config[]}
+ * @type {ESLintConfig[]}
  */
 export default defineConfig([
   includeIgnoreFile(gitignorePath, "Imported .gitignore patterns"),

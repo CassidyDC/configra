@@ -3,6 +3,11 @@ import { readJson } from "./filesystem.js";
 import { execute } from "./process.js";
 
 /**
+ * @typedef {import("../contracts.js").InstallationOperation} InstallationOperation
+ * @typedef {typeof import("./process.js").execute} ProcessRunner
+ */
+
+/**
  * Read and validate npm workspace declarations without modifying the manifest.
  *
  * @param {string} root Absolute workspace registration root.
@@ -55,7 +60,7 @@ export function matchesWorkspace(relative, patterns) {
  * @param {string} packagePath Project-relative dependency owner.
  * @param {boolean} [workspace=false] Whether npm workspace installation semantics apply.
  * @param {string} [workspaceName] Exact registered workspace name for a child package.
- * @returns {import("../contracts.js").InstallationOperation} Prepared npm operation; no process is executed.
+ * @returns {InstallationOperation} Prepared npm operation; no process is executed.
  */
 export function installation(root, packagePath, workspace = false, workspaceName) {
   return {
@@ -72,6 +77,6 @@ export function installation(root, packagePath, workspace = false, workspaceName
 /**
  * Execute a prepared npm operation through the shared process adapter.
  *
- * @type {typeof import("./process.js").execute}
+ * @type {ProcessRunner}
  */
 export const install = execute;

@@ -4,7 +4,13 @@
  * @module contracts
  */
 
+/**
+ * @typedef {import("node:child_process").StdioOptions} StdioOptions
+ * @typedef {typeof import("./platform/filesystem.js").write} FileWriter
+ */
+
 /** @typedef {"single"|"nested"|"workspaces"} Layout Selected package ownership strategy. */
+
 /** @typedef {string|number|boolean|null|unknown[]|Object<string, unknown>} JsonValue Primitive, array, or object read from JSON content. */
 
 /**
@@ -229,7 +235,7 @@
 /**
  * Process output routing shared by installation runners.
  * @typedef {object} ProcessOptions
- * @property {import("node:child_process").StdioOptions} [stdio] Stream routing; defaults to inherited terminal output.
+ * @property {StdioOptions} [stdio] Stream routing; defaults to inherited terminal output.
  */
 
 /**
@@ -238,8 +244,8 @@
  * @property {boolean} [force] Explicitly replace all reported conflicting generated content.
  * @property {boolean} [install] Run dependency operations after successful file generation.
  * @property {function(InstallationOperation, ProcessOptions): Promise<InstallationResult>} [execute] Installation runner override.
- * @property {typeof import("./platform/filesystem.js").write} [writeFile] File adapter override.
- * @property {import("node:child_process").StdioOptions} [stdio] Installation process output routing.
+ * @property {FileWriter} [writeFile] File adapter override.
+ * @property {StdioOptions} [stdio] Installation process output routing.
  */
 
 /**

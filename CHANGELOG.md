@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
+- Declare imported JSDoc types once per file with local aliases for readable annotations.
+
 - Move the `cdctool` executable to `bin/cdctool.js` and package the component-based implementation and templates.
 
 ## Fixed

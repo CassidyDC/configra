@@ -1,9 +1,16 @@
 /**
+ * @typedef {import("../../contracts.js").ResolvedPackage} ResolvedPackage
+ * @typedef {import("../../contracts.js").ResolvedProject} ResolvedProject
+ * @typedef {import("../../contracts.js").PackageContext} PackageContext
+ * @typedef {import("../../contracts.js").ToolContribution} ToolContribution
+ */
+
+/**
  * Add local exclusions and workspace lookup information to a resolved package.
  *
- * @param {import("../../contracts.js").ResolvedPackage & {descendants: string[]}} project Package and selected descendants.
- * @param {import("../../contracts.js").ResolvedProject} resolved Complete resolution and ownership graph.
- * @returns {import("../../contracts.js").PackageContext} Renderer context for this package.
+ * @param {ResolvedPackage & {descendants: string[]}} project Package and selected descendants.
+ * @param {ResolvedProject} resolved Complete resolution and ownership graph.
+ * @returns {PackageContext} Renderer context for this package.
  */
 export function context(project, resolved) {
   return {
@@ -33,8 +40,8 @@ export function context(project, resolved) {
 /**
  * Compose local tool checks without child-package delegation.
  *
- * @param {import("../../contracts.js").PackageContext} project Package ownership and layout context.
- * @param {import("../../contracts.js").ToolContribution} contribution Combined scripts and requirements.
+ * @param {PackageContext} project Package ownership and layout context.
+ * @param {ToolContribution} contribution Combined scripts and requirements.
  * @returns {Object<string, string>} Local and aggregate npm scripts.
  */
 export function scripts(project, contribution) {
@@ -49,7 +56,7 @@ export function scripts(project, contribution) {
 /**
  * Keep dependency declarations owned by the package that requires them.
  *
- * @param {import("../../contracts.js").ResolvedPackage} project Owning package.
+ * @param {ResolvedPackage} project Owning package.
  * @returns {string} Project-relative dependency owner path.
  */
 export const dependencyOwner = (project) => project.path;

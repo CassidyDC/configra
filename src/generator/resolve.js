@@ -2,6 +2,16 @@ import { projects, capabilities, standards, tools } from "../components/registry
 import { relativePath } from "../platform/filesystem.js";
 
 /**
+ * @typedef {import("../contracts.js").ProjectInput} ProjectInput
+ * @typedef {import("../contracts.js").ProjectRequest} ProjectRequest
+ * @typedef {import("../contracts.js").Selections} Selections
+ * @typedef {import("../contracts.js").PackageNode} PackageNode
+ * @typedef {import("../contracts.js").ResolvedPackage} ResolvedPackage
+ * @typedef {import("../contracts.js").PackageGraph} PackageGraph
+ * @typedef {import("../contracts.js").ResolvedProject} ResolvedProject
+ */
+
+/**
  * Validate selection identifiers, remove duplicates, and return a stable ordering.
  *
  * @param {unknown} value Untrusted selection list.
@@ -47,8 +57,8 @@ const selectionFields = ["project", "languages", "capabilities", "standards", "t
 /**
  * Apply request defaults and normalize child paths without resolving component defaults.
  *
- * @param {import("../contracts.js").ProjectInput} [input={}] CLI, prompt, or saved selections.
- * @returns {import("../contracts.js").ProjectRequest} Versioned, normalized request.
+ * @param {ProjectInput} [input={}] CLI, prompt, or saved selections.
+ * @returns {ProjectRequest} Versioned, normalized request.
  * @throws {Error} If the schema, layout, package paths, or selections are invalid.
  */
 export function normalizeRequest(input = {}) {
@@ -81,9 +91,9 @@ export function normalizeRequest(input = {}) {
 /**
  * Resolve one package against project defaults, standards, capabilities, and overrides.
  *
- * @param {import("../contracts.js").Selections} selection Effective selections before component resolution.
- * @param {import("../contracts.js").PackageNode} node Selected package ownership information.
- * @returns {import("../contracts.js").ResolvedPackage} Validated effective package settings.
+ * @param {Selections} selection Effective selections before component resolution.
+ * @param {PackageNode} node Selected package ownership information.
+ * @returns {ResolvedPackage} Validated effective package settings.
  * @throws {Error} If a component or formatting combination is unsupported.
  */
 function resolvePackage(selection, node) {
@@ -172,9 +182,9 @@ function resolvePackage(selection, node) {
 /**
  * Resolve selected packages in parent-before-child order while applying explicit inheritance.
  *
- * @param {import("../contracts.js").ProjectRequest} request Normalized root and child selections.
- * @param {import("../contracts.js").PackageGraph} graph Selected package ownership graph.
- * @returns {import("../contracts.js").ResolvedProject} Effective settings for all selected packages.
+ * @param {ProjectRequest} request Normalized root and child selections.
+ * @param {PackageGraph} graph Selected package ownership graph.
+ * @returns {ResolvedProject} Effective settings for all selected packages.
  */
 export function resolve(request, graph) {
   request = normalizeRequest(request);

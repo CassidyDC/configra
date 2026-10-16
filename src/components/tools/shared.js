@@ -1,4 +1,9 @@
 /**
+ * @typedef {import("../../contracts.js").PackageContext} PackageContext
+ * @typedef {import("../../contracts.js").HookRequirement} HookRequirement
+ */
+
+/**
  * Serialize tool-native configuration data with a trailing newline.
  *
  * @param {unknown} value JSON-serializable configuration.
@@ -16,7 +21,7 @@ export const xml = (value) =>
 /**
  * Derive JavaScript-family filename globs from the selected capabilities.
  *
- * @param {import("../../contracts.js").PackageContext} project Resolved capability selections.
+ * @param {PackageContext} project Resolved capability selections.
  * @returns {string[]} Package-relative JavaScript, JSX, TypeScript, and TSX patterns.
  */
 export const patterns = (project) => [
@@ -28,6 +33,6 @@ export const patterns = (project) => [
  * @param {string} id Stable tool check identifier.
  * @param {string[]} glob Package-relative filename patterns.
  * @param {string} run Command using Lefthook staged-file placeholders.
- * @returns {import("../../contracts.js").HookRequirement} Unrouted staged check contribution.
+ * @returns {HookRequirement} Unrouted staged check contribution.
  */
 export const hook = (id, glob, run) => ({ id, glob, run });

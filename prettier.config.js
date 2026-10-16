@@ -1,9 +1,13 @@
 /**
+ * @typedef {import("prettier").Config} PrettierConfig
+ */
+
+/**
  * Prettier configuration.
  *
  * @author CassidyDC <info@cassidydc.com>
  * @see https://prettier.io/docs/configuration
- * @type {import("prettier").Config}
+ * @type {PrettierConfig}
  * @version 1.0.0
  */
 

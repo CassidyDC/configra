@@ -1,7 +1,11 @@
 /**
+ * @typedef {import("../../../contracts.js").ToolDefinition} ToolDefinition
+ */
+
+/**
  * Markdownlint integration metadata, requirements, operations, and configuration ownership.
  *
- * @type {import("../../../contracts.js").ToolDefinition}
+ * @type {ToolDefinition}
  */
 export default {
   id: "markdownlint",

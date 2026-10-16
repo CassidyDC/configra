@@ -10,6 +10,13 @@ import * as nested from "./layouts/nested.js";
 import * as workspaces from "./layouts/workspaces.js";
 
 /**
+ * @typedef {import("../contracts.js").JsonValue} JsonValue
+ * @typedef {import("../contracts.js").ToolContribution} ToolContribution
+ * @typedef {import("../contracts.js").ResolvedProject} ResolvedProject
+ * @typedef {import("../contracts.js").GenerationPlan} GenerationPlan
+ */
+
+/**
  * Generation ownership metadata filename, separate from editable selections.
  *
  * @constant {string}
@@ -48,10 +55,10 @@ const join = (root, name) => path.posix.join(root, name);
 /**
  * Flatten managed JSON leaves into keys encoding their complete property paths.
  *
- * @param {Object<string, import("../contracts.js").JsonValue>} value Structured managed entries.
+ * @param {Object<string, JsonValue>} value Structured managed entries.
  * @param {string[]} [prefix=[]] Ancestor property names.
- * @param {Object<string, import("../contracts.js").JsonValue>} [result={}] Accumulator mutated during traversal.
- * @returns {Object<string, import("../contracts.js").JsonValue>} Leaf values keyed by JSON-encoded property paths.
+ * @param {Object<string, JsonValue>} [result={}] Accumulator mutated during traversal.
+ * @returns {Object<string, JsonValue>} Leaf values keyed by JSON-encoded property paths.
  * @throws {Error} If a property name could modify object prototypes.
  */
 function leaves(value, prefix = [], result = {}) {
@@ -95,8 +102,8 @@ function set(value, keys, next) {
 /**
  * Combine one tool contribution into the accumulator and reject competing values.
  *
- * @param {Required<import("../contracts.js").ToolContribution>} target Mutable accumulated contributions.
- * @param {import("../contracts.js").ToolContribution} contribution New renderer output.
+ * @param {Required<ToolContribution>} target Mutable accumulated contributions.
+ * @param {ToolContribution} contribution New renderer output.
  * @returns {void}
  * @throws {Error} If two tools contribute different values for the same entry.
  */
@@ -113,7 +120,7 @@ function mergeContribution(target, contribution) {
 /**
  * Create independent accumulators for every supported contribution category.
  *
- * @returns {Required<import("../contracts.js").ToolContribution>} Empty mutable contribution collections.
+ * @returns {Required<ToolContribution>} Empty mutable contribution collections.
  */
 const empty = () => ({
   files: {},
@@ -129,8 +136,8 @@ const empty = () => ({
 /**
  * Read project state and render a complete proposal without writing project files.
  *
- * @param {import("../contracts.js").ResolvedProject} resolved Effective package settings and ownership.
- * @returns {Promise<import("../contracts.js").GenerationPlan>} Changes, conflicts, diagnostics, and installation operations.
+ * @param {ResolvedProject} resolved Effective package settings and ownership.
+ * @returns {Promise<GenerationPlan>} Changes, conflicts, diagnostics, and installation operations.
  * @throws {Error} If state, manifests, paths, or combined contributions are invalid.
  */
 export async function plan(resolved) {

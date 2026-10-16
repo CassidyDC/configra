@@ -1,7 +1,11 @@
 /**
+ * @typedef {import("../../../contracts.js").ProjectDefinition} ProjectDefinition
+ */
+
+/**
  * WordPress theme defaults with optional framework and language capabilities.
  *
- * @type {import("../../../contracts.js").ProjectDefinition}
+ * @type {ProjectDefinition}
  */
 export default {
   id: "wordpress-theme",

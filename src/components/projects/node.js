@@ -1,7 +1,11 @@
 /**
+ * @typedef {import("../../contracts.js").ProjectDefinition} ProjectDefinition
+ */
+
+/**
  * Default development tools and source paths for a Node.js package.
  *
- * @type {import("../../contracts.js").ProjectDefinition}
+ * @type {ProjectDefinition}
  */
 export default {
   id: "node",

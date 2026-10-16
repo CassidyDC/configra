@@ -1,7 +1,11 @@
 /**
+ * @typedef {import("../../../contracts.js").ProjectDefinition} ProjectDefinition
+ */
+
+/**
  * WordPress plugin defaults shared by standalone and child packages.
  *
- * @type {import("../../../contracts.js").ProjectDefinition}
+ * @type {ProjectDefinition}
  */
 export default {
   id: "wordpress-plugin",

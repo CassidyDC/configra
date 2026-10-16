@@ -1,11 +1,17 @@
 import { spawn } from "node:child_process";
 
 /**
+ * @typedef {import("../contracts.js").InstallationOperation} InstallationOperation
+ * @typedef {import("../contracts.js").ProcessOptions} ProcessOptions
+ * @typedef {import("../contracts.js").InstallationResult} InstallationResult
+ */
+
+/**
  * Execute a dependency operation without a shell and report spawn or exit failures as results.
  *
- * @param {import("../contracts.js").InstallationOperation} operation Prepared executable, arguments, and working directory.
- * @param {import("../contracts.js").ProcessOptions} [options={}] Child-process output routing.
- * @returns {Promise<import("../contracts.js").InstallationResult>} Completion status with operation context.
+ * @param {InstallationOperation} operation Prepared executable, arguments, and working directory.
+ * @param {ProcessOptions} [options={}] Child-process output routing.
+ * @returns {Promise<InstallationResult>} Completion status with operation context.
  */
 export function execute(operation, { stdio = "inherit" } = {}) {
   return new Promise((resolve) => {

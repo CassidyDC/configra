@@ -1,16 +1,23 @@
+/**
+ * @typedef {import("../../../contracts.js").PackageContext} PackageContext
+ * @typedef {import("prettier").Config} PrettierConfig
+ * @typedef {import("../../../contracts.js").Formatting} Formatting
+ * @typedef {import("prettier").Options} PrettierOptions
+ */
+
 // WordPress baseline mirrors @wordpress/prettier-config; resolved formatting wins.
 /**
  * Combine the documented WordPress baseline with resolved global and language formatting.
  *
- * @param {import("../../../contracts.js").PackageContext} project Resolved standards and formatting choices.
- * @returns {import("prettier").Config} Formatter options shared by generation and generated configuration.
+ * @param {PackageContext} project Resolved standards and formatting choices.
+ * @returns {PrettierConfig} Formatter options shared by generation and generated configuration.
  */
 export function options(project) {
   /**
    * Translate shared formatting choices into native Prettier options.
    *
-   * @param {import("../../../contracts.js").Formatting} format Effective formatting choices.
-   * @returns {import("prettier").Options} Core indentation, line-ending, and width options.
+   * @param {Formatting} format Effective formatting choices.
+   * @returns {PrettierOptions} Core indentation, line-ending, and width options.
    */
   const base = (format) => ({
     useTabs: format.indentStyle === "tab",

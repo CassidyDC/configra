@@ -1,9 +1,15 @@
 import { json, hook } from "../shared.js";
+
+/**
+ * @typedef {import("../../../contracts.js").PackageContext} PackageContext
+ * @typedef {import("../../../contracts.js").ToolContribution} ToolContribution
+ */
+
 /**
  * Render stylesheet lint settings for the selected CSS standard.
  *
- * @param {import("../../../contracts.js").PackageContext} project Resolved settings and package ownership.
- * @returns {import("../../../contracts.js").ToolContribution} Proposed configuration and tool requirements.
+ * @param {PackageContext} project Resolved settings and package ownership.
+ * @returns {ToolContribution} Proposed configuration and tool requirements.
  */
 export default function render(project) {
   const standard = project.standards.css.settings.extends;

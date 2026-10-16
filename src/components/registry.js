@@ -39,21 +39,28 @@ import webpack from "./tools/webpack/definition.js";
 import renderWebpack from "./tools/webpack/render.js";
 
 /**
+ * @typedef {import("../contracts.js").ProjectDefinition} ProjectDefinition
+ * @typedef {import("../contracts.js").CapabilityDefinition} CapabilityDefinition
+ * @typedef {import("../contracts.js").StandardDefinition} StandardDefinition
+ * @typedef {import("../contracts.js").ToolIntegration} ToolIntegration
+ */
+
+/**
  * Supported project defaults indexed by stable component identifier.
  *
- * @type {Object<string, import("../contracts.js").ProjectDefinition>}
+ * @type {Object<string, ProjectDefinition>}
  */
 export const projects = Object.fromEntries([node, php, python, site, plugin, theme].map((item) => [item.id, item]));
 /**
  * Explicitly registered optional language capabilities.
  *
- * @type {Object<string, import("../contracts.js").CapabilityDefinition>}
+ * @type {Object<string, CapabilityDefinition>}
  */
 export const capabilities = { react, typescript };
 /**
  * Supported standards indexed first by language and then standard identifier.
  *
- * @type {Object<string, Object<string, import("../contracts.js").StandardDefinition>>}
+ * @type {Object<string, Object<string, StandardDefinition>>}
  */
 export const standards = {
   javascript: { community: jsCommunity, wordpress: jsWordpress },
@@ -64,7 +71,7 @@ export const standards = {
 /**
  * Supported tool metadata and pure renderer implementations.
  *
- * @type {Object<string, import("../contracts.js").ToolIntegration>}
+ * @type {Object<string, ToolIntegration>}
  */
 export const tools = {
   editorconfig: { ...editorconfig, render: renderEditorconfig },

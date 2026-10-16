@@ -2,9 +2,13 @@ import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 
 /**
+ * @typedef {import("../../contracts.js").GenerationConflict} GenerationConflict
+ */
+
+/**
  * Collect an explicit replacement decision without applying any project changes.
  *
- * @param {import("../../contracts.js").GenerationConflict[]} conflicts Reported conflicts requiring a decision.
+ * @param {GenerationConflict[]} conflicts Reported conflicts requiring a decision.
  * @returns {Promise<boolean>} Whether the user explicitly approved replacement.
  */
 export async function decide(conflicts) {

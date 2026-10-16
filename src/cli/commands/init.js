@@ -1,7 +1,12 @@
 import { generate } from "./generate.js";
+
+/**
+ * @typedef {typeof import("./generate.js").generate} GenerateCommand
+ */
+
 /**
  * Initialize a setup using the shared generation workflow.
  *
- * @type {typeof import("./generate.js").generate}
+ * @type {GenerateCommand}
  */
 export const init = generate;
