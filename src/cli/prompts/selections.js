@@ -40,6 +40,7 @@ export async function collect(defaults = {}) {
   try {
     const project = await ask(`Project (${Object.keys(projects).join(", ")})`, defaults.project ?? "node");
     const definition = projects[project];
+
     if (!definition) throw new Error(`Unsupported project: ${project}`);
 
     const languages = split(
@@ -49,6 +50,7 @@ export async function collect(defaults = {}) {
       await ask("Capabilities (react, typescript; comma separated)", (defaults.capabilities ?? []).join(",")),
     );
     const standards = {};
+
     for (const language of languages)
       standards[language] = await ask(
         `${language} standard`,
@@ -77,6 +79,7 @@ export async function collect(defaults = {}) {
               (defaults.packages ?? []).map((item) => item.path).join(","),
             ),
           ).map((path) => defaults.packages?.find((item) => item.path === path) ?? { path });
+
     return { ...defaults, project, languages, capabilities, standards, tools: selectedTools, layout, packages };
   } finally {
     prompt.close();

@@ -18,6 +18,7 @@ export default function render(project) {
   const imports = ['import { defineConfig } from "eslint/config";', 'import globals from "globals";'];
   const configs = [];
   const npm = { eslint: "^10.0.0", globals: "^17.0.0" };
+
   if (wordpress) {
     imports.push('import wordpress from "@wordpress/eslint-plugin";');
     configs.push("wordpress.configs.recommended");
@@ -47,6 +48,7 @@ export default function render(project) {
 
   const globals = project.environment === "node" ? "globals.node" : "{ ...globals.browser, ...globals.node }";
   const config = `${imports.join("\n")}\n\nexport default defineConfig(\n  { ignores: ${json(project.excludes).trim()} },\n  { files: ${json(patterns(project)).trim()}, extends: [${configs.join(", ")}], languageOptions: { globals: ${globals}, parserOptions: { ecmaFeatures: { jsx: ${react} } } }${react ? ', settings: { react: { version: "detect" } }' : ""} },\n${ts ? '  { files: ["**/*.{ts,mts,cts,tsx}"], extends: [tseslint.configs.recommended] },\n' : ""}${project.tools.includes("prettier") ? "  prettier,\n" : ""});\n`;
+
   return {
     files: { "eslint.config.mjs": config },
     npm,

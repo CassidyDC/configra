@@ -98,6 +98,7 @@ function get(value, keys) {
  */
 function set(value, keys, next) {
   let current = value;
+
   for (const key of keys.slice(0, -1)) {
     if (["__proto__", "prototype", "constructor"].includes(key)) throw new Error("Unsafe manifest key");
 
@@ -159,6 +160,7 @@ export async function plan(resolved) {
   const root = graph.root;
   const stateBefore = await read(root, STATE);
   let previous;
+
   try {
     previous = stateBefore === null ? { version: 1, files: {} } : JSON.parse(stateBefore);
   } catch {
@@ -189,8 +191,10 @@ export async function plan(resolved) {
       resolved,
     ),
   );
+
   for (const project of contexts) {
     const contribution = empty();
+
     for (const id of project.tools.filter((id) => id !== "lefthook"))
       mergeContribution(contribution, tools[id].render(project));
 
@@ -200,6 +204,7 @@ export async function plan(resolved) {
 
     for (const requirement of contribution.hooks) {
       const prefix = project.path === "." ? "" : project.path + "/";
+
       hooks.push({
         ...requirement,
         id: `${project.path}:${requirement.id}`,
@@ -211,6 +216,7 @@ export async function plan(resolved) {
   }
 
   const rootProject = contexts[0];
+
   if (contexts.some((project) => project.tools.includes("lefthook"))) {
     if (graph.gitRoot && graph.gitRoot !== root)
       diagnostics.push(
@@ -221,6 +227,7 @@ export async function plan(resolved) {
 
   for (const project of contexts) {
     const contribution = contributions.get(project.path);
+
     for (const [name, content] of Object.entries(contribution.files))
       desired.set(join(project.path, name), { kind: "file", content });
 
@@ -231,6 +238,7 @@ export async function plan(resolved) {
       desired.set(join(project.path, name), { kind: "lines", content });
 
     const scripts = layout.scripts(project, contribution);
+
     if (Object.keys(scripts).length || Object.keys(contribution.npm).length) {
       desired.set(join(project.path, "package.json"), {
         kind: "json",
@@ -274,6 +282,7 @@ export async function plan(resolved) {
     const owner = [...contexts]
       .reverse()
       .find((project) => project.path === "." || name.startsWith(project.path + "/"));
+
     if (!owner.tools.includes("prettier")) return content;
 
     return format(content, { ...prettierOptions(owner), filepath: name, plugins: [] });
@@ -283,16 +292,19 @@ export async function plan(resolved) {
   const conflicts = [];
   const state = { version: 1, files: {} };
   const snapshots = { ...graph.snapshots };
+
   for (const name of [...new Set([...desired.keys(), ...Object.keys(previous.files)])].sort()) {
     relativePath(name);
     if ([STATE, SELECTIONS].includes(name)) throw new Error(`Invalid managed state entry: ${name}`);
 
     const before = await read(root, name);
+
     if (Object.hasOwn(snapshots, name) && snapshots[name] !== hash(before))
       throw new Error(`Project changed during planning: ${name}`);
 
     snapshots[name] = hash(before);
     const old = previous.files[name];
+
     if (old && !["file", "json", "lines"].includes(old.kind)) throw new Error(`Invalid generation state for ${name}`);
 
     const entry = desired.get(name);
@@ -308,6 +320,7 @@ export async function plan(resolved) {
 
     if ((entry?.kind ?? old?.kind) === "json") {
       let existing;
+
       try {
         existing = before === null ? { ...entry?.defaults } : JSON.parse(before);
       } catch {
@@ -319,8 +332,10 @@ export async function plan(resolved) {
       const next = JSON.parse(JSON.stringify(existing));
       const entries = leaves(entry?.content ?? {});
       const prior = old?.entries ?? {};
+
       for (const key of new Set([...Object.keys(prior), ...Object.keys(entries)])) {
         const keys = JSON.parse(key);
+
         if (
           !Array.isArray(keys) ||
           !keys.length ||
@@ -331,6 +346,7 @@ export async function plan(resolved) {
         const current = get(existing, keys);
         let wanted = entries[key];
         let additive = false;
+
         // Recommendations are additive, preserving user extensions on updates and removal.
         if (name.endsWith("/.vscode/extensions.json") || name === ".vscode/extensions.json") {
           if (keys.length === 1 && keys[0] === "recommendations" && (current === undefined || Array.isArray(current))) {
@@ -347,6 +363,7 @@ export async function plan(resolved) {
 
         if (!equal(current, wanted)) {
           const known = Object.hasOwn(prior, key);
+
           if (
             !additive &&
             ((known && !equal(current, prior[key])) || (!known && current !== undefined && !equal(current, wanted)))
@@ -356,6 +373,7 @@ export async function plan(resolved) {
           // Never replace a scalar ancestor (e.g. allow-plugins: false) silently.
           for (let i = 1; i < keys.length; i++) {
             const parent = get(existing, keys.slice(0, i));
+
             if (parent !== undefined && !object(parent))
               conflict(`Conflicting manifest structure: ${keys.slice(0, i).join(".")}`);
           }
@@ -371,6 +389,7 @@ export async function plan(resolved) {
       const previousLines = old?.entries ?? [];
       const lines = entry?.content ?? [];
       const kept = existing.filter((line) => !previousLines.includes(line));
+
       while (kept.at(-1) === "") kept.pop();
 
       after = [...kept, ...lines.filter((line) => !kept.includes(line))].join("\n") + "\n";
@@ -400,6 +419,7 @@ export async function plan(resolved) {
     if (desired.has(name)) throw new Error(`Competing generated configuration: ${name}`);
 
     const before = await read(root, name);
+
     snapshots[name] = hash(before);
     if (before !== null) {
       conflicts.push({
@@ -411,8 +431,10 @@ export async function plan(resolved) {
   }
 
   const selectionsBefore = await read(root, SELECTIONS);
+
   snapshots[SELECTIONS] = hash(selectionsBefore);
   let selectionsContent = await formatted(SELECTIONS, json(request));
+
   if (selectionsBefore !== null) {
     try {
       if (equal(JSON.parse(selectionsBefore), request)) selectionsContent = selectionsBefore;
@@ -426,6 +448,7 @@ export async function plan(resolved) {
 
   snapshots[STATE] = hash(stateBefore);
   const stateContent = json(state);
+
   if (stateBefore !== stateContent) changes.push({ path: STATE, before: hash(stateBefore), content: stateContent });
 
   return { root, changes, conflicts, diagnostics, installations, snapshots, request };

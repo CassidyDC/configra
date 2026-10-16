@@ -23,8 +23,10 @@ export default function render(project) {
     `max_line_length = ${project.formatting.printWidth}`,
   ];
   const extensions = { javascript: "{js,mjs,cjs,jsx,ts,mts,cts,tsx}", css: "css", php: "php", python: "py" };
+
   for (const language of project.languages) {
     const format = project.languageFormatting[language];
+
     lines.push(
       "",
       `[*.${extensions[language]}]`,

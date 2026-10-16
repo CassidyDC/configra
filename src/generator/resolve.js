@@ -71,9 +71,11 @@ export function normalizeRequest(input = {}) {
   if (input.version !== undefined && input.version !== 1) throw new Error("Unsupported selection schema version");
 
   const layout = input.layout ?? "single";
+
   if (!["single", "nested", "workspaces"].includes(layout)) throw new Error(`Unsupported layout: ${layout}`);
 
   const request = { version: 1, project: input.project ?? "node", layout, packages: [], ...input };
+
   request.version = 1;
   request.layout = layout;
   if (!Array.isArray(request.packages)) throw new Error("packages must be an array");
@@ -110,10 +112,12 @@ export function normalizeRequest(input = {}) {
  */
 function resolvePackage(selection, node) {
   const project = Object.hasOwn(projects, selection.project) ? projects[selection.project] : undefined;
+
   if (!project) throw new Error(`Unsupported project: ${selection.project}`);
 
   const languages = list(selection.languages ?? project.languages, "languages", Object.keys(standards));
   const selectedCapabilities = list(selection.capabilities ?? [], "capabilities", Object.keys(capabilities));
+
   for (const id of selectedCapabilities) {
     if (!languages.includes(capabilities[id].language)) throw new Error(`${id} requires JavaScript`);
   }
@@ -121,6 +125,7 @@ function resolvePackage(selection, node) {
   if (!languages.length) throw new Error("Select at least one language");
 
   const chosenStandards = {};
+
   for (const [language, id] of Object.entries(selection.standards ?? {})) {
     if (!languages.includes(language) || !Object.hasOwn(standards[language], id))
       throw new Error(`Unsupported standard: ${language}=${id}`);
@@ -137,6 +142,7 @@ function resolvePackage(selection, node) {
     (id) => !tools[id].languages.length || tools[id].languages.some((language) => languages.includes(language)),
   );
   let selectedTools = list(selection.tools ?? defaults, "tools", Object.keys(tools));
+
   if (selection.tools === undefined)
     selectedTools = [
       ...new Set([...selectedTools, ...selectedCapabilities.flatMap((id) => capabilities[id].tools)]),
@@ -155,6 +161,7 @@ function resolvePackage(selection, node) {
     ...chosenStandards[languages.includes("javascript") ? "javascript" : languages[0]]?.formatting,
     ...selection.formatting,
   };
+
   if (
     !["space", "tab"].includes(formatting.indentStyle) ||
     !Number.isInteger(formatting.indentSize) ||
@@ -171,8 +178,10 @@ function resolvePackage(selection, node) {
       { ...formatting, ...chosenStandards[language].formatting, ...selection.formatting },
     ]),
   );
+
   for (const language of ["php", "python"]) {
     const format = languageFormatting[language];
+
     if (chosenStandards[language]?.id === "community" && (format.indentStyle !== "space" || format.indentSize !== 4))
       throw new Error(`${language} community standard requires four-space indentation`);
   }
@@ -213,11 +222,13 @@ export function resolve(request, graph) {
   request = normalizeRequest(request);
   const root = resolvePackage(request, graph.packages[0]);
   const packages = [root];
+
   for (const node of graph.packages.slice(1)) {
     const override = request.packages.find((item) => item.path === node.path);
     const parent = packages.find((item) => item.path === node.parent);
     const projectId = override.project ?? parent.project;
     const definition = Object.hasOwn(projects, projectId) ? projects[projectId] : undefined;
+
     if (!definition) throw new Error(`Unsupported project: ${override.project}`);
 
     const languages =
@@ -231,6 +242,7 @@ export function resolve(request, graph) {
     const inheritedTools = parent.toolOverrides?.filter(
       (id) => !tools[id].languages.length || tools[id].languages.some((language) => languages.includes(language)),
     );
+
     packages.push(
       resolvePackage(
         {

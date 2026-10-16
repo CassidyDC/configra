@@ -14,6 +14,7 @@ import { json } from "../shared.js";
 export default function render(project) {
   const wordpress = project.environment === "wordpress";
   const composer = { "phpstan/phpstan": "^2.0" };
+
   if (wordpress) composer["szepeviktor/phpstan-wordpress"] = "^2.0";
 
   return {

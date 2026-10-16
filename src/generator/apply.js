@@ -21,6 +21,7 @@ export async function apply(
   { force = false, install = false, execute, writeFile = write, stdio = "inherit" } = {},
 ) {
   const result = { generated: false, applied: [], failed: [], installations: [] };
+
   if (plan.conflicts.length && !force)
     throw new Error(
       "Unresolved conflicts; no files were written. Resolve the listed entries or use --force to replace the conflicting generated content.",
@@ -47,6 +48,7 @@ export async function apply(
     for (const operation of plan.installations) {
       const runner = execute ?? (operation.ecosystem === "npm" ? npmInstall : composerInstall);
       let installed;
+
       try {
         installed = await runner(operation, { stdio });
       } catch (error) {

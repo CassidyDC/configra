@@ -26,6 +26,7 @@ export default function render(project, { hooks = [] } = {}) {
       },
     ]),
   );
+
   // JSON is a YAML subset; Lefthook accepts it without an extra serializer dependency.
   return {
     files: { "lefthook.yml": json({ glob_matcher: "doublestar", "pre-commit": { parallel: false, commands } }) },

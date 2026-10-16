@@ -18,6 +18,7 @@ export default function render(project) {
     .join("\n");
   const composer = { "squizlabs/php_codesniffer": "^3.13" };
   const composerSettings = {};
+
   if (standard === "WordPress") {
     composer["wp-coding-standards/wpcs"] = "^3.0";
     composer["dealerdirect/phpcodesniffer-composer-installer"] = "^1.0";

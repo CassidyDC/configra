@@ -11,6 +11,7 @@
  */
 export default function render(project) {
   const recommendations = ["editorconfig.editorconfig"];
+
   if (project.tools.includes("eslint")) recommendations.push("dbaeumer.vscode-eslint");
 
   if (project.tools.includes("prettier")) recommendations.push("esbenp.prettier-vscode");

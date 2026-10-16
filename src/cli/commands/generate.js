@@ -23,6 +23,7 @@ export async function generate(root, selections, options, io) {
   const request = normalizeRequest(selections);
   const graph = await packageGraph(root, request);
   const proposal = await plan(resolve(request, graph));
+
   if (options.json && options.dryRun) io.out(JSON.stringify(proposal, null, 2));
   else if (!options.json) {
     io.out(`${options.dryRun ? "Dry run: " : ""}${proposal.changes.length} proposed change(s)`);
@@ -39,8 +40,10 @@ export async function generate(root, selections, options, io) {
   if (options.dryRun) return proposal.conflicts.length ? 2 : 0;
 
   let force = options.force;
+
   if (options.interactive && proposal.conflicts.length && !force) {
     const { decide } = await import("../prompts/conflicts.js");
+
     force = await decide(proposal.conflicts);
   }
 
@@ -49,6 +52,7 @@ export async function generate(root, selections, options, io) {
     install: options.install,
     stdio: options.json ? ["inherit", 2, 2] : "inherit",
   });
+
   if (options.json) io.out(JSON.stringify({ ...proposal, result }, null, 2));
 
   if (!options.json) {

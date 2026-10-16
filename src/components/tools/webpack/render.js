@@ -20,6 +20,7 @@ export default function render(project) {
     "@babel/preset-env": "^7.0.0",
   };
   const presets = ["@babel/preset-env"];
+
   if (project.capabilities.includes("react")) {
     presets.push(["@babel/preset-react", { runtime: "automatic" }]);
     npm["@babel/preset-react"] = "^7.0.0";
@@ -38,6 +39,7 @@ export default function render(project) {
       ? "jsx"
       : "js";
   const template = readFileSync(new URL("./templates/webpack.config.mjs", import.meta.url), "utf8");
+
   return {
     files: {
       "webpack.config.mjs": template

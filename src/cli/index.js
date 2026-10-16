@@ -67,6 +67,7 @@ export async function run(
         version: { type: "boolean", short: "v" },
       },
     });
+
     if (values.version) {
       io.out(JSON.parse(await readFile(new URL("../../package.json", import.meta.url), "utf8")).version);
       return 0;
@@ -81,13 +82,16 @@ export async function run(
       throw new Error("Expected init, update, or discover; use --help");
 
     const root = path.resolve(values.cwd ?? process.cwd());
+
     if (positionals[0] === "discover") {
       const { packageGraph } = await import("../generator/package-graph.js");
+
       io.out(JSON.stringify(await packageGraph(root, { packages: [], layout: "single" }), null, 2));
       return 0;
     }
 
     let selections = {};
+
     if (values.config) selections = JSON.parse(await readFile(path.resolve(root, values.config), "utf8"));
 
     if (!selections || typeof selections !== "object" || Array.isArray(selections))
@@ -106,6 +110,7 @@ export async function run(
       selections.standards = { ...selections.standards };
       for (const standard of values.standard) {
         const parts = standard.split("=");
+
         if (parts.length !== 2 || parts.some((part) => !part)) throw new Error("Use --standard language=standard");
 
         selections.standards[parts[0]] = parts[1];
@@ -115,13 +120,16 @@ export async function run(
     if (values.package) selections.packages = values.package.map((path) => ({ path }));
 
     const interactive = values.interactive || (positionals[0] === "init" && argv.length === 1 && process.stdin.isTTY);
+
     if (interactive) {
       if (!process.stdin.isTTY || !process.stdout.isTTY)
         throw new Error("Interactive mode requires a terminal; pass selections as arguments or --config");
 
       const { collect } = await import("./prompts/selections.js");
+
       if (positionals[0] === "update") {
         const { readJson } = await import("../platform/filesystem.js");
+
         selections = { ...(await readJson(root, ".cassidydc-toolset.json", {})), ...selections };
       }
 

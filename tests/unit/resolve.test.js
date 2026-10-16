@@ -20,6 +20,7 @@ import { packageGraph } from "../../src/generator/package-graph.js";
 async function resolved(t, input) {
   const root = await temporary(t);
   const request = normalizeRequest(input);
+
   for (const child of request.packages)
     await put(root, child.path + "/package.json", { name: child.path.replaceAll("/", "-") });
 
@@ -31,6 +32,7 @@ test("WordPress environment supports community standards by language", async (t)
     project: "wordpress-plugin",
     standards: { javascript: "community", php: "community" },
   });
+
   assert.equal(result.packages[0].environment, "wordpress");
   assert.equal(result.packages[0].standards.javascript.baseline, "ESLint recommended");
   assert.equal(result.packages[0].standards.css.id, "wordpress");
@@ -48,6 +50,7 @@ test("child selections inherit standards and support language-specific overrides
       { path: "plugins/example/packages/nested", project: "php", languages: ["php"] },
     ],
   });
+
   assert.equal(result.packages[1].standards.javascript.id, "community");
   assert.equal(result.packages[1].standards.php.id, "community");
   assert.equal(result.packages[2].standards.php.id, "community");
@@ -57,6 +60,7 @@ test("child selections inherit standards and support language-specific overrides
 
 test("capabilities compose without selecting a bundler", async (t) => {
   const result = await resolved(t, { project: "wordpress-theme", capabilities: ["react", "typescript"] });
+
   assert.deepEqual(result.packages[0].capabilities, ["react", "typescript"]);
   assert(!result.packages[0].tools.includes("webpack"));
 });
@@ -83,6 +87,7 @@ test("a different child project keeps its default tool integrations", async (t) 
     layout: "nested",
     packages: [{ path: "plugin", project: "wordpress-plugin" }],
   });
+
   assert(result.packages[1].tools.includes("phpcs"));
   assert(result.packages[1].tools.includes("stylelint"));
   const explicit = await resolved(t, {
@@ -91,6 +96,7 @@ test("a different child project keeps its default tool integrations", async (t) 
     layout: "nested",
     packages: [{ path: "plugin", project: "wordpress-plugin" }],
   });
+
   assert.deepEqual(explicit.packages[1].tools, ["editorconfig"]);
 });
 
@@ -101,6 +107,7 @@ test("child formatting overrides merge with inherited explicit choices", async (
     formatting: { printWidth: 120 },
     packages: [{ path: "child", formatting: { indentSize: 4 } }],
   });
+
   assert.equal(result.packages[1].formatting.printWidth, 120);
   assert.equal(result.packages[1].formatting.indentSize, 4);
 });

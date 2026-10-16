@@ -33,6 +33,7 @@ export function relativePath(value, { allowRoot = false } = {}) {
   }
 
   const normalized = path.posix.normalize(value);
+
   if (normalized === ".." || normalized.startsWith("../") || (!allowRoot && normalized === ".")) {
     throw new Error(`Path is outside the selected project or has no filename: ${value}`);
   }
@@ -57,13 +58,16 @@ export async function safePath(root, relative) {
   const target = path.resolve(root, relative);
   const boundary = await fs.realpath(root);
   const resolvedRoot = path.resolve(root);
+
   if (!target.startsWith(resolvedRoot + path.sep)) throw new Error(`Path escapes project: ${relative}`);
 
   let cursor = resolvedRoot;
+
   for (const segment of path.relative(resolvedRoot, target).split(path.sep)) {
     cursor = path.join(cursor, segment);
     try {
       const actual = await fs.realpath(cursor);
+
       if (actual !== boundary && !actual.startsWith(boundary + path.sep)) {
         throw new Error(`Path escapes project through a symbolic link: ${relative}`);
       }
@@ -88,6 +92,7 @@ export async function safePath(root, relative) {
  */
 export async function read(root, relative) {
   const target = await safePath(root, relative);
+
   try {
     return await fs.readFile(target, "utf8");
   } catch (error) {
@@ -108,10 +113,12 @@ export async function read(root, relative) {
  */
 export async function readJson(root, relative, fallback = null) {
   const content = await read(root, relative);
+
   if (content === null) return fallback;
 
   try {
     const parsed = JSON.parse(content);
+
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Expected a JSON object");
 
     return parsed;
@@ -131,6 +138,7 @@ export async function readJson(root, relative, fallback = null) {
  */
 export async function write(root, relative, content) {
   const target = await safePath(root, relative);
+
   if (content === null) {
     await fs.unlink(target);
     return;
@@ -139,8 +147,10 @@ export async function write(root, relative, content) {
   await fs.mkdir(path.dirname(target), { recursive: true });
   const temporary = `${target}.${randomUUID()}.tmp`;
   let created = false;
+
   try {
     const handle = await fs.open(temporary, "wx");
+
     created = true;
     try {
       await handle.writeFile(content);
@@ -163,6 +173,7 @@ export async function write(root, relative, content) {
  */
 export async function directories(root) {
   const entries = await fs.readdir(root, { withFileTypes: true });
+
   return entries
     .filter(
       (entry) =>

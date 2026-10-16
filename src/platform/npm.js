@@ -17,6 +17,7 @@ import { execute } from "./process.js";
 export async function workspacePatterns(root) {
   const manifest = await readJson(root, "package.json", {});
   const patterns = manifest.workspaces?.packages ?? manifest.workspaces ?? [];
+
   if (!Array.isArray(patterns) || patterns.some((pattern) => typeof pattern !== "string")) {
     throw new Error("package.json workspaces must be an array of package paths or globs");
   }
@@ -34,8 +35,10 @@ export async function workspacePatterns(root) {
 export function matchesWorkspace(relative, patterns) {
   const includes = [];
   let excludes = [];
+
   for (let pattern of patterns) {
     const bangs = pattern.match(/^!+/)?.[0].length ?? 0;
+
     pattern = pattern
       .slice(bangs)
       .replace(/^\.?\/+/, "")
@@ -49,6 +52,7 @@ export function matchesWorkspace(relative, patterns) {
   }
 
   const ancestors = relative.split("/").map((_, index, segments) => segments.slice(0, index + 1).join("/"));
+
   return (
     includes.some((pattern) => path.matchesGlob(relative, pattern)) &&
     !excludes.some((pattern) => ancestors.some((ancestor) => path.matchesGlob(ancestor, pattern)))
