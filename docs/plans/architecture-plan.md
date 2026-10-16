@@ -113,7 +113,7 @@ The tree describes the proposed toolset architecture. Each tool's `templates/` d
 
 ## Summary
 
-Use the structure in `docs/plans/organization-plan.md`, with `generator/`, `components/`, and `standards/` as the agreed names. Each tool uses `definition.js`, `render.js`, and an optional `templates/` directory.
+Use the structure in above, with `generator/`, `components/`, and `standards/` as the agreed names. Each tool uses `definition.js`, `render.js`, and an optional `templates/` directory.
 
 The package will generate editable development configuration files from selections for project type, languages, capabilities, coding standards, tools, and package layout. It will support standalone projects, ordinary nested packages, and npm workspaces.
 
