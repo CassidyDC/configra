@@ -1,3 +1,7 @@
+/**
+ * @file Stylelint configuration and dependencies for the selected CSS standard.
+ */
+
 import { json, hook } from "../shared.js";
 
 /**

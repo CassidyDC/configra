@@ -1,4 +1,8 @@
 /**
+ * @file Shared package context and local scripts for standalone project layouts.
+ */
+
+/**
  * @typedef {import("../../contracts.js").ResolvedPackage} ResolvedPackage
  * @typedef {import("../../contracts.js").ResolvedProject} ResolvedProject
  * @typedef {import("../../contracts.js").PackageContext} PackageContext

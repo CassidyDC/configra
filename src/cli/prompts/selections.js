@@ -1,3 +1,7 @@
+/**
+ * @file Interactive collection of project, language, tool, and package selections.
+ */
+
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 import { projects, tools } from "../../components/registry.js";

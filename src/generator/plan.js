@@ -1,3 +1,7 @@
+/**
+ * @file Generation proposals, configuration merging, ownership tracking, and conflict detection.
+ */
+
 import { format } from "prettier";
 import { options as prettierOptions } from "../components/tools/prettier/options.js";
 import path from "node:path";

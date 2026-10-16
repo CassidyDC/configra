@@ -1,3 +1,7 @@
+/**
+ * @file CLI argument parsing, command dispatch, help output, and exit-status handling.
+ */
+
 import { parseArgs } from "node:util";
 import path from "node:path";
 import { readFile } from "node:fs/promises";

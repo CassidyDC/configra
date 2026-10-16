@@ -1,3 +1,5 @@
+<!-- Reference proposal comparing repository and generated-project structures. -->
+
 # Two recommended structures for CassidyDC Toolset
 
 ## 1. Assessment of the current project

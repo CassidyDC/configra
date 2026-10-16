@@ -1,3 +1,7 @@
+/**
+ * @file PHP syntax-check dependencies, scripts, and staged-file checks.
+ */
+
 import { quote } from "../../../platform/process.js";
 import { hook } from "../shared.js";
 

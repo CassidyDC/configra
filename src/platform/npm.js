@@ -1,3 +1,7 @@
+/**
+ * @file npm workspace matching and package-scoped dependency installation operations.
+ */
+
 import path from "node:path";
 import { readJson } from "./filesystem.js";
 import { execute } from "./process.js";

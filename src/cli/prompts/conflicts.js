@@ -1,3 +1,7 @@
+/**
+ * @file Interactive confirmation of generated configuration replacements.
+ */
+
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 

@@ -1,3 +1,7 @@
+/**
+ * @file Boundary-safe filesystem access, content hashing, and atomic file replacement.
+ */
+
 import { createHash, randomUUID } from "node:crypto";
 import * as fs from "node:fs/promises";
 import path from "node:path";

@@ -1,3 +1,7 @@
+/**
+ * @file CLI update command that merges saved selections with explicit overrides.
+ */
+
 import { readJson } from "../../platform/filesystem.js";
 import { generate } from "./generate.js";
 

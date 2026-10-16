@@ -1,3 +1,7 @@
+/**
+ * @file Lefthook integration coverage for staged-file routing and package ownership.
+ */
+
 import test from "node:test";
 import assert from "node:assert/strict";
 import * as fs from "node:fs/promises";

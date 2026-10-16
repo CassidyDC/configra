@@ -1,3 +1,7 @@
+/**
+ * @file Selection resolution coverage for defaults, inheritance, standards, and capabilities.
+ */
+
 import test from "node:test";
 import assert from "node:assert/strict";
 import { normalizeRequest, resolve } from "../../src/generator/resolve.js";

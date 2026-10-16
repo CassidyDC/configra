@@ -1,4 +1,8 @@
 /**
+ * @file Prettier options derived from resolved standards and shared formatting choices.
+ */
+
+/**
  * @typedef {import("../../../contracts.js").PackageContext} PackageContext
  * @typedef {import("prettier").Config} PrettierConfig
  * @typedef {import("../../../contracts.js").Formatting} Formatting

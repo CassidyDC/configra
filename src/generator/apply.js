@@ -1,3 +1,7 @@
+/**
+ * @file Generation preflight, managed file writes, and optional dependency installation.
+ */
+
 import { read, write, hash, safePath } from "../platform/filesystem.js";
 import { install as npmInstall } from "../platform/npm.js";
 import { install as composerInstall } from "../platform/composer.js";

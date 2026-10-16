@@ -1,5 +1,5 @@
 /**
- * Internal contracts shared by the CLI, generator, components, and adapters.
+ * @file Internal contracts shared by the CLI, generator, components, and adapters.
  * These types describe implementation details rather than a public JavaScript API.
  * @module contracts
  */

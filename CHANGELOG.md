@@ -1,3 +1,5 @@
+<!-- Release history and notable changes to CassidyDC Toolset. -->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

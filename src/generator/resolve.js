@@ -1,3 +1,7 @@
+/**
+ * @file Selection validation, project inheritance, and resolved package configuration.
+ */
+
 import { projects, capabilities, standards, tools } from "../components/registry.js";
 import { relativePath } from "../platform/filesystem.js";
 

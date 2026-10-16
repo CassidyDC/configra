@@ -1,3 +1,7 @@
+/**
+ * @file CLI initialization command backed by the shared generation workflow.
+ */
+
 import { generate } from "./generate.js";
 
 /**

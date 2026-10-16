@@ -1,3 +1,7 @@
+/**
+ * @file Shared CLI workflow for planning, reporting, and applying project configuration.
+ */
+
 import { normalizeRequest, resolve } from "../../generator/resolve.js";
 import { packageGraph } from "../../generator/package-graph.js";
 import { plan } from "../../generator/plan.js";

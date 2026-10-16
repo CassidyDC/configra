@@ -1,3 +1,7 @@
+/**
+ * @file CLI integration coverage for generation, saved selections, linting, and process failures.
+ */
+
 import test from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";

@@ -1,3 +1,5 @@
+<!-- Reference CLI syntax examples from the original API design. -->
+
 # CassidyDC Toolsets API
 
 `cdctool --standard=wordpress --script=wordpress-site`

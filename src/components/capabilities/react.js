@@ -1,4 +1,8 @@
 /**
+ * @file React capability metadata for JSX support and ESLint integration.
+ */
+
+/**
  * @typedef {import("../../contracts.js").CapabilityDefinition} CapabilityDefinition
  */
 

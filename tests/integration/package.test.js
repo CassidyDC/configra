@@ -1,3 +1,7 @@
+/**
+ * @file Offline npm artifact installation and packaged CLI and template integration coverage.
+ */
+
 import test from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";

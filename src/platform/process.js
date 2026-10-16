@@ -1,3 +1,7 @@
+/**
+ * @file Shell-free process execution and shell-argument quoting for generated scripts.
+ */
+
 import { spawn } from "node:child_process";
 
 /**

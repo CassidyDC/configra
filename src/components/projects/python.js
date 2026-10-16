@@ -1,4 +1,8 @@
 /**
+ * @file Default languages, editor tools, and source paths for Python packages.
+ */
+
+/**
  * @typedef {import("../../contracts.js").ProjectDefinition} ProjectDefinition
  */
 

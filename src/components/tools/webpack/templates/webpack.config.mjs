@@ -1,3 +1,7 @@
+/**
+ * @file Editable Webpack configuration template with entry and Babel-preset placeholders.
+ */
+
 import { fileURLToPath } from "node:url";
 
 /**

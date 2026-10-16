@@ -1,3 +1,7 @@
+/**
+ * @file Git-root Lefthook configuration that routes staged checks to their owning packages.
+ */
+
 import { json } from "../shared.js";
 
 /**

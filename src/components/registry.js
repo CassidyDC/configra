@@ -1,3 +1,7 @@
+/**
+ * @file Explicit registry of supported projects, capabilities, standards, and tool integrations.
+ */
+
 import node from "./projects/node.js";
 import php from "./projects/php.js";
 import python from "./projects/python.js";

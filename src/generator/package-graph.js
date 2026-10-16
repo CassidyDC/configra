@@ -1,3 +1,7 @@
+/**
+ * @file Project discovery, Git boundaries, and selected-package ownership relationships.
+ */
+
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { directories, read, readJson, safePath, hash } from "../platform/filesystem.js";

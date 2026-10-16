@@ -1,3 +1,7 @@
+/**
+ * @file Layout coverage for package graphs, workspace delegation, hooks, and dependency ownership.
+ */
+
 import { load as yaml } from "js-yaml";
 import test from "node:test";
 import assert from "node:assert/strict";

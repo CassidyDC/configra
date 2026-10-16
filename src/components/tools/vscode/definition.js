@@ -1,4 +1,8 @@
 /**
+ * @file VS Code integration metadata, supported operations, and configuration ownership.
+ */
+
+/**
  * @typedef {import("../../../contracts.js").ToolDefinition} ToolDefinition
  */
 

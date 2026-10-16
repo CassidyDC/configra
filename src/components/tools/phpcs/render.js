@@ -1,3 +1,7 @@
+/**
+ * @file PHP CodeSniffer rules and Composer requirements for the selected coding standard.
+ */
+
 import { xml, hook } from "../shared.js";
 
 /**

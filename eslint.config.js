@@ -1,9 +1,8 @@
 /**
- * ESLint configuration.
+ * @file Repository ESLint configuration for JavaScript linting.
  *
  * @author CassidyDC <info@cassidydc.com>
  * @see https://eslint.org/docs/latest/use/configure/configuration-files
- * @type {ESLintConfig[]}
  * @version 1.0.0
  */
 

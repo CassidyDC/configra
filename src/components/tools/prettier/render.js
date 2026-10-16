@@ -1,3 +1,7 @@
+/**
+ * @file Prettier configuration, ignore patterns, and formatting checks for resolved packages.
+ */
+
 import { options } from "./options.js";
 import { json, hook } from "../shared.js";
 

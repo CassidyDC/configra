@@ -1,3 +1,5 @@
+// Repository VS Code editor, formatting, and search settings.
+
 {
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",

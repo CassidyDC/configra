@@ -1,3 +1,5 @@
+<!-- Usage examples and expected output for generated project configurations. -->
+
 # Generated projects
 
 ## Standalone WordPress plugin

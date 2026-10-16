@@ -1,3 +1,5 @@
+<!-- Overview of the generation pipeline, internal contracts, and package ownership. -->
+
 # Architecture
 
 The toolset turns selections into editable, self-contained project files. Its

@@ -1,4 +1,8 @@
 /**
+ * @file Shared serialization, file-pattern, and staged-hook helpers for tool renderers.
+ */
+
+/**
  * @typedef {import("../../contracts.js").PackageContext} PackageContext
  * @typedef {import("../../contracts.js").HookRequirement} HookRequirement
  */

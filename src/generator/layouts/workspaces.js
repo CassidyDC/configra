@@ -1,3 +1,7 @@
+/**
+ * @file Package dependency ownership and workspace script delegation for npm layouts.
+ */
+
 import { scripts as localScripts, context } from "./single.js";
 import { quote } from "../../platform/process.js";
 

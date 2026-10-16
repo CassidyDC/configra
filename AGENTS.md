@@ -1,3 +1,5 @@
+<!-- Repository instructions for contributors and coding agents. -->
+
 # Repository guidance
 
 - Finish each task or feature by committing its completed changes.

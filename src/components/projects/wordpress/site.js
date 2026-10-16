@@ -1,4 +1,8 @@
 /**
+ * @file WordPress site defaults and child-package discovery hints.
+ */
+
+/**
  * @typedef {import("../../../contracts.js").ProjectDefinition} ProjectDefinition
  */
 

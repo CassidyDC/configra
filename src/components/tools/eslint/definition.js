@@ -1,4 +1,8 @@
 /**
+ * @file ESLint integration metadata, supported operations, and configuration ownership.
+ */
+
+/**
  * @typedef {import("../../../contracts.js").ToolDefinition} ToolDefinition
  */
 

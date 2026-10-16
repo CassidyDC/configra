@@ -1,3 +1,7 @@
+/**
+ * @file PHPStan analysis configuration and optional WordPress integration.
+ */
+
 import { json } from "../shared.js";
 
 /**

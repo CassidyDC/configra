@@ -1,3 +1,7 @@
+/**
+ * @file Temporary-project fixtures and shared helpers for generator and CLI tests.
+ */
+
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";

@@ -1,4 +1,8 @@
 /**
+ * @file VS Code editor settings and additive extension recommendations.
+ */
+
+/**
  * @typedef {import("../../../contracts.js").PackageContext} PackageContext
  * @typedef {import("../../../contracts.js").ToolContribution} ToolContribution
  */

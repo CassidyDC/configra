@@ -1,3 +1,5 @@
+<!-- Contributor guide to implementing and registering a tool integration. -->
+
 # Adding a tool
 
 Create `src/components/tools/<id>/definition.js` and `render.js`. Add a `templates/`

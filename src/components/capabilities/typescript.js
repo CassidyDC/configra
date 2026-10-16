@@ -1,4 +1,8 @@
 /**
+ * @file TypeScript capability metadata for source extensions and ESLint integration.
+ */
+
+/**
  * @typedef {import("../../contracts.js").CapabilityDefinition} CapabilityDefinition
  */
 

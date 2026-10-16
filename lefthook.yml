@@ -1,3 +1,5 @@
+# Repository Git hooks for staged linting and formatting.
+
 pre-commit:
   parallel: false
   commands:

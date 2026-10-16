@@ -1,3 +1,7 @@
+/**
+ * @file Package dependency ownership and relative-path script delegation for nested layouts.
+ */
+
 import path from "node:path";
 import { scripts as localScripts, context } from "./single.js";
 import { quote } from "../../platform/process.js";

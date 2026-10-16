@@ -1,4 +1,8 @@
 /**
+ * @file Explicit rejection of Python dependency installation without a supported environment manager.
+ */
+
+/**
  * Reject Python dependency operations until an environment manager is explicitly supported.
  *
  * @returns {never} This unsupported operation always throws.

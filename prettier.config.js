@@ -1,4 +1,8 @@
 /**
+ * @file Repository Prettier configuration and structured-data formatting overrides.
+ */
+
+/**
  * @typedef {import("prettier").Config} PrettierConfig
  */
 

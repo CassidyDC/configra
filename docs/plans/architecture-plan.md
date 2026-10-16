@@ -1,3 +1,5 @@
+<!-- Architecture implementation plan and completion status. -->
+
 # CassidyDC Toolset organization plan
 
 ## Implementation status

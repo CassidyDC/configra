@@ -1,3 +1,5 @@
+<!-- CassidyDC Toolset overview, installation, usage, and development guidance. -->
+
 # CassidyDC Toolset
 
 Generate editable development configuration for Node.js, PHP, Python, and WordPress

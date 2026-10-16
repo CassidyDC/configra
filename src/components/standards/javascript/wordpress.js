@@ -1,4 +1,8 @@
 /**
+ * @file WordPress JavaScript standard settings and shared formatting defaults.
+ */
+
+/**
  * @typedef {import("../../../contracts.js").StandardDefinition} StandardDefinition
  */
 

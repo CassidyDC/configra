@@ -1,3 +1,7 @@
+/**
+ * @file Webpack configuration generation with selected Babel presets and source extensions.
+ */
+
 import { readFileSync } from "node:fs";
 
 /**

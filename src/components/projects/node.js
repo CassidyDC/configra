@@ -1,4 +1,8 @@
 /**
+ * @file Default languages, tools, and source paths for Node.js packages.
+ */
+
+/**
  * @typedef {import("../../contracts.js").ProjectDefinition} ProjectDefinition
  */
 

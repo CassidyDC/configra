@@ -1,3 +1,7 @@
+/**
+ * @file Package-scoped Markdownlint configuration and documentation checks.
+ */
+
 import { json, hook } from "../shared.js";
 
 /**

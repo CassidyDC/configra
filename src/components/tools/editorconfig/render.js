@@ -1,4 +1,8 @@
 /**
+ * @file EditorConfig generation from shared and language-specific formatting choices.
+ */
+
+/**
  * @typedef {import("../../../contracts.js").PackageContext} PackageContext
  * @typedef {import("../../../contracts.js").ToolContribution} ToolContribution
  */

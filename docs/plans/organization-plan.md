@@ -1,3 +1,5 @@
+<!-- Reference directory organization plan for the toolset implementation. -->
+
 # Organization Plan
 
 ```text

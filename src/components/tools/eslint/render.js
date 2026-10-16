@@ -1,3 +1,7 @@
+/**
+ * @file ESLint configuration, dependencies, and checks for selected JavaScript capabilities.
+ */
+
 import { json, patterns, hook } from "../shared.js";
 
 /**

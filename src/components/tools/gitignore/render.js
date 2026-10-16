@@ -1,4 +1,8 @@
 /**
+ * @file Git ignore contributions for project languages and selected tools.
+ */
+
+/**
  * @typedef {import("../../../contracts.js").PackageContext} PackageContext
  * @typedef {import("../../../contracts.js").ToolContribution} ToolContribution
  */
