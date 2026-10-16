@@ -12,6 +12,7 @@ test("Lefthook routes real staged paths once to their owning packages", async (t
   assert.equal(initialized.status, 0, initialized.stderr);
   const children = ["plugins/a", "plugins/a/sub", "plugins/b"];
   for (const child of children) await put(root, child + "/package.json", { name: child.replaceAll("/", "-") });
+
   await generate(root, {
     project: "node",
     tools: ["eslint", "lefthook"],
@@ -20,6 +21,7 @@ test("Lefthook routes real staged paths once to their owning packages", async (t
   });
   const expected = ["root file.js", "plugins/a/child.js", "plugins/a/sub/deep.js", "plugins/b/child.js"];
   for (const name of expected) await put(root, name, "// staged\n");
+
   const log = path.join(root, "checks.jsonl");
   for (const owner of [".", ...children]) {
     const executable = path.posix.join(owner, "node_modules/.bin/eslint");
@@ -30,6 +32,7 @@ test("Lefthook routes real staged paths once to their owning packages", async (t
     );
     await fs.chmod(path.join(root, executable), 0o755);
   }
+
   const staged = spawnSync("git", ["add", "--", ...expected], { cwd: root, encoding: "utf8" });
   assert.equal(staged.status, 0, staged.stderr);
   const lefthook = fileURLToPath(new URL("../../node_modules/.bin/lefthook", import.meta.url));

@@ -71,49 +71,63 @@ export async function run(
       io.out(JSON.parse(await readFile(new URL("../../package.json", import.meta.url), "utf8")).version);
       return 0;
     }
+
     if (values.help || !positionals.length) {
       io.out(help);
       return 0;
     }
+
     if (positionals.length !== 1 || !["init", "update", "discover"].includes(positionals[0]))
       throw new Error("Expected init, update, or discover; use --help");
+
     const root = path.resolve(values.cwd ?? process.cwd());
     if (positionals[0] === "discover") {
       const { packageGraph } = await import("../generator/package-graph.js");
       io.out(JSON.stringify(await packageGraph(root, { packages: [], layout: "single" }), null, 2));
       return 0;
     }
+
     let selections = {};
     if (values.config) selections = JSON.parse(await readFile(path.resolve(root, values.config), "utf8"));
+
     if (!selections || typeof selections !== "object" || Array.isArray(selections))
       throw new Error("Selections must be a JSON object");
+
     for (const name of ["project", "layout"]) if (values[name] !== undefined) selections[name] = values[name];
+
     for (const name of ["languages", "capabilities", "tools"])
       if (values[name] !== undefined)
         selections[name] = values[name]
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean);
+
     if (values.standard) {
       selections.standards = { ...selections.standards };
       for (const standard of values.standard) {
         const parts = standard.split("=");
         if (parts.length !== 2 || parts.some((part) => !part)) throw new Error("Use --standard language=standard");
+
         selections.standards[parts[0]] = parts[1];
       }
     }
+
     if (values.package) selections.packages = values.package.map((path) => ({ path }));
+
     const interactive = values.interactive || (positionals[0] === "init" && argv.length === 1 && process.stdin.isTTY);
     if (interactive) {
       if (!process.stdin.isTTY || !process.stdout.isTTY)
         throw new Error("Interactive mode requires a terminal; pass selections as arguments or --config");
+
       const { collect } = await import("./prompts/selections.js");
       if (positionals[0] === "update") {
         const { readJson } = await import("../platform/filesystem.js");
         selections = { ...(await readJson(root, ".cassidydc-toolset.json", {})), ...selections };
       }
+
       selections = await collect(selections);
     }
+
     return await (positionals[0] === "init" ? init : update)(
       root,
       selections,

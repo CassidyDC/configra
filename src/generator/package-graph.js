@@ -24,8 +24,10 @@ async function gitBoundary(root) {
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
     }
+
     const parent = path.dirname(cursor);
     if (parent === cursor) return null;
+
     cursor = parent;
   }
 }
@@ -50,8 +52,10 @@ export async function discover(root) {
     for (const name of ["package.json", "composer.json", "pyproject.toml"]) {
       if ((await read(root, path.posix.join(relative, name))) !== null) manifests.push(name);
     }
+
     if (manifests.length || /^(plugins|themes|mu-plugins)\/[^/]+$/.test(relative))
       candidates.push({ path: relative, manifests });
+
     for (const child of await directories(path.resolve(root, relative))) {
       const next = path.posix.join(relative, child);
       try {
@@ -61,9 +65,11 @@ export async function discover(root) {
       } catch (error) {
         if (error.code !== "ENOENT") throw error;
       }
+
       await visit(next);
     }
   }
+
   await visit(".");
   return candidates;
 }
@@ -86,8 +92,10 @@ export async function packageGraph(root, request) {
   )) {
     const target = await safePath(root, selection.path);
     if (!(await fs.stat(target)).isDirectory()) throw new Error(`Package is not a directory: ${selection.path}`);
+
     if ((await gitBoundary(target)) !== (await gitBoundary(root)))
       throw new Error(`Selected package crosses a Git boundary: ${selection.path}`);
+
     const parent = [...packages]
       .reverse()
       .find((node) => node.path === "." || selection.path.startsWith(node.path + "/"));
@@ -97,6 +105,7 @@ export async function packageGraph(root, request) {
       (!workspace || (await read(root, `${selection.path}/package.json`)) === null)
     )
       throw new Error(`Package is not a registered npm workspace: ${selection.path}`);
+
     const manifest = await readJson(root, path.posix.join(selection.path, "package.json"), {});
     const workspaceName = manifest.name;
     if (
@@ -106,14 +115,17 @@ export async function packageGraph(root, request) {
         packages.some((node) => node.workspaceName === workspaceName))
     )
       throw new Error(`Workspace needs a unique package name: ${selection.path}`);
+
     const node = { path: selection.path, parent: parent.path, workspace, workspaceName, children: [] };
     packages.push(node);
     parent.children.push(node.path);
   }
+
   const snapshots = {};
   for (const node of packages) {
     const name = path.posix.join(node.path, "package.json");
     snapshots[name] = hash(await read(root, name));
   }
+
   return { root, gitRoot: await gitBoundary(root), candidates, packages, workspacePatterns: patterns, snapshots };
 }

@@ -28,22 +28,29 @@ export async function generate(root, selections, options, io) {
     io.out(`${options.dryRun ? "Dry run: " : ""}${proposal.changes.length} proposed change(s)`);
     for (const change of proposal.changes)
       io.out(`  ${change.content === null ? "remove" : change.before === null ? "create" : "update"} ${change.path}`);
+
     for (const conflict of proposal.conflicts) io.out(`  conflict ${conflict.path}: ${conflict.reason}`);
+
     for (const diagnostic of proposal.diagnostics) io.out(diagnostic);
+
     if (proposal.installations.length) io.out("Dependencies are installed only with --install.");
   }
+
   if (options.dryRun) return proposal.conflicts.length ? 2 : 0;
+
   let force = options.force;
   if (options.interactive && proposal.conflicts.length && !force) {
     const { decide } = await import("../prompts/conflicts.js");
     force = await decide(proposal.conflicts);
   }
+
   const result = await apply(proposal, {
     force,
     install: options.install,
     stdio: options.json ? ["inherit", 2, 2] : "inherit",
   });
   if (options.json) io.out(JSON.stringify({ ...proposal, result }, null, 2));
+
   if (!options.json) {
     io.out(
       result.generated
@@ -55,5 +62,6 @@ export async function generate(root, selections, options, io) {
         `${failure.phase === "installation" ? "Installation failed after successful generation" : "Write failed"}: ${failure.path ?? failure.command}: ${failure.error ?? failure.code ?? failure.signal}`,
       );
   }
+
   return result.failed.length ? 1 : 0;
 }

@@ -120,6 +120,7 @@ test("unrequested installations never execute", async (t) => {
       called = true;
     },
   });
+
   assert(result.generated);
   assert.equal(called, false);
 });
@@ -162,9 +163,11 @@ test("a write failure reports partial progress without recording successful stat
   const result = await apply(planned, {
     writeFile: async (...args) => {
       if (++writes === 2) throw new Error("Simulated disk failure");
+
       return write(...args);
     },
   });
+
   assert.equal(result.generated, false);
   assert.deepEqual(result.applied, [".editorconfig"]);
   assert.equal(result.failed[0].path, second);

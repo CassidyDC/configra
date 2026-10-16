@@ -50,7 +50,9 @@ export function scripts(project, contribution) {
     .filter((name) => name.startsWith("lint:") || name === "format:check")
     .sort();
   if (checks.length) result["lint:local"] = checks.map((name) => `npm run ${name}`).join(" && ");
+
   if (checks.length) result.lint = "npm run lint:local";
+
   return result;
 }
 

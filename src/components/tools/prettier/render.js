@@ -17,6 +17,7 @@ export default function render(project) {
   const config = options(project);
   const npm = { prettier: "^3.0.0" };
   if (wordpress) npm["@wordpress/prettier-config"] = "^4.0.0";
+
   const source = `module.exports = { ${wordpress ? '...require("@wordpress/prettier-config"),' : ""} ...${json(config).trim()} };\n`;
   return {
     files: {

@@ -36,5 +36,6 @@ export function scripts(project, contribution) {
     (child) => `npm --prefix ${quote(path.posix.relative(project.path, child))} run lint --if-present`,
   );
   if (calls.length) result.lint = [...(result["lint:local"] ? ["npm run lint:local"] : []), ...calls].join(" && ");
+
   return result;
 }

@@ -94,6 +94,7 @@ test("invalid CLI selections and missing update state have readable errors", asy
     assert(result.stderr.trim());
     assert(!result.stderr.includes("at file:"));
   }
+
   assert.deepEqual(await fs.readdir(root), []);
 });
 
@@ -122,6 +123,7 @@ for (const layout of ["nested", "workspaces"]) {
     await put(root, "package.json", { name: "root", private: true, workspaces: ["packages/*", "packages/a/sub"] });
     for (const child of [...children, "packages/unselected"])
       await put(root, `${child}/package.json`, { name: child.replaceAll("/", "-") });
+
     const args = [
       "init",
       "--project",
@@ -150,6 +152,7 @@ for (const layout of ["nested", "workspaces"]) {
         `require('node:fs').appendFileSync(${JSON.stringify(log)}, JSON.stringify(${JSON.stringify(owner)}) + '\\n');\n`,
       );
     }
+
     const aggregate = spawnSync("npm", ["run", "lint"], { cwd: root, encoding: "utf8" });
     assert.equal(aggregate.status, 0, aggregate.stderr + aggregate.stdout);
     const visits = (await read(root, "visits.jsonl"))

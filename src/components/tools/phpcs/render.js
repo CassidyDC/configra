@@ -23,6 +23,7 @@ export default function render(project) {
     composer["dealerdirect/phpcodesniffer-composer-installer"] = "^1.0";
     composerSettings["config"] = { "allow-plugins": { "dealerdirect/phpcodesniffer-composer-installer": true } };
   }
+
   return {
     files: {
       "phpcs.xml.dist": `<?xml version="1.0"?>\n<ruleset name="Project">\n  <file>.</file>\n  <arg name="extensions" value="php"/>\n${excludes}\n  <rule ref="${xml(standard)}"/>\n</ruleset>\n`,

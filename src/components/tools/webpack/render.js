@@ -24,10 +24,12 @@ export default function render(project) {
     presets.push(["@babel/preset-react", { runtime: "automatic" }]);
     npm["@babel/preset-react"] = "^7.0.0";
   }
+
   if (project.capabilities.includes("typescript")) {
     presets.push("@babel/preset-typescript");
     npm["@babel/preset-typescript"] = "^7.0.0";
   }
+
   const extension = project.capabilities.includes("typescript")
     ? project.capabilities.includes("react")
       ? "tsx"

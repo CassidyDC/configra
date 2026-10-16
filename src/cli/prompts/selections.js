@@ -36,10 +36,12 @@ export async function collect(defaults = {}) {
       .split(",")
       .map((item) => item.trim())
       .filter(Boolean);
+
   try {
     const project = await ask(`Project (${Object.keys(projects).join(", ")})`, defaults.project ?? "node");
     const definition = projects[project];
     if (!definition) throw new Error(`Unsupported project: ${project}`);
+
     const languages = split(
       await ask("Languages (comma separated)", (defaults.languages ?? definition.languages).join(",")),
     );
@@ -53,6 +55,7 @@ export async function collect(defaults = {}) {
         defaults.standards?.[language] ??
           (definition.environment === "wordpress" && language !== "python" ? "wordpress" : "community"),
       );
+
     const selectedTools = split(
       await ask(
         `Tools (${Object.keys(tools).join(", ")})`,

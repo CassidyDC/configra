@@ -33,6 +33,7 @@ for (const project of ["wordpress-plugin", "wordpress-theme"]) {
         assert.match(manifest.scripts.lint, layout === "nested" ? /--prefix/ : /--workspace/);
         assert.equal((await readJson(root, child + "/package.json")).scripts.lint, "npm run lint:local");
       }
+
       assert.equal((await proposal(root, selection)).changes.length, 0);
     });
   }
@@ -53,6 +54,7 @@ test("workspace registration is required and discovery never selects packages au
 test("nested package graph tracks nearest selected parents", async (t) => {
   const root = await temporary(t);
   for (const child of ["packages/a", "packages/a/sub", "packages/b"]) await put(root, child + "/package.json", {});
+
   const graph = await packageGraph(root, {
     layout: "nested",
     packages: [{ path: "packages/a" }, { path: "packages/b" }, { path: "packages/a/sub" }],
@@ -96,6 +98,7 @@ test("local checks exclude independent Git repositories and analysis caches", as
   for (const name of ["eslint.config.mjs", ".prettierignore", "phpcs.xml.dist", "phpstan.neon.dist"]) {
     assert(planned.changes.find((item) => item.path === name).content.includes("foreign/"), name);
   }
+
   const manifest = JSON.parse(planned.changes.find((item) => item.path === "package.json").content);
   assert.match(manifest.scripts["lint:php:syntax"], /--exclude 'foreign'/);
   assert(planned.changes.find((item) => item.path === "phpstan.neon.dist").content.includes(".phpstan-cache"));

@@ -38,5 +38,6 @@ export function scripts(project, contribution) {
     );
     if (calls.length) result.lint = [...(result["lint:local"] ? ["npm run lint:local"] : []), ...calls].join(" && ");
   }
+
   return result;
 }

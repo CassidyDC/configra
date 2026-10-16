@@ -20,6 +20,7 @@ export async function workspacePatterns(root) {
   if (!Array.isArray(patterns) || patterns.some((pattern) => typeof pattern !== "string")) {
     throw new Error("package.json workspaces must be an array of package paths or globs");
   }
+
   return patterns;
 }
 
@@ -46,6 +47,7 @@ export function matchesWorkspace(relative, patterns) {
       includes.push(pattern);
     }
   }
+
   const ancestors = relative.split("/").map((_, index, segments) => segments.slice(0, index + 1).join("/"));
   return (
     includes.some((pattern) => path.matchesGlob(relative, pattern)) &&

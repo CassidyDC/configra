@@ -22,6 +22,7 @@ async function resolved(t, input) {
   const request = normalizeRequest(input);
   for (const child of request.packages)
     await put(root, child.path + "/package.json", { name: child.path.replaceAll("/", "-") });
+
   return resolve(request, await packageGraph(root, request));
 }
 
@@ -70,6 +71,7 @@ test("unsupported selections and inconsistent formatting are rejected", async (t
     { project: "python", standards: { python: "wordpress" } },
   ])
     await assert.rejects(resolved(t, input));
+
   assert.throws(() => normalizeRequest({ packages: ["../escape"], layout: "nested" }));
   assert.throws(() => normalizeRequest({ packages: ["child"] }));
   assert.throws(() => normalizeRequest({ version: 2 }));
@@ -112,5 +114,6 @@ test("invalid selection shapes and incompatible WordPress PHP formatting are rej
     { project: "wordpress-plugin", formatting: { indentStyle: "space" } },
   ])
     await assert.rejects(resolved(t, input));
+
   assert.throws(() => normalizeRequest({ typo: true }), /Unknown selection/);
 });

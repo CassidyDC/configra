@@ -25,11 +25,13 @@ export async function apply(
     throw new Error(
       "Unresolved conflicts; no files were written. Resolve the listed entries or use --force to replace the conflicting generated content.",
     );
+
   for (const [name, snapshot] of Object.entries(plan.snapshots)) {
     await safePath(plan.root, name);
     if (hash(await read(plan.root, name)) !== snapshot)
       throw new Error(`Project changed after planning: ${name}. No files were written; run again.`);
   }
+
   for (const change of plan.changes) {
     try {
       await writeFile(plan.root, change.path, change.content);
@@ -39,6 +41,7 @@ export async function apply(
       return result;
     }
   }
+
   result.generated = true;
   if (install) {
     for (const operation of plan.installations) {
@@ -49,9 +52,11 @@ export async function apply(
       } catch (error) {
         installed = { ...operation, success: false, error: error.message };
       }
+
       result.installations.push(installed);
       if (!installed.success) result.failed.push({ ...installed, phase: "installation" });
     }
   }
+
   return result;
 }

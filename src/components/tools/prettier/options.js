@@ -28,6 +28,7 @@ export function options(project) {
     endOfLine: format.endOfLine,
     printWidth: format.printWidth,
   });
+
   const wordpress = project.standards.javascript?.id === "wordpress";
   const extensions = { javascript: "**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}", css: "**/*.css" };
   return {

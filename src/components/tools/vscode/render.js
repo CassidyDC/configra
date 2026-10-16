@@ -12,10 +12,15 @@
 export default function render(project) {
   const recommendations = ["editorconfig.editorconfig"];
   if (project.tools.includes("eslint")) recommendations.push("dbaeumer.vscode-eslint");
+
   if (project.tools.includes("prettier")) recommendations.push("esbenp.prettier-vscode");
+
   if (project.tools.includes("stylelint")) recommendations.push("stylelint.vscode-stylelint");
+
   if (project.languages.includes("php")) recommendations.push("bmewburn.vscode-intelephense-client");
+
   if (project.languages.includes("python")) recommendations.push("ms-python.python");
+
   return {
     jsonFiles: {
       ".vscode/extensions.json": { recommendations },

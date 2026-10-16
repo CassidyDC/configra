@@ -31,13 +31,16 @@ export function relativePath(value, { allowRoot = false } = {}) {
   if (typeof value !== "string" || path.isAbsolute(value) || value.includes("\\") || value.includes("\0")) {
     throw new Error(`Expected a project-relative path: ${value}`);
   }
+
   const normalized = path.posix.normalize(value);
   if (normalized === ".." || normalized.startsWith("../") || (!allowRoot && normalized === ".")) {
     throw new Error(`Path is outside the selected project or has no filename: ${value}`);
   }
+
   if (normalized.split("/").some((part) => [".git", "node_modules", "vendor"].includes(part))) {
     throw new Error(`Path enters a protected directory: ${value}`);
   }
+
   return normalized;
 }
 
@@ -55,6 +58,7 @@ export async function safePath(root, relative) {
   const boundary = await fs.realpath(root);
   const resolvedRoot = path.resolve(root);
   if (!target.startsWith(resolvedRoot + path.sep)) throw new Error(`Path escapes project: ${relative}`);
+
   let cursor = resolvedRoot;
   for (const segment of path.relative(resolvedRoot, target).split(path.sep)) {
     cursor = path.join(cursor, segment);
@@ -63,12 +67,15 @@ export async function safePath(root, relative) {
       if (actual !== boundary && !actual.startsWith(boundary + path.sep)) {
         throw new Error(`Path escapes project through a symbolic link: ${relative}`);
       }
+
       if ((await fs.lstat(cursor)).isSymbolicLink()) throw new Error(`Refusing symbolic link: ${relative}`);
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
+
       break;
     }
   }
+
   return target;
 }
 
@@ -85,6 +92,7 @@ export async function read(root, relative) {
     return await fs.readFile(target, "utf8");
   } catch (error) {
     if (error.code === "ENOENT") return null;
+
     throw error;
   }
 }
@@ -101,9 +109,11 @@ export async function read(root, relative) {
 export async function readJson(root, relative, fallback = null) {
   const content = await read(root, relative);
   if (content === null) return fallback;
+
   try {
     const parsed = JSON.parse(content);
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Expected a JSON object");
+
     return parsed;
   } catch (error) {
     throw new Error(`Invalid JSON in ${relative}: ${error.message}`, { cause: error });
@@ -125,6 +135,7 @@ export async function write(root, relative, content) {
     await fs.unlink(target);
     return;
   }
+
   await fs.mkdir(path.dirname(target), { recursive: true });
   const temporary = `${target}.${randomUUID()}.tmp`;
   let created = false;
@@ -136,6 +147,7 @@ export async function write(root, relative, content) {
     } finally {
       await handle.close();
     }
+
     await safePath(root, relative);
     await fs.rename(temporary, target);
   } finally {
