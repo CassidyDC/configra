@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
+- Document prioritized repository review findings and proposed fixes in `docs/issues.md`.
+
 - Document component definitions, named functions, and shared internal contracts with JSDoc types.
 
 - Implement configurable project generation with explicit project, language, capability, standard, and tool selections.

@@ -80,4 +80,5 @@ aliases declared once per file.
 - [Architecture](docs/architecture.md)
 - [Adding a tool](docs/adding-a-tool.md)
 - [Generated projects and update behavior](docs/generated-projects.md)
+- [Project issues and proposed fixes](docs/issues.md)
 - [Architecture plan](docs/plans/architecture-plan.md)
