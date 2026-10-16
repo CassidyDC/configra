@@ -43,7 +43,6 @@ export async function generate(root, selections, options, io) {
 
   if (options.interactive && proposal.conflicts.length && !force) {
     const { decide } = await import("../prompts/conflicts.js");
-
     force = await decide(proposal.conflicts);
   }
 

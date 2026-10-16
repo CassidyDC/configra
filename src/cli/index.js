@@ -129,7 +129,6 @@ export async function run(
 
       if (positionals[0] === "update") {
         const { readJson } = await import("../platform/filesystem.js");
-
         selections = { ...(await readJson(root, ".cassidydc-toolset.json", {})), ...selections };
       }
 

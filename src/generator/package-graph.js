@@ -134,7 +134,6 @@ export async function packageGraph(root, request) {
 
   for (const node of packages) {
     const name = path.posix.join(node.path, "package.json");
-
     snapshots[name] = hash(await read(root, name));
   }
 

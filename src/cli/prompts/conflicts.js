@@ -16,7 +16,6 @@ export async function decide(conflicts) {
 
   try {
     const answer = await prompt.question(`Replace the ${conflicts.length} reported generated conflict(s)? [y/N]: `);
-
     return /^(y|yes)$/i.test(answer.trim());
   } finally {
     prompt.close();
