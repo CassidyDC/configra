@@ -22,6 +22,7 @@ export default function render(project) {
     `indent_size = ${project.formatting.indentSize}`,
     `max_line_length = ${project.formatting.printWidth}`,
   ];
+
   const extensions = { javascript: "{js,mjs,cjs,jsx,ts,mts,cts,tsx}", css: "css", php: "php", python: "py" };
 
   for (const language of project.languages) {

@@ -115,6 +115,7 @@ test("symbolic links cannot escape the selected boundary", async (t) => {
 test("installation failure is separate from successful generation", async (t) => {
   const root = await temporary(t);
   const planned = await proposal(root, plugin);
+
   const result = await apply(planned, {
     install: true,
     execute: async (operation) => ({ ...operation, success: false, code: 7 }),
@@ -129,6 +130,7 @@ test("installation failure is separate from successful generation", async (t) =>
 test("unrequested installations never execute", async (t) => {
   const root = await temporary(t);
   let called = false;
+
   const result = await apply(await proposal(root), {
     execute: () => {
       called = true;
@@ -178,6 +180,7 @@ test("a write failure reports partial progress without recording successful stat
   const { write } = await import("../../src/platform/filesystem.js");
   const second = planned.changes[1].path;
   let writes = 0;
+
   const result = await apply(planned, {
     writeFile: async (...args) => {
       if (++writes === 2) throw new Error("Simulated disk failure");

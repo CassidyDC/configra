@@ -45,10 +45,12 @@ test("Lefthook routes real staged paths once to their owning packages", async (t
   const checked = spawnSync(lefthook, ["run", "pre-commit", "--force"], { cwd: root, encoding: "utf8" });
 
   assert.equal(checked.status, 0, checked.stderr + checked.stdout);
+
   const checks = (await read(root, "checks.jsonl"))
     .trim()
     .split("\n")
     .map((line) => JSON.parse(line));
+
   const actual = checks.flatMap((check) =>
     check.files.map((file) => path.relative(root, path.resolve(check.cwd, file))),
   );

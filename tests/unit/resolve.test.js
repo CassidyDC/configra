@@ -90,6 +90,7 @@ test("a different child project keeps its default tool integrations", async (t) 
 
   assert(result.packages[1].tools.includes("phpcs"));
   assert(result.packages[1].tools.includes("stylelint"));
+
   const explicit = await resolved(t, {
     project: "node",
     tools: ["editorconfig"],

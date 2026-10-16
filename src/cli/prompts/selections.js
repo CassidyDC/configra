@@ -69,7 +69,9 @@ export async function collect(defaults = {}) {
         ).join(","),
       ),
     );
+
     const layout = await ask("Layout (single, nested, workspaces)", defaults.layout ?? "single");
+
     const packages =
       layout === "single"
         ? []

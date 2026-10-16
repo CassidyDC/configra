@@ -234,11 +234,13 @@ export function resolve(request, graph) {
     const languages =
       override.languages ??
       (override.project && override.project !== parent.project ? definition.languages : parent.languages);
+
     const inheritedStandards = Object.fromEntries(
       Object.entries(parent.standards)
         .filter(([language]) => languages.includes(language))
         .map(([language, standard]) => [language, standard.id]),
     );
+
     const inheritedTools = parent.toolOverrides?.filter(
       (id) => !tools[id].languages.length || tools[id].languages.some((language) => languages.includes(language)),
     );

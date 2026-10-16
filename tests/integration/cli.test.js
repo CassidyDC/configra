@@ -51,6 +51,7 @@ test("config and argument selections produce equivalent requests", async (t) => 
     tools: ["editorconfig", "eslint"],
   });
   const config = run(root, "init", "--config", "selections.json", "--dry-run", "--json");
+
   const flags = run(
     root,
     "init",
@@ -114,6 +115,7 @@ test("generated ESLint configuration executes in CommonJS and ESM consumers", as
     assert.equal(result.status, 0, result.stderr);
     await fs.symlink(fileURLToPath(new URL("../../node_modules", import.meta.url)), path.join(root, "node_modules"));
     await put(root, "example.js", type === "module" ? "export const value = 1;\n" : "module.exports = 1;\n");
+
     const lint = spawnSync(
       process.execPath,
       [fileURLToPath(new URL("../../node_modules/eslint/bin/eslint.js", import.meta.url)), "example.js"],
@@ -149,6 +151,7 @@ for (const layout of ["nested", "workspaces"]) {
       "--package",
       children[2],
     ];
+
     const generated = run(root, ...args);
 
     assert.equal(generated.status, 0, generated.stderr);
@@ -169,6 +172,7 @@ for (const layout of ["nested", "workspaces"]) {
     const aggregate = spawnSync("npm", ["run", "lint"], { cwd: root, encoding: "utf8" });
 
     assert.equal(aggregate.status, 0, aggregate.stderr + aggregate.stdout);
+
     const visits = (await read(root, "visits.jsonl"))
       .trim()
       .split("\n")
@@ -224,6 +228,7 @@ test("real process failures remain machine-readable after successful generation"
       `#!${process.execPath}\nconsole.log('simulated ${command} failure'); process.exitCode = 7;\n`,
     );
     await fs.chmod(path.join(commands, command), 0o755);
+
     const result = spawnSync(
       process.execPath,
       [executable, "init", "--cwd", root, "--project", project, "--tools", tool, "--install", "--json"],

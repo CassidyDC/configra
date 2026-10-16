@@ -177,6 +177,7 @@ export async function plan(resolved) {
   const diagnostics = [];
   const contributions = new Map();
   const alternatives = new Map();
+
   const contexts = resolved.packages.map((project) =>
     layout.context(
       {

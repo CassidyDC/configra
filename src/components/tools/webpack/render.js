@@ -19,6 +19,7 @@ export default function render(project) {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
   };
+
   const presets = ["@babel/preset-env"];
 
   if (project.capabilities.includes("react")) {
@@ -38,6 +39,7 @@ export default function render(project) {
     : project.capabilities.includes("react")
       ? "jsx"
       : "js";
+
   const template = readFileSync(new URL("./templates/webpack.config.mjs", import.meta.url), "utf8");
 
   return {

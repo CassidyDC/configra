@@ -15,6 +15,7 @@ const repository = fileURLToPath(new URL("../../", import.meta.url));
 test("packed npm artifact runs independently and locates module-relative templates", async (t) => {
   const destination = await temporary(t);
   const cache = path.join(destination, "cache");
+
   const pack = spawnSync(
     "npm",
     ["pack", "--json", "--ignore-scripts", "--pack-destination", destination, "--cache", cache],
@@ -28,6 +29,7 @@ test("packed npm artifact runs independently and locates module-relative templat
   assert(artifact.files.some((entry) => entry.path === "bin/cdctool.js"));
   assert(artifact.files.some((entry) => entry.path === "src/components/tools/webpack/templates/webpack.config.mjs"));
   assert(!artifact.files.some((entry) => entry.path.startsWith("docs/reference/")));
+
   const dependencyPack = spawnSync(
     "npm",
     ["pack", "--json", "--ignore-scripts", "--pack-destination", destination, "--cache", cache],
@@ -40,6 +42,7 @@ test("packed npm artifact runs independently and locates module-relative templat
   const consumer = await temporary(t);
 
   await put(consumer, "package.json", { name: "packed-consumer", private: true });
+
   const install = spawnSync(
     "npm",
     [
@@ -59,6 +62,7 @@ test("packed npm artifact runs independently and locates module-relative templat
   assert.equal(install.status, 0, install.stderr);
   const executable = path.join(consumer, "node_modules/@cassidydc/cassidydc-toolset/bin/cdctool.js");
   const project = await temporary(t);
+
   const generate = spawnSync(
     process.execPath,
     [
