@@ -1,6 +1,8 @@
+import { format } from "prettier";
+import { options as prettierOptions } from "../components/tools/prettier/options.js";
 import path from "node:path";
 import { tools } from "../components/registry.js";
-import { read, readJson, hash, json, relativePath } from "../platform/filesystem.js";
+import { read, hash, json, relativePath } from "../platform/filesystem.js";
 import { installation as npmInstallation } from "../platform/npm.js";
 import { installation as composerInstallation } from "../platform/composer.js";
 import * as single from "./layouts/single.js";
@@ -60,14 +62,22 @@ const empty = () => ({
 export async function plan(resolved) {
   const { graph, request } = resolved;
   const root = graph.root;
-  const previous = await readJson(root, STATE, { version: 1, files: {} });
-  if (previous.version !== 1 || !object(previous.files)) throw new Error("Unsupported or invalid generation state");
+  const stateBefore = await read(root, STATE);
+  let previous;
+  try {
+    previous = stateBefore === null ? { version: 1, files: {} } : JSON.parse(stateBefore);
+  } catch {
+    throw new Error("Invalid JSON in generation state");
+  }
+  if (!object(previous) || previous.version !== 1 || !object(previous.files))
+    throw new Error("Unsupported or invalid generation state");
   const layout = { single, nested, workspaces }[request.layout];
   const desired = new Map();
   const installations = [];
   const hooks = [];
   const diagnostics = [];
   const contributions = new Map();
+  const alternatives = new Map();
   const contexts = resolved.packages.map((project) =>
     layout.context(
       {
@@ -87,6 +97,8 @@ export async function plan(resolved) {
     for (const id of project.tools.filter((id) => id !== "lefthook"))
       mergeContribution(contribution, tools[id].render(project));
     contributions.set(project.path, contribution);
+    for (const id of project.tools)
+      for (const name of tools[id].alternatives ?? []) alternatives.set(join(project.path, name), id);
     for (const requirement of contribution.hooks) {
       const prefix = project.path === "." ? "" : project.path + "/";
       hooks.push({
@@ -132,7 +144,7 @@ export async function plan(resolved) {
     }
     if (Object.keys(contribution.npm).length)
       installations.push(
-        npmInstallation(root, layout.dependencyOwner(project), request.layout === "workspaces" && project.path !== "."),
+        npmInstallation(root, layout.dependencyOwner(project), request.layout === "workspaces", project.workspaceName),
       );
     if (Object.keys(contribution.composer).length) {
       desired.set(join(project.path, "composer.json"), {
@@ -142,16 +154,27 @@ export async function plan(resolved) {
       installations.push(composerInstallation(root, project.path));
     }
   }
+  async function formatted(name, content) {
+    if (content === null || !/\.(?:[cm]?js|jsonc?|ya?ml|md)$/.test(name)) return content;
+    const owner = [...contexts]
+      .reverse()
+      .find((project) => project.path === "." || name.startsWith(project.path + "/"));
+    if (!owner.tools.includes("prettier")) return content;
+    return format(content, { ...prettierOptions(owner), filepath: name, plugins: [] });
+  }
   const changes = [];
   const conflicts = [];
   const state = { version: 1, files: {} };
-  const snapshots = {};
+  const snapshots = { ...graph.snapshots };
   for (const name of [...new Set([...desired.keys(), ...Object.keys(previous.files)])].sort()) {
     relativePath(name);
     if ([STATE, SELECTIONS].includes(name)) throw new Error(`Invalid managed state entry: ${name}`);
     const before = await read(root, name);
+    if (Object.hasOwn(snapshots, name) && snapshots[name] !== hash(before))
+      throw new Error(`Project changed during planning: ${name}`);
     snapshots[name] = hash(before);
     const old = previous.files[name];
+    if (old && !["file", "json", "lines"].includes(old.kind)) throw new Error(`Invalid generation state for ${name}`);
     const entry = desired.get(name);
     let after;
     const conflict = (reason) => conflicts.push({ path: name, reason });
@@ -170,6 +193,7 @@ export async function plan(resolved) {
         const keys = JSON.parse(key);
         if (
           !Array.isArray(keys) ||
+          !keys.length ||
           keys.some((part) => typeof part !== "string" || ["__proto__", "prototype", "constructor"].includes(part))
         )
           throw new Error(`Invalid state entry in ${name}`);
@@ -205,7 +229,7 @@ export async function plan(resolved) {
           set(next, keys, wanted);
         }
       }
-      after = equal(next, existing) ? before : json(next);
+      after = equal(next, existing) ? before : await formatted(name, json(next));
       if (entry) state.files[name] = { kind: "json", entries };
     } else if ((entry?.kind ?? old?.kind) === "lines") {
       const existing = before?.split(/\r?\n/) ?? [];
@@ -221,7 +245,7 @@ export async function plan(resolved) {
         };
       if (before === after) after = before;
     } else {
-      after = entry?.content ?? null;
+      after = await formatted(name, entry?.content ?? null);
       if (before !== after && before !== null && (!old || hash(before) !== old.hash))
         conflict("File contains existing or edited content");
       if (before === null && old && entry) conflict("Previously generated file was deleted");
@@ -229,9 +253,22 @@ export async function plan(resolved) {
     }
     if (before !== after) changes.push({ path: name, before: hash(before), content: after });
   }
+  for (const [name, tool] of alternatives) {
+    if (previous.files[name]) continue; // Previously generated alternatives follow normal ownership rules.
+    if (desired.has(name)) throw new Error(`Competing generated configuration: ${name}`);
+    const before = await read(root, name);
+    snapshots[name] = hash(before);
+    if (before !== null) {
+      conflicts.push({
+        path: name,
+        reason: `Competing ${tool} configuration; replacement requires removing this file`,
+      });
+      changes.push({ path: name, before: hash(before), content: null });
+    }
+  }
   const selectionsBefore = await read(root, SELECTIONS);
   snapshots[SELECTIONS] = hash(selectionsBefore);
-  let selectionsContent = json(request);
+  let selectionsContent = await formatted(SELECTIONS, json(request));
   if (selectionsBefore !== null) {
     try {
       if (equal(JSON.parse(selectionsBefore), request)) selectionsContent = selectionsBefore;
@@ -241,7 +278,6 @@ export async function plan(resolved) {
   }
   if (selectionsContent !== selectionsBefore)
     changes.push({ path: SELECTIONS, before: hash(selectionsBefore), content: selectionsContent });
-  const stateBefore = await read(root, STATE);
   snapshots[STATE] = hash(stateBefore);
   const stateContent = json(state);
   if (stateBefore !== stateContent) changes.push({ path: STATE, before: hash(stateBefore), content: stateContent });

@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import * as fs from "node:fs/promises";
 import path from "node:path";
 
@@ -71,13 +71,20 @@ export async function write(root, relative, content) {
     return;
   }
   await fs.mkdir(path.dirname(target), { recursive: true });
-  const temporary = `${target}.${process.pid}.${createHash("sha256").update(relative).digest("hex").slice(0, 8)}.tmp`;
+  const temporary = `${target}.${randomUUID()}.tmp`;
+  let created = false;
   try {
-    await fs.writeFile(temporary, content, { flag: "wx" });
+    const handle = await fs.open(temporary, "wx");
+    created = true;
+    try {
+      await handle.writeFile(content);
+    } finally {
+      await handle.close();
+    }
     await safePath(root, relative);
     await fs.rename(temporary, target);
   } finally {
-    await fs.rm(temporary, { force: true });
+    if (created) await fs.rm(temporary, { force: true });
   }
 }
 

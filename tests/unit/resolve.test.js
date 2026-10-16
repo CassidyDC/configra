@@ -61,3 +61,43 @@ test("unsupported selections and inconsistent formatting are rejected", async (t
   assert.throws(() => normalizeRequest({ packages: ["child"] }));
   assert.throws(() => normalizeRequest({ version: 2 }));
 });
+
+test("a different child project keeps its default tool integrations", async (t) => {
+  const result = await resolved(t, {
+    project: "node",
+    layout: "nested",
+    packages: [{ path: "plugin", project: "wordpress-plugin" }],
+  });
+  assert(result.packages[1].tools.includes("phpcs"));
+  assert(result.packages[1].tools.includes("stylelint"));
+  const explicit = await resolved(t, {
+    project: "node",
+    tools: ["editorconfig"],
+    layout: "nested",
+    packages: [{ path: "plugin", project: "wordpress-plugin" }],
+  });
+  assert.deepEqual(explicit.packages[1].tools, ["editorconfig"]);
+});
+
+test("child formatting overrides merge with inherited explicit choices", async (t) => {
+  const result = await resolved(t, {
+    project: "node",
+    layout: "nested",
+    formatting: { printWidth: 120 },
+    packages: [{ path: "child", formatting: { indentSize: 4 } }],
+  });
+  assert.equal(result.packages[1].formatting.printWidth, 120);
+  assert.equal(result.packages[1].formatting.indentSize, 4);
+});
+
+test("invalid selection shapes and incompatible WordPress PHP formatting are rejected", async (t) => {
+  for (const input of [
+    { languages: [] },
+    { standards: "community" },
+    { formatting: [] },
+    { formatting: { unknown: true } },
+    { project: "wordpress-plugin", formatting: { indentStyle: "space" } },
+  ])
+    await assert.rejects(resolved(t, input));
+  assert.throws(() => normalizeRequest({ typo: true }), /Unknown selection/);
+});

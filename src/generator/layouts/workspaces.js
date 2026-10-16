@@ -5,9 +5,11 @@ export const dependencyOwner = (project) => project.path;
 
 export function scripts(project, contribution) {
   const result = localScripts(project, contribution);
-  // npm workspace commands are issued from the registration root, once per selected child.
+  // Select exact workspace names: a path selector also includes nested workspaces in npm.
   if (project.path === ".") {
-    const calls = project.descendants.map((child) => `npm run lint:local --workspace=${quote(child)} --if-present`);
+    const calls = project.descendants.map(
+      (child) => `npm run lint:local --workspace=${quote(project.workspaceNames[child])} --if-present`,
+    );
     if (calls.length) result.lint = [...(result["lint:local"] ? ["npm run lint:local"] : []), ...calls].join(" && ");
   }
   return result;

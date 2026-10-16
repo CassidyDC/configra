@@ -20,4 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed
 
+- Keep nested workspace checks from running twice by delegating with exact package names.
+- Format generated files consistently with their selected standards and exclude Git boundaries and analysis caches from recursive checks.
+- Detect competing active configurations and preserve structured installation failure results in JSON output.
+
 ## Removed

@@ -97,3 +97,102 @@ test("generated ESLint configuration executes in CommonJS and ESM consumers", as
     assert.equal((await readJson(root, "package.json")).type, type);
   }
 });
+
+for (const layout of ["nested", "workspaces"]) {
+  test(`${layout} aggregate command visits each selected package once`, async (t) => {
+    const root = await temporary(t);
+    const children = ["packages/a", "packages/b", "packages/a/sub"];
+    await put(root, "package.json", { name: "root", private: true, workspaces: ["packages/*", "packages/a/sub"] });
+    for (const child of [...children, "packages/unselected"])
+      await put(root, `${child}/package.json`, { name: child.replaceAll("/", "-") });
+    const args = [
+      "init",
+      "--project",
+      "node",
+      "--tools",
+      "markdownlint",
+      "--layout",
+      layout,
+      "--package",
+      children[0],
+      "--package",
+      children[1],
+      "--package",
+      children[2],
+    ];
+    const generated = run(root, ...args);
+    assert.equal(generated.status, 0, generated.stderr);
+    const log = path.join(root, "visits.jsonl");
+    for (const owner of [".", ...children]) {
+      const manifest = await readJson(root, path.posix.join(owner, "package.json"));
+      manifest.scripts["lint:markdown"] = "node record.cjs";
+      await put(root, path.posix.join(owner, "package.json"), manifest);
+      await put(
+        root,
+        path.posix.join(owner, "record.cjs"),
+        `require('node:fs').appendFileSync(${JSON.stringify(log)}, JSON.stringify(${JSON.stringify(owner)}) + '\\n');\n`,
+      );
+    }
+    const aggregate = spawnSync("npm", ["run", "lint"], { cwd: root, encoding: "utf8" });
+    assert.equal(aggregate.status, 0, aggregate.stderr + aggregate.stdout);
+    const visits = (await read(root, "visits.jsonl"))
+      .trim()
+      .split("\n")
+      .map((line) => JSON.parse(line));
+    assert.deepEqual(visits.sort(), [".", ...children].sort());
+  });
+}
+
+test("root-local ESLint skips selected child files", async (t) => {
+  const root = await temporary(t);
+  await put(root, "child/package.json", { name: "child" });
+  const generated = run(root, "init", "--tools", "eslint", "--layout", "nested", "--package", "child");
+  assert.equal(generated.status, 0, generated.stderr);
+  await fs.symlink(fileURLToPath(new URL("../../node_modules", import.meta.url)), path.join(root, "node_modules"));
+  await put(root, "root.js", "export const value = 1;\n");
+  await put(root, "child/failing.js", "missingGlobal();\n");
+  const eslint = fileURLToPath(new URL("../../node_modules/eslint/bin/eslint.js", import.meta.url));
+  const local = spawnSync(process.execPath, [eslint, "."], { cwd: root, encoding: "utf8" });
+  assert.equal(local.status, 0, local.stderr + local.stdout);
+  const child = spawnSync(process.execPath, [eslint, "."], { cwd: path.join(root, "child"), encoding: "utf8" });
+  assert.equal(child.status, 1);
+  assert.match(child.stdout, /missingGlobal/);
+});
+
+test("JSON application output distinguishes the plan from its result", async (t) => {
+  const root = await temporary(t);
+  const result = run(root, "init", "--json", "--tools", "editorconfig");
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert(output.changes.length > 0);
+  assert.equal(output.result.generated, true);
+  assert.equal(output.result.applied.length, output.changes.length);
+});
+
+test("real process failures remain machine-readable after successful generation", async (t) => {
+  for (const [project, tool, command] of [
+    ["node", "eslint", "npm"],
+    ["php", "phpcs", "composer"],
+  ]) {
+    const root = await temporary(t);
+    const commands = await temporary(t);
+    await put(
+      commands,
+      command,
+      `#!${process.execPath}\nconsole.log('simulated ${command} failure'); process.exitCode = 7;\n`,
+    );
+    await fs.chmod(path.join(commands, command), 0o755);
+    const result = spawnSync(
+      process.execPath,
+      [executable, "init", "--cwd", root, "--project", project, "--tools", tool, "--install", "--json"],
+      { encoding: "utf8", env: { ...process.env, PATH: commands + path.delimiter + process.env.PATH } },
+    );
+    assert.equal(result.status, 1, result.stderr);
+    const output = JSON.parse(result.stdout);
+    assert.equal(output.result.generated, true);
+    assert.equal(output.result.failed[0].phase, "installation");
+    assert.equal(output.result.installations[0].code, 7);
+    assert.match(result.stderr, new RegExp(`simulated ${command} failure`));
+    assert(await read(root, ".cassidydc-toolset-state.json"));
+  }
+});

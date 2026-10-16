@@ -87,7 +87,8 @@ export async function run(
       }
     }
     if (values.package) selections.packages = values.package.map((path) => ({ path }));
-    if (values.interactive || (positionals[0] === "init" && argv.length === 1 && process.stdin.isTTY)) {
+    const interactive = values.interactive || (positionals[0] === "init" && argv.length === 1 && process.stdin.isTTY);
+    if (interactive) {
       if (!process.stdin.isTTY || !process.stdout.isTTY)
         throw new Error("Interactive mode requires a terminal; pass selections as arguments or --config");
       const { collect } = await import("./prompts/selections.js");
@@ -100,7 +101,7 @@ export async function run(
     return await (positionals[0] === "init" ? init : update)(
       root,
       selections,
-      { dryRun: values["dry-run"], json: values.json, install: values.install, force: values.force },
+      { dryRun: values["dry-run"], json: values.json, install: values.install, force: values.force, interactive },
       io,
     );
   } catch (error) {

@@ -7,8 +7,8 @@ export async function generate(root, selections, options, io) {
   const request = normalizeRequest(selections);
   const graph = await packageGraph(root, request);
   const proposal = await plan(resolve(request, graph));
-  if (options.json) io.out(JSON.stringify(proposal, null, 2));
-  else {
+  if (options.json && options.dryRun) io.out(JSON.stringify(proposal, null, 2));
+  else if (!options.json) {
     io.out(`${options.dryRun ? "Dry run: " : ""}${proposal.changes.length} proposed change(s)`);
     for (const change of proposal.changes)
       io.out(`  ${change.content === null ? "remove" : change.before === null ? "create" : "update"} ${change.path}`);
@@ -17,7 +17,17 @@ export async function generate(root, selections, options, io) {
     if (proposal.installations.length) io.out("Dependencies are installed only with --install.");
   }
   if (options.dryRun) return proposal.conflicts.length ? 2 : 0;
-  const result = await apply(proposal, { force: options.force, install: options.install });
+  let force = options.force;
+  if (options.interactive && proposal.conflicts.length && !force) {
+    const { decide } = await import("../prompts/conflicts.js");
+    force = await decide(proposal.conflicts);
+  }
+  const result = await apply(proposal, {
+    force,
+    install: options.install,
+    stdio: options.json ? ["inherit", 2, 2] : "inherit",
+  });
+  if (options.json) io.out(JSON.stringify({ ...proposal, result }, null, 2));
   if (!options.json) {
     io.out(
       result.generated

@@ -1,5 +1,20 @@
 # CassidyDC Toolset organization plan
 
+## Implementation status
+
+Implemented in `bin/`, `src/`, and `tests/`. The working pipeline, component
+registry, package layouts, safe updates, and npm packaging follow this plan.
+See [architecture](../architecture.md), [adding a tool](../adding-a-tool.md), and
+[generated projects](../generated-projects.md) for the current interfaces and
+supported behavior. Python environment installation remains explicitly unsupported
+until a Python tool integration is added, as described below.
+
+The automated suite covers the required generation, layout, safety, ownership,
+module-format, and packed-artifact scenarios. Exact npm workspace name selectors
+avoid duplicate checks for nested workspaces. Fresh WordPress output has also been
+verified with installed npm and Composer tools, along with an explicitly selected
+TypeScript Webpack build.
+
 ## Proposed structure
 
 ```text

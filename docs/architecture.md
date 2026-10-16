@@ -37,7 +37,8 @@ standards, and tools. Components do not discover or install themselves.
 
 The CLI depends on the generator. The generator depends on components, layouts,
 and platform adapters. Components never import CLI workflows or perform project
-writes. Templates are located relative to the installed module.
+writes. Templates are located relative to the installed module. Prettier is the
+runtime formatting dependency used to render output consistently with generated settings.
 
 The community baselines are ESLint recommended for JavaScript, Stylelint standard
 for CSS, PSR-12 for PHP, and PEP 8 indentation for Python. Python currently has no
@@ -48,12 +49,14 @@ baselines rather than a universal community convention.
 
 Every selected package owns its configuration and dependency declarations.
 `single` runs local checks. `nested` delegates through relative package paths and
-installs dependencies independently. `workspaces` delegates using registered
-workspace paths and installs workspace dependencies from the registration root.
-Existing workspace declarations are preserved.
+installs dependencies independently. `workspaces` delegates using exact registered
+workspace package names and installs dependencies from the registration root.
+Existing workspace declarations are preserved. Exact name selectors prevent npm
+from including nested workspaces a second time.
 
 `lint:local` runs one package's checks. Aggregate `lint` commands delegate once to
-each selected package. Local configurations exclude selected child directories.
+each selected package. Local configurations exclude selected child directories,
+independent nested Git repositories, and generated analysis caches.
 Staged checks use Git-relative globs, a package working directory, and child
 exclusions. Generation below an enclosing Git root skips hook management because
 the root hook configuration is outside the selected boundary. Hook installation
@@ -65,7 +68,9 @@ is a separate, explicit `npm run hooks:install` operation.
 `.cassidydc-toolset-state.json` separately tracks generated-file hashes, managed
 JSON entries, and owned ignore lines. Updates preserve unrelated JSON keys,
 scripts, dependency entries, ignore lines, and VS Code extension recommendations.
-Conflicts stop all writes unless explicitly resolved with `--force`.
+Competing active configuration files are reported as conflicts rather than leaving
+two configurations with ambiguous precedence. Conflicts stop all writes unless
+explicitly resolved interactively or with `--force`.
 
 Unchanged output is not rewritten. Removed tools relinquish their unchanged
 managed files and entries. A changed generated file or managed entry requires a

@@ -8,7 +8,22 @@ function list(value, label, allowed) {
   return [...new Set(value)].sort();
 }
 
+function validateSelection(input, allowed) {
+  if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("Selections must be a JSON object");
+  for (const key of Object.keys(input)) if (!allowed.includes(key)) throw new Error(`Unknown selection: ${key}`);
+  for (const key of ["standards", "formatting"]) {
+    if (input[key] !== undefined && (!input[key] || typeof input[key] !== "object" || Array.isArray(input[key])))
+      throw new Error(`${key} must be an object`);
+  }
+  if (input.formatting)
+    for (const key of Object.keys(input.formatting))
+      if (!["indentStyle", "indentSize", "endOfLine", "printWidth"].includes(key))
+        throw new Error(`Unsupported formatting option: ${key}`);
+}
+const selectionFields = ["project", "languages", "capabilities", "standards", "tools", "formatting"];
+
 export function normalizeRequest(input = {}) {
+  validateSelection(input, [...selectionFields, "version", "layout", "packages"]);
   if (input.version !== undefined && input.version !== 1) throw new Error("Unsupported selection schema version");
   const layout = input.layout ?? "single";
   if (!["single", "nested", "workspaces"].includes(layout)) throw new Error(`Unsupported layout: ${layout}`);
@@ -19,7 +34,7 @@ export function normalizeRequest(input = {}) {
   request.packages = request.packages
     .map((item) => {
       if (typeof item === "string") return { path: relativePath(item) };
-      if (!item || typeof item !== "object") throw new Error("Each package needs a relative path");
+      validateSelection(item, [...selectionFields, "path"]);
       return { ...item, path: relativePath(item.path) };
     })
     .sort((a, b) => a.path.localeCompare(b.path));
@@ -35,16 +50,17 @@ export function normalizeRequest(input = {}) {
 }
 
 function resolvePackage(selection, node) {
-  const project = projects[selection.project];
+  const project = Object.hasOwn(projects, selection.project) ? projects[selection.project] : undefined;
   if (!project) throw new Error(`Unsupported project: ${selection.project}`);
   const languages = list(selection.languages ?? project.languages, "languages", Object.keys(standards));
   const selectedCapabilities = list(selection.capabilities ?? [], "capabilities", Object.keys(capabilities));
   for (const id of selectedCapabilities) {
     if (!languages.includes(capabilities[id].language)) throw new Error(`${id} requires JavaScript`);
   }
+  if (!languages.length) throw new Error("Select at least one language");
   const chosenStandards = {};
   for (const [language, id] of Object.entries(selection.standards ?? {})) {
-    if (!languages.includes(language) || !standards[language]?.[id])
+    if (!languages.includes(language) || !Object.hasOwn(standards[language], id))
       throw new Error(`Unsupported standard: ${language}=${id}`);
   }
   for (const language of languages)
@@ -93,9 +109,17 @@ function resolvePackage(selection, node) {
     if (chosenStandards[language]?.id === "community" && (format.indentStyle !== "space" || format.indentSize !== 4))
       throw new Error(`${language} community standard requires four-space indentation`);
   }
+  if (
+    chosenStandards.php?.id === "wordpress" &&
+    (languageFormatting.php.indentStyle !== "tab" || languageFormatting.php.indentSize !== 4)
+  )
+    throw new Error("PHP WordPress standard requires tabs with width four");
+  if (chosenStandards.php && formatting.endOfLine !== "lf")
+    throw new Error("PHP coding standards require LF line endings");
   return {
     ...node,
     formattingOverrides: selection.formatting,
+    toolOverrides: selection.tools,
     project: project.id,
     environment: project.environment,
     languages,
@@ -115,7 +139,8 @@ export function resolve(request, graph) {
   for (const node of graph.packages.slice(1)) {
     const override = request.packages.find((item) => item.path === node.path);
     const parent = packages.find((item) => item.path === node.parent);
-    const definition = projects[override.project ?? parent.project];
+    const projectId = override.project ?? parent.project;
+    const definition = Object.hasOwn(projects, projectId) ? projects[projectId] : undefined;
     if (!definition) throw new Error(`Unsupported project: ${override.project}`);
     const languages =
       override.languages ??
@@ -125,7 +150,7 @@ export function resolve(request, graph) {
         .filter(([language]) => languages.includes(language))
         .map(([language, standard]) => [language, standard.id]),
     );
-    const inheritedTools = parent.tools.filter(
+    const inheritedTools = parent.toolOverrides?.filter(
       (id) => !tools[id].languages.length || tools[id].languages.some((language) => languages.includes(language)),
     );
     packages.push(
@@ -135,8 +160,8 @@ export function resolve(request, graph) {
           languages,
           capabilities: languages.includes("javascript") ? parent.capabilities : [],
           tools: inheritedTools,
-          formatting: parent.formattingOverrides,
           ...override,
+          formatting: { ...parent.formattingOverrides, ...override.formatting },
           standards: { ...inheritedStandards, ...override.standards },
         },
         node,

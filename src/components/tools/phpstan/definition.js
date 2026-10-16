@@ -11,4 +11,8 @@ export default {
   requirements: [
     "composer:phpstan/phpstan",
   ],
+  alternatives: [
+    "phpstan.neon",
+    "phpstan.dist.neon",
+  ],
 };

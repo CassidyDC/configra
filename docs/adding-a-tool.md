@@ -10,7 +10,9 @@ definitions if the tool should be selected automatically.
 Export metadata containing a stable `id`, supported `languages` and `capabilities`,
 package `requirements`, script `operations`, and configuration `scope` (`package`
 or `git`). An empty languages list means the tool is language independent.
-Definitions contain no installation or project filesystem effects.
+Definitions contain no installation or project filesystem effects. Use an
+`alternatives` array for configuration filenames that would compete with the
+generated file; the planner reports their removal as a conflict.
 
 ## Rendering
 

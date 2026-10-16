@@ -123,3 +123,54 @@ test("deselection removes unchanged generated output while preserving user data"
   assert.equal((await readJson(root, "package.json")).name, path.basename(root).toLowerCase());
   assert.deepEqual((await readJson(root, "package.json")).scripts, {});
 });
+
+test("new output already matches the generated formatter configuration", async (t) => {
+  const { check, resolveConfig } = await import("prettier");
+  for (const selection of [
+    { project: "node" },
+    { ...plugin, standards: { javascript: "community", php: "community" } },
+  ]) {
+    const root = await temporary(t);
+    const { planned } = await generate(root, selection);
+    for (const change of planned.changes.filter(
+      (item) => /\.(?:[cm]?js|jsonc?|ya?ml)$/.test(item.path) && item.path !== ".cassidydc-toolset-state.json",
+    )) {
+      const filename = path.join(root, change.path);
+      assert(
+        await check(await read(root, change.path), { ...(await resolveConfig(filename)), filepath: filename }),
+        change.path,
+      );
+    }
+  }
+});
+
+test("a write failure reports partial progress without recording successful state", async (t) => {
+  const root = await temporary(t);
+  const planned = await proposal(root, { tools: ["editorconfig"] });
+  const { write } = await import("../../src/platform/filesystem.js");
+  const second = planned.changes[1].path;
+  let writes = 0;
+  const result = await apply(planned, {
+    writeFile: async (...args) => {
+      if (++writes === 2) throw new Error("Simulated disk failure");
+      return write(...args);
+    },
+  });
+  assert.equal(result.generated, false);
+  assert.deepEqual(result.applied, [".editorconfig"]);
+  assert.equal(result.failed[0].path, second);
+  await assert.rejects(read(root, ".cassidydc-toolset-state.json"), { code: "ENOENT" });
+});
+
+test("competing active configuration is reported before explicit replacement", async (t) => {
+  const root = await temporary(t);
+  await put(root, "eslint.config.js", "export default [];\n");
+  const planned = await proposal(root, { tools: ["eslint"] });
+  assert(planned.conflicts.some((item) => item.path === "eslint.config.js"));
+  await assert.rejects(apply(planned));
+  assert.deepEqual(await fs.readdir(root), ["eslint.config.js"]);
+  await apply(planned, { force: true });
+  await assert.rejects(read(root, "eslint.config.js"), { code: "ENOENT" });
+  assert.match(await read(root, "eslint.config.mjs"), /defineConfig/);
+  assert.equal((await proposal(root, { tools: ["eslint"] })).changes.length, 0);
+});

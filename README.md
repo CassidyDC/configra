@@ -31,6 +31,7 @@ Selections are saved in `.cassidydc-toolset.json`; generation ownership is track
 separately in `.cassidydc-toolset-state.json`. Keep both under version control.
 Edited generated files and conflicting manifest entries stop application until
 resolved. `--force` explicitly replaces the reported conflicting generated content.
+Competing configuration filenames are also reported for explicit replacement.
 Unrelated manifest fields and scripts are preserved. `--dry-run` never writes files
 or installs dependencies; add `--json` for the complete machine-readable plan.
 

@@ -12,15 +12,37 @@ export async function workspacePatterns(root) {
 }
 
 export function matchesWorkspace(relative, patterns) {
-  return patterns.some((pattern) => path.matchesGlob(relative, pattern.replace(/\/$/, "")));
+  const includes = [];
+  let excludes = [];
+  for (let pattern of patterns) {
+    const bangs = pattern.match(/^!+/)?.[0].length ?? 0;
+    pattern = pattern
+      .slice(bangs)
+      .replace(/^\.?\/+/, "")
+      .replace(/\/$/, "")
+      .replaceAll("\\", "/");
+    if (bangs % 2) excludes.push(pattern);
+    else {
+      excludes = excludes.filter((excluded) => !path.matchesGlob(pattern, excluded));
+      includes.push(pattern);
+    }
+  }
+  const ancestors = relative.split("/").map((_, index, segments) => segments.slice(0, index + 1).join("/"));
+  return (
+    includes.some((pattern) => path.matchesGlob(relative, pattern)) &&
+    !excludes.some((pattern) => ancestors.some((ancestor) => path.matchesGlob(ancestor, pattern)))
+  );
 }
 
-export function installation(root, packagePath, workspace = false) {
+export function installation(root, packagePath, workspace = false, workspaceName) {
   return {
     ecosystem: "npm",
     package: packagePath,
     command: "npm",
-    args: workspace ? ["install", `--workspace=${packagePath}`] : ["install"],
+    args:
+      workspace && packagePath !== "."
+        ? ["install", `--workspace=${workspaceName ?? packagePath}`]
+        : ["install", "--workspaces=false"],
     cwd: workspace ? root : path.resolve(root, packagePath),
   };
 }

@@ -21,6 +21,14 @@ test("packed npm artifact runs independently and locates module-relative templat
   assert(artifact.files.some((entry) => entry.path === "bin/cdctool.js"));
   assert(artifact.files.some((entry) => entry.path === "src/components/tools/webpack/templates/webpack.config.mjs"));
   assert(!artifact.files.some((entry) => entry.path.startsWith("docs/reference/")));
+  const dependencyPack = spawnSync(
+    "npm",
+    ["pack", "--json", "--ignore-scripts", "--pack-destination", destination, "--cache", cache],
+    { cwd: path.join(repository, "node_modules/prettier"), encoding: "utf8" },
+  );
+  assert.equal(dependencyPack.status, 0, dependencyPack.stderr);
+  const dependencies = JSON.parse(dependencyPack.stdout);
+  const prettier = Array.isArray(dependencies) ? dependencies[0] : Object.values(dependencies)[0];
   const consumer = await temporary(t);
   await put(consumer, "package.json", { name: "packed-consumer", private: true });
   const install = spawnSync(
@@ -34,6 +42,7 @@ test("packed npm artifact runs independently and locates module-relative templat
       "--cache",
       cache,
       path.join(destination, artifact.filename),
+      path.join(destination, prettier.filename),
     ],
     { cwd: consumer, encoding: "utf8" },
   );

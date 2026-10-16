@@ -11,4 +11,9 @@ export default {
   requirements: [
     "composer:squizlabs/php_codesniffer",
   ],
+  alternatives: [
+    "phpcs.xml",
+    ".phpcs.xml",
+    ".phpcs.xml.dist",
+  ],
 };

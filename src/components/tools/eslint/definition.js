@@ -14,4 +14,18 @@ export default {
   requirements: [
     "npm:eslint",
   ],
+  alternatives: [
+    "eslint.config.js",
+    "eslint.config.cjs",
+    "eslint.config.ts",
+    "eslint.config.mts",
+    "eslint.config.cts",
+    ".eslintrc",
+    ".eslintrc.json",
+    ".eslintrc.js",
+    ".eslintrc.cjs",
+    ".eslintrc.yaml",
+    ".eslintrc.yml",
+    ".eslintignore",
+  ],
 };

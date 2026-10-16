@@ -1,3 +1,4 @@
+import { load as yaml } from "js-yaml";
 import test from "node:test";
 import assert from "node:assert/strict";
 import * as fs from "node:fs/promises";
@@ -68,7 +69,7 @@ test("root hooks route staged files by package ownership", async (t) => {
     layout: "nested",
     packages: [{ path: "plugins/child", project: "wordpress-plugin" }],
   });
-  const hooks = (await readJson(root, "lefthook.yml"))["pre-commit"].commands;
+  const hooks = yaml(await read(root, "lefthook.yml"))["pre-commit"].commands;
   assert(hooks[".:eslint"].exclude.includes("plugins/child/**"));
   assert.equal(hooks["plugins/child:eslint"].root, "plugins/child/");
   assert(hooks["plugins/child:eslint"].glob[0].startsWith("plugins/child/"));
@@ -85,4 +86,37 @@ test("Git boundary is distinct from package boundary", async (t) => {
   assert(!planned.changes.some((item) => item.path === "lefthook.yml"));
   await fs.mkdir(path.join(child, ".git"));
   await assert.rejects(proposal(root, { layout: "nested", packages: [{ path: "child" }] }), /crosses a Git boundary/);
+});
+
+test("local checks exclude independent Git repositories and analysis caches", async (t) => {
+  const root = await temporary(t);
+  await put(root, "foreign/.git/HEAD", "ref: refs/heads/main\n");
+  await put(root, "foreign/package.json", { name: "foreign" });
+  const planned = await proposal(root, { project: "wordpress-site" });
+  for (const name of ["eslint.config.mjs", ".prettierignore", "phpcs.xml.dist", "phpstan.neon.dist"]) {
+    assert(planned.changes.find((item) => item.path === name).content.includes("foreign/"), name);
+  }
+  const manifest = JSON.parse(planned.changes.find((item) => item.path === "package.json").content);
+  assert.match(manifest.scripts["lint:php:syntax"], /--exclude 'foreign'/);
+  assert(planned.changes.find((item) => item.path === "phpstan.neon.dist").content.includes(".phpstan-cache"));
+});
+
+test("npm installation commands stay scoped to selected package owners", async (t) => {
+  const root = await temporary(t);
+  await put(root, "package.json", { name: "root", workspaces: ["packages/*"] });
+  await put(root, "packages/selected/package.json", { name: "selected" });
+  const planned = await proposal(root, { layout: "workspaces", packages: [{ path: "packages/selected" }] });
+  assert.deepEqual(planned.installations[0].args, ["install", "--workspaces=false"]);
+  assert.deepEqual(planned.installations[1].args, ["install", "--workspace=selected"]);
+  assert(planned.installations.every((operation) => operation.cwd === root));
+});
+
+test("workspace registration respects exclusions and later explicit inclusion", async (t) => {
+  const root = await temporary(t);
+  await put(root, "package.json", { name: "root", workspaces: ["./packages/*", "!packages/skip"] });
+  await put(root, "packages/skip/package.json", { name: "skip" });
+  const selection = { layout: "workspaces", packages: [{ path: "packages/skip" }] };
+  await assert.rejects(proposal(root, selection), /not a registered npm workspace/);
+  await put(root, "package.json", { name: "root", workspaces: ["./packages/*", "!packages/skip", "packages/skip"] });
+  assert.equal((await proposal(root, selection)).conflicts.length, 0);
 });

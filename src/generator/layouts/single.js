@@ -1,12 +1,22 @@
 export function context(project, resolved) {
   return {
     ...project,
+    workspaceNames: Object.fromEntries(resolved.graph.packages.map((node) => [node.path, node.workspaceName])),
     excludes: [
       "**/node_modules/**",
       "**/vendor/**",
       "**/.git/**",
       "**/dist/**",
       "**/build/**",
+      "**/.phpstan-cache/**",
+      "**/.venv/**",
+      "**/__pycache__/**",
+      ...resolved.graph.candidates
+        .filter(
+          (candidate) =>
+            candidate.gitBoundary && (project.path === "." || candidate.path.startsWith(project.path + "/")),
+        )
+        .map((candidate) => candidate.path.slice(project.path === "." ? 0 : project.path.length + 1) + "/**"),
       ...project.children.map((child) => child.slice(project.path === "." ? 0 : project.path.length + 1) + "/**"),
     ],
     layout: resolved.request.layout,
