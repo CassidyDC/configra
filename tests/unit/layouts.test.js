@@ -66,7 +66,6 @@ test("nested package graph tracks nearest selected parents", async (t) => {
     layout: "nested",
     packages: [{ path: "packages/a" }, { path: "packages/b" }, { path: "packages/a/sub" }],
   });
-
   assert.equal(graph.packages.find((item) => item.path === "packages/a/sub").parent, "packages/a");
 });
 

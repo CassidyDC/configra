@@ -181,7 +181,6 @@ function resolvePackage(selection, node) {
 
   for (const language of ["php", "python"]) {
     const format = languageFormatting[language];
-
     if (chosenStandards[language]?.id === "community" && (format.indentStyle !== "space" || format.indentSize !== 4))
       throw new Error(`${language} community standard requires four-space indentation`);
   }
@@ -242,7 +241,6 @@ export function resolve(request, graph) {
     const inheritedTools = parent.toolOverrides?.filter(
       (id) => !tools[id].languages.length || tools[id].languages.some((language) => languages.includes(language)),
     );
-
     packages.push(
       resolvePackage(
         {

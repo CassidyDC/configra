@@ -52,7 +52,6 @@ export function matchesWorkspace(relative, patterns) {
   }
 
   const ancestors = relative.split("/").map((_, index, segments) => segments.slice(0, index + 1).join("/"));
-
   return (
     includes.some((pattern) => path.matchesGlob(relative, pattern)) &&
     !excludes.some((pattern) => ancestors.some((ancestor) => path.matchesGlob(ancestor, pattern)))

@@ -96,7 +96,6 @@ test("a different child project keeps its default tool integrations", async (t) 
     layout: "nested",
     packages: [{ path: "plugin", project: "wordpress-plugin" }],
   });
-
   assert.deepEqual(explicit.packages[1].tools, ["editorconfig"]);
 });
 

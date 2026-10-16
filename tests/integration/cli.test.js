@@ -173,7 +173,6 @@ for (const layout of ["nested", "workspaces"]) {
       .trim()
       .split("\n")
       .map((line) => JSON.parse(line));
-
     assert.deepEqual(visits.sort(), [".", ...children].sort());
   });
 }

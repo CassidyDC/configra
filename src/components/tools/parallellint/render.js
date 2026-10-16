@@ -14,7 +14,6 @@ import { hook } from "../shared.js";
  */
 export default function render(project) {
   const excludes = project.excludes.map((pattern) => pattern.replace(/^\*\*\//, "").replace(/\/\*\*$/, ""));
-
   return {
     composer: { "php-parallel-lint/php-parallel-lint": "^1.4" },
     scripts: {
