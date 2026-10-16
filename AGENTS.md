@@ -1,15 +1,20 @@
-<!-- Repository instructions for contributors and coding agents. -->
+# Agent Instructions
 
-# Repository guidance
+## Repository guidance
 
 - Finish each task or feature by committing its completed changes.
 - Match the existing commit message style and formatting; use a plain, sentence-case imperative subject without adding prefixes or changing the format.
 - When relevant, document completed tasks or features in `CHANGELOG.md` and `README.md`.
-- For all future updates, leave a blank line before every JSDoc block unless it starts on the first line of the file.
-- For all future updates, leave a blank line before control-flow statements (including `if`, loops, `switch`, `try`, `return`, `throw`, `break`, and `continue`) when another statement precedes them at the same level. Do not add padding at the start of a block or between attached `else`, `catch`, `finally`, or `do...while` continuations. Preserve the final single-line statement exception for `const` declarations below.
-- For all future updates, leave a blank line after each completed code block or control-flow statement (such as an if statement, loop, or function) when another block, statement, or expression follows at the same level. Omit the blank line when only closing syntax follows, and keep `else`, `catch`, `finally`, and `do...while` continuations attached.
-- For all future updates, also leave a blank line after each completed multiline expression statement, such as a function call, awaited call, or assignment, when another statement follows at the same level. Omit the blank line when only closing syntax follows; keep arguments and chained expressions together.
-- For all future updates, leave a blank line after each standalone `let`, `const`, or `var` declaration when the next statement is not another variable declaration. Consecutive variable declarations may remain together. Do not add padding before closing syntax or within loop headers.
-- For all future updates, add a blank line before and after any `const` declaration that spans more than three source lines, even when it is adjacent to another variable declaration.
-- Exception to the spacing rules above: when a standalone `const` declaration is followed by exactly one remaining statement in its containing code block, that statement occupies a single source line, and the block closes immediately afterward, omit the blank line between the declaration and that statement. This also applies to multiline `const` declarations; keep any required blank line before the declaration.
-- Exception to the spacing rules above: when every statement directly inside a code block occupies a single source line, omit blank lines between those statements. Apply this independently to each block, including function bodies and nested control-flow blocks. Keep comments attached to their code and preserve required spacing before JSDoc comments.
+
+## Code Spacing Rules
+
+- Put a blank line before each JSDoc block, except at the start of a file.
+- Separate a control-flow statement from the preceding statement at the same level with a blank line. This includes `if`, loops, `switch`, `try`, `return`, `throw`, `break`, and `continue`. Do not pad the start of a block or detach `else`, `catch`, `finally`, or `do...while` continuations.
+- Put a blank line after a completed block, control-flow statement, or multiline expression statement when another statement follows at the same level. Keep function-call arguments and chained expressions together.
+- Put a blank line after a standalone `let`, `const`, or `var` when the next statement is not another variable declaration. Keep consecutive variable declarations together; do not pad before closing syntax or inside loop headers.
+- Separate a `const` declaration spanning more than three source lines from neighboring statements with blank lines, including adjacent variable declarations.
+
+Exceptions to these spacing rules:
+
+- Keep a `const` and the single-line statement that immediately precedes its block’s closing syntax together, even when the `const` spans multiple lines. Retain any required blank line before the `const`.
+- If every statement directly inside a code block fits on one source line, omit blank lines between them. Apply this separately to nested blocks. Keep comments attached to their code and preserve spacing before JSDoc blocks.
