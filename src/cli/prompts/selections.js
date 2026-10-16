@@ -15,6 +15,7 @@ import { projects, tools } from "../../components/registry.js";
  */
 export async function collect(defaults = {}) {
   const prompt = createInterface({ input: stdin, output: stdout });
+
   /**
    * Ask one question, retaining the fallback when the answer is empty.
    *
@@ -23,6 +24,7 @@ export async function collect(defaults = {}) {
    * @returns {Promise<string>} Trimmed answer or the supplied fallback.
    */
   const ask = async (label, fallback) => (await prompt.question(`${label} [${fallback}]: `)).trim() || fallback;
+
   /**
    * Normalize a comma-separated answer into nonempty selection values.
    *

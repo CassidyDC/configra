@@ -22,12 +22,14 @@ import * as workspaces from "./layouts/workspaces.js";
  * @constant {string}
  */
 const STATE = ".cassidydc-toolset-state.json";
+
 /**
  * Versioned project selection filename.
  *
  * @constant {string}
  */
 const SELECTIONS = ".cassidydc-toolset.json";
+
 /**
  * Compare values using their serialized JSON representation.
  *
@@ -36,6 +38,7 @@ const SELECTIONS = ".cassidydc-toolset.json";
  * @returns {boolean} Whether serialization produces the same content.
  */
 const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
 /**
  * Recognize non-null objects while excluding arrays.
  *
@@ -43,6 +46,7 @@ const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
  * @returns {boolean} Whether the value has an object shape.
  */
 const object = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+
 /**
  * Join package-relative filenames using portable manifest path separators.
  *
@@ -69,6 +73,7 @@ function leaves(value, prefix = [], result = {}) {
   }
   return result;
 }
+
 /**
  * Read a nested manifest entry without requiring every ancestor to exist.
  *
@@ -79,6 +84,7 @@ function leaves(value, prefix = [], result = {}) {
 function get(value, keys) {
   return keys.reduce((current, key) => current?.[key], value);
 }
+
 /**
  * Set or remove a managed manifest leaf, creating object ancestors as necessary.
  *
@@ -117,6 +123,7 @@ function mergeContribution(target, contribution) {
   }
   target.hooks.push(...(contribution.hooks ?? []));
 }
+
 /**
  * Create independent accumulators for every supported contribution category.
  *
@@ -235,6 +242,7 @@ export async function plan(resolved) {
       installations.push(composerInstallation(root, project.path));
     }
   }
+
   /**
    * Format supported generated content using the owning package's selected Prettier settings.
    *
@@ -265,6 +273,7 @@ export async function plan(resolved) {
     if (old && !["file", "json", "lines"].includes(old.kind)) throw new Error(`Invalid generation state for ${name}`);
     const entry = desired.get(name);
     let after;
+
     /**
      * Record a conflict against the file currently being planned.
      *

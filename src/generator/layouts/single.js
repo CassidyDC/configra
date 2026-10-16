@@ -53,6 +53,7 @@ export function scripts(project, contribution) {
   if (checks.length) result.lint = "npm run lint:local";
   return result;
 }
+
 /**
  * Keep dependency declarations owned by the package that requires them.
  *

@@ -38,6 +38,7 @@ async function gitBoundary(root) {
  */
 export async function discover(root) {
   const candidates = [];
+
   /**
    * Accumulate candidates below one directory, stopping at independent Git repositories.
    *

@@ -51,12 +51,14 @@ import renderWebpack from "./tools/webpack/render.js";
  * @type {Object<string, ProjectDefinition>}
  */
 export const projects = Object.fromEntries([node, php, python, site, plugin, theme].map((item) => [item.id, item]));
+
 /**
  * Explicitly registered optional language capabilities.
  *
  * @type {Object<string, CapabilityDefinition>}
  */
 export const capabilities = { react, typescript };
+
 /**
  * Supported standards indexed first by language and then standard identifier.
  *
@@ -68,6 +70,7 @@ export const standards = {
   php: { community: phpCommunity, wordpress: phpWordpress },
   python: { community: pythonCommunity },
 };
+
 /**
  * Supported tool metadata and pure renderer implementations.
  *

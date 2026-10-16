@@ -22,6 +22,7 @@ export function installation(root, packagePath) {
     cwd: path.resolve(root, packagePath),
   };
 }
+
 /**
  * Execute a prepared composer operation through the shared process adapter.
  *

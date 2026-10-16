@@ -9,6 +9,7 @@ import path from "node:path";
  * @returns {string|null} SHA-256 digest, or null when the file is absent.
  */
 export const hash = (content) => (content === null ? null : createHash("sha256").update(content).digest("hex"));
+
 /**
  * Serialize a JSON value with two-space indentation and a trailing newline.
  *

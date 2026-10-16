@@ -10,6 +10,7 @@
  * @returns {string} Indented JSON text.
  */
 export const json = (value) => JSON.stringify(value, null, 2) + "\n";
+
 /**
  * Escape text used in generated XML attributes and element content.
  *
@@ -18,6 +19,7 @@ export const json = (value) => JSON.stringify(value, null, 2) + "\n";
  */
 export const xml = (value) =>
   String(value).replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
 /**
  * Derive JavaScript-family filename globs from the selected capabilities.
  *
@@ -27,6 +29,7 @@ export const xml = (value) =>
 export const patterns = (project) => [
   `**/*.{js,mjs,cjs${project.capabilities.includes("react") ? ",jsx" : ""}${project.capabilities.includes("typescript") ? ",ts,mts,cts" : ""}${project.capabilities.includes("react") && project.capabilities.includes("typescript") ? ",tsx" : ""}}`,
 ];
+
 /**
  * Create a staged check requirement for later package and Git-root routing.
  *

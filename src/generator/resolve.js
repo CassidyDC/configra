@@ -47,6 +47,7 @@ function validateSelection(input, allowed) {
       if (!["indentStyle", "indentSize", "endOfLine", "printWidth"].includes(key))
         throw new Error(`Unsupported formatting option: ${key}`);
 }
+
 /**
  * Selection fields shared by root requests and child package overrides.
  *

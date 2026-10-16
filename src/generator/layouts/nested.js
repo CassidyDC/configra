@@ -14,6 +14,7 @@ import { quote } from "../../platform/process.js";
  * @see module:generator/layouts/single.context
  */
 export { context };
+
 /**
  * Keep dependency declarations owned by the package that requires them.
  *

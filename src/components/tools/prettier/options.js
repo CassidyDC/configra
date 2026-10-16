@@ -6,6 +6,7 @@
  */
 
 // WordPress baseline mirrors @wordpress/prettier-config; resolved formatting wins.
+
 /**
  * Combine the documented WordPress baseline with resolved global and language formatting.
  *
@@ -13,6 +14,8 @@
  * @returns {PrettierConfig} Formatter options shared by generation and generated configuration.
  */
 export function options(project) {
+  // prettier-ignore
+
   /**
    * Translate shared formatting choices into native Prettier options.
    *

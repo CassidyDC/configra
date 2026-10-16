@@ -26,6 +26,7 @@ export async function temporary(t) {
   t.after(() => fs.rm(root, { recursive: true, force: true }));
   return root;
 }
+
 /**
  * Create a fixture file, serializing non-string content as JSON.
  *
@@ -41,6 +42,7 @@ export async function put(root, name, content) {
     typeof content === "string" ? content : JSON.stringify(content, null, 2) + "\n",
   );
 }
+
 /**
  * Read a fixture file as UTF-8 text.
  *
@@ -49,6 +51,7 @@ export async function put(root, name, content) {
  * @returns {Promise<string>} File content.
  */
 export const read = (root, name) => fs.readFile(path.join(root, name), "utf8");
+
 /**
  * Read and parse a fixture JSON file.
  *
@@ -57,6 +60,7 @@ export const read = (root, name) => fs.readFile(path.join(root, name), "utf8");
  * @returns {Promise<JsonValue>} Parsed fixture value.
  */
 export const readJson = async (root, name) => JSON.parse(await read(root, name));
+
 /**
  * Build a complete generation proposal for an isolated fixture project.
  *
@@ -68,6 +72,7 @@ export async function proposal(root, input = {}) {
   const request = normalizeRequest(input);
   return plan(resolve(request, await packageGraph(root, request)));
 }
+
 /**
  * Plan and apply generation to an isolated fixture project.
  *
