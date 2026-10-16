@@ -9,12 +9,12 @@
     "url": "https://cassidydc.com"
   },
   "bin": {
-    "cdctool": "./src/cli.js"
+    "cdctool": "./bin/cdctool.js"
   },
   "files": [
+    "bin",
     "src"
   ],
-  "main": "src/cli.js",
   "type": "module",
   "homepage": "https://github.com/CassidyDC/cassidydc-toolset/blob/main/README.md",
   "repository": {
@@ -50,6 +50,10 @@
     "lint:docs": "npx markdownlint-cli2 \"**/*.md\"",
     "lint:docs:fix": "npx markdownlint-cli2 \"**/*.md\" --fix",
     "lint:scripts": "npx eslint",
-    "lint:scripts:fix": "npx eslint --fix"
+    "lint:scripts:fix": "npx eslint --fix",
+    "test": "node --test tests/unit/*.test.js tests/integration/*.test.js"
+  },
+  "engines": {
+    "node": ">=24.0.0"
   }
 }

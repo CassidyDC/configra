@@ -8,6 +8,7 @@
  */
 
 import js from "@eslint/js";
+import globals from "globals";
 import { defineConfig, globalIgnores, includeIgnoreFile } from "eslint/config";
 import { fileURLToPath, URL } from "node:url";
 import { importX } from "eslint-plugin-import-x";
@@ -27,6 +28,7 @@ export default defineConfig([
       "js/recommended",
     ],
     files: ["**/*.js"],
+    languageOptions: { globals: globals.node },
     linterOptions: {
       reportUnusedInlineConfigs: "warn",
     },
