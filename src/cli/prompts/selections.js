@@ -36,6 +36,7 @@ export async function collect(defaults = {}) {
       .split(",")
       .map((item) => item.trim())
       .filter(Boolean);
+
   try {
     const project = await ask(`Project (${Object.keys(projects).join(", ")})`, defaults.project ?? "node");
     const definition = projects[project];
@@ -78,6 +79,7 @@ export async function collect(defaults = {}) {
               (defaults.packages ?? []).map((item) => item.path).join(","),
             ),
           ).map((path) => defaults.packages?.find((item) => item.path === path) ?? { path });
+
     return { ...defaults, project, languages, capabilities, standards, tools: selectedTools, layout, packages };
   } finally {
     prompt.close();

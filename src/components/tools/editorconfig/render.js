@@ -26,6 +26,7 @@ export default function render(project) {
 
   for (const language of project.languages) {
     const format = project.languageFormatting[language];
+
     lines.push(
       "",
       `[*.${extensions[language]}]`,

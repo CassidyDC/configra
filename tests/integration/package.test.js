@@ -11,6 +11,7 @@ import { temporary, put, read } from "../helpers.js";
  * @constant {string}
  */
 const repository = fileURLToPath(new URL("../../", import.meta.url));
+
 test("packed npm artifact runs independently and locates module-relative templates", async (t) => {
   const destination = await temporary(t);
   const cache = path.join(destination, "cache");

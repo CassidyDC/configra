@@ -17,6 +17,7 @@ import { workspacePatterns, matchesWorkspace } from "../platform/npm.js";
  */
 async function gitBoundary(root) {
   let cursor = root;
+
   while (true) {
     try {
       await fs.lstat(path.join(cursor, ".git"));
@@ -133,6 +134,7 @@ export async function packageGraph(root, request) {
 
   for (const node of packages) {
     const name = path.posix.join(node.path, "package.json");
+
     snapshots[name] = hash(await read(root, name));
   }
 

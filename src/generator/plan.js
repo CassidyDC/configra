@@ -204,6 +204,7 @@ export async function plan(resolved) {
 
     for (const requirement of contribution.hooks) {
       const prefix = project.path === "." ? "" : project.path + "/";
+
       hooks.push({
         ...requirement,
         id: `${project.path}:${requirement.id}`,
@@ -372,6 +373,7 @@ export async function plan(resolved) {
           // Never replace a scalar ancestor (e.g. allow-plugins: false) silently.
           for (let i = 1; i < keys.length; i++) {
             const parent = get(existing, keys.slice(0, i));
+
             if (parent !== undefined && !object(parent))
               conflict(`Conflicting manifest structure: ${keys.slice(0, i).join(".")}`);
           }

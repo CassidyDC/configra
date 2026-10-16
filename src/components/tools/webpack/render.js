@@ -39,6 +39,7 @@ export default function render(project) {
       ? "jsx"
       : "js";
   const template = readFileSync(new URL("./templates/webpack.config.mjs", import.meta.url), "utf8");
+
   return {
     files: {
       "webpack.config.mjs": template

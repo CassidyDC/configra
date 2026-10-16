@@ -92,6 +92,7 @@ export async function safePath(root, relative) {
  */
 export async function read(root, relative) {
   const target = await safePath(root, relative);
+
   try {
     return await fs.readFile(target, "utf8");
   } catch (error) {
@@ -146,6 +147,7 @@ export async function write(root, relative, content) {
   await fs.mkdir(path.dirname(target), { recursive: true });
   const temporary = `${target}.${randomUUID()}.tmp`;
   let created = false;
+
   try {
     const handle = await fs.open(temporary, "wx");
 
@@ -171,6 +173,7 @@ export async function write(root, relative, content) {
  */
 export async function directories(root) {
   const entries = await fs.readdir(root, { withFileTypes: true });
+
   return entries
     .filter(
       (entry) =>

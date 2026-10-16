@@ -71,6 +71,7 @@ export const readJson = async (root, name) => JSON.parse(await read(root, name))
  */
 export async function proposal(root, input = {}) {
   const request = normalizeRequest(input);
+
   return plan(resolve(request, await packageGraph(root, request)));
 }
 
@@ -84,5 +85,6 @@ export async function proposal(root, input = {}) {
  */
 export async function generate(root, input = {}, options = {}) {
   const planned = await proposal(root, input);
+
   return { planned, result: await apply(planned, options) };
 }

@@ -13,6 +13,7 @@ import { json, hook } from "../shared.js";
  */
 export default function render(project) {
   const standard = project.standards.css.settings.extends;
+
   return {
     files: {
       "stylelint.config.mjs": `export default ${json({ extends: [standard], ignoreFiles: project.excludes })};\n`,

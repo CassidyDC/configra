@@ -151,16 +151,19 @@ test("deselection removes unchanged generated output while preserving user data"
 
 test("new output already matches the generated formatter configuration", async (t) => {
   const { check, resolveConfig } = await import("prettier");
+
   for (const selection of [
     { project: "node" },
     { ...plugin, standards: { javascript: "community", php: "community" } },
   ]) {
     const root = await temporary(t);
     const { planned } = await generate(root, selection);
+
     for (const change of planned.changes.filter(
       (item) => /\.(?:[cm]?js|jsonc?|ya?ml)$/.test(item.path) && item.path !== ".cassidydc-toolset-state.json",
     )) {
       const filename = path.join(root, change.path);
+
       assert(
         await check(await read(root, change.path), { ...(await resolveConfig(filename)), filepath: filename }),
         change.path,
