@@ -12,6 +12,7 @@
 - Separate a control-flow statement from the preceding statement at the same level with a blank line. This includes `if`, loops, `switch`, `try`, `return`, `throw`, `break`, and `continue`. Do not pad the start of a block or detach `else`, `catch`, `finally`, or `do...while` continuations.
 - Put a blank line after a completed block, control-flow statement, or multiline expression statement when another statement follows at the same level. Keep function-call arguments and chained expressions together.
 - Put a blank line after a standalone `let`, `const`, or `var` when the next statement is not another variable declaration. Keep consecutive variable declarations together; do not pad before closing syntax or inside loop headers.
+- Put a blank line after every export declaration, including `export const`, before any following code or comment.
 - Separate a `const` declaration spanning more than three source lines from neighboring statements with blank lines, including adjacent variable declarations.
 
 Exceptions to these spacing rules:
