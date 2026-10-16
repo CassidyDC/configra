@@ -19,7 +19,6 @@ const plugin = { project: "wordpress-plugin" };
 test("standalone plugin generates self-contained files and repeat generation has no changes", async (t) => {
   const root = await temporary(t);
   const { result } = await generate(root, plugin);
-
   assert(result.generated);
   assert.match(await read(root, "phpcs.xml.dist"), /ref="WordPress"/);
   assert.match(await read(root, "eslint.config.mjs"), /wordpress.configs.recommended/);
@@ -29,10 +28,8 @@ test("standalone plugin generates self-contained files and repeat generation has
 
 test("planning and conflicts make no project writes", async (t) => {
   const root = await temporary(t);
-
   await put(root, ".editorconfig", "# custom editor settings\n");
   const planned = await proposal(root, plugin);
-
   assert(planned.conflicts.some((item) => item.path === ".editorconfig"));
   await assert.rejects(apply(planned), /Unresolved conflicts/);
   assert.deepEqual(await fs.readdir(root), [".editorconfig"]);
@@ -40,18 +37,15 @@ test("planning and conflicts make no project writes", async (t) => {
 
 test("updates preserve edited files and unrelated manifest content", async (t) => {
   const root = await temporary(t);
-
   await fs.cp(new URL("../fixtures/wordpress-plugin/", import.meta.url), root, { recursive: true });
   await generate(root, plugin);
   const manifest = await readJson(root, "package.json");
-
   assert.equal(manifest.version, "1.2.3");
   assert.equal(manifest.scripts.test, "echo keep-test");
   assert.deepEqual(manifest.custom, { keep: true });
   assert.equal(manifest.dependencies["existing-package"], "^1.0.0");
   await fs.appendFile(path.join(root, "eslint.config.mjs"), "// user override\n");
   const planned = await proposal(root, { ...plugin, standards: { javascript: "community" } });
-
   assert(planned.conflicts.some((item) => item.path === "eslint.config.mjs"));
   await assert.rejects(apply(planned));
   assert.match(await read(root, "eslint.config.mjs"), /user override/);
@@ -61,15 +55,12 @@ test("updates preserve edited files and unrelated manifest content", async (t) =
 
 test("modified and deleted generated scripts require resolution", async (t) => {
   const root = await temporary(t);
-
   await generate(root, plugin);
   const manifest = await readJson(root, "package.json");
-
   manifest.scripts["lint:js"] = "echo custom";
   delete manifest.scripts["lint:css"];
   await put(root, "package.json", manifest);
   const planned = await proposal(root, plugin);
-
   assert(planned.conflicts.some((item) => item.reason.includes("lint:js")));
   assert(planned.conflicts.some((item) => item.reason.includes("lint:css")));
 });
@@ -97,7 +88,6 @@ test("gitignore and VS Code contributions preserve unrelated entries", async (t)
 test("application rejects files changed since planning before any writes", async (t) => {
   const root = await temporary(t);
   const planned = await proposal(root, plugin);
-
   await put(root, "package.json", { name: "concurrently-created" });
   await assert.rejects(apply(planned), /Project changed after planning/);
   assert.deepEqual(await fs.readdir(root), ["package.json"]);
@@ -106,7 +96,6 @@ test("application rejects files changed since planning before any writes", async
 test("symbolic links cannot escape the selected boundary", async (t) => {
   const root = await temporary(t);
   const outside = await temporary(t);
-
   await fs.symlink(outside, path.join(root, ".vscode"));
   await assert.rejects(proposal(root, plugin), /symbolic link/);
   assert.deepEqual(await fs.readdir(outside), []);
@@ -143,7 +132,6 @@ test("unrequested installations never execute", async (t) => {
 
 test("deselection removes unchanged generated output while preserving user data", async (t) => {
   const root = await temporary(t);
-
   await generate(root, plugin);
   await generate(root, { ...plugin, tools: ["editorconfig"] });
   await assert.rejects(read(root, "eslint.config.mjs"), { code: "ENOENT" });
@@ -184,7 +172,6 @@ test("a write failure reports partial progress without recording successful stat
   const result = await apply(planned, {
     writeFile: async (...args) => {
       if (++writes === 2) throw new Error("Simulated disk failure");
-
       return write(...args);
     },
   });
@@ -197,10 +184,8 @@ test("a write failure reports partial progress without recording successful stat
 
 test("competing active configuration is reported before explicit replacement", async (t) => {
   const root = await temporary(t);
-
   await put(root, "eslint.config.js", "export default [];\n");
   const planned = await proposal(root, { tools: ["eslint"] });
-
   assert(planned.conflicts.some((item) => item.path === "eslint.config.js"));
   await assert.rejects(apply(planned));
   assert.deepEqual(await fs.readdir(root), ["eslint.config.js"]);

@@ -85,9 +85,7 @@ export function normalizeRequest(input = {}) {
   request.packages = request.packages
     .map((item) => {
       if (typeof item === "string") return { path: relativePath(item) };
-
       validateSelection(item, [...selectionFields, "path"]);
-
       return { ...item, path: relativePath(item.path) };
     })
     .sort((a, b) => a.path.localeCompare(b.path));

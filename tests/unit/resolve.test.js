@@ -60,7 +60,6 @@ test("child selections inherit standards and support language-specific overrides
 
 test("capabilities compose without selecting a bundler", async (t) => {
   const result = await resolved(t, { project: "wordpress-theme", capabilities: ["react", "typescript"] });
-
   assert.deepEqual(result.packages[0].capabilities, ["react", "typescript"]);
   assert(!result.packages[0].tools.includes("webpack"));
 });

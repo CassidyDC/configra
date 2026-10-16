@@ -76,7 +76,6 @@ export async function safePath(root, relative) {
       if ((await fs.lstat(cursor)).isSymbolicLink()) throw new Error(`Refusing symbolic link: ${relative}`);
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
-
       break;
     }
   }
@@ -98,7 +97,6 @@ export async function read(root, relative) {
     return await fs.readFile(target, "utf8");
   } catch (error) {
     if (error.code === "ENOENT") return null;
-
     throw error;
   }
 }
@@ -119,9 +117,7 @@ export async function readJson(root, relative, fallback = null) {
 
   try {
     const parsed = JSON.parse(content);
-
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Expected a JSON object");
-
     return parsed;
   } catch (error) {
     throw new Error(`Invalid JSON in ${relative}: ${error.message}`, { cause: error });
@@ -142,7 +138,6 @@ export async function write(root, relative, content) {
 
   if (content === null) {
     await fs.unlink(target);
-
     return;
   }
 

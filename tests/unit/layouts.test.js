@@ -92,12 +92,10 @@ test("root hooks route staged files by package ownership", async (t) => {
 
 test("Git boundary is distinct from package boundary", async (t) => {
   const root = await temporary(t);
-
   await fs.mkdir(path.join(root, ".git"));
   await put(root, "child/package.json", {});
   const child = path.join(root, "child");
   const planned = await proposal(child);
-
   assert(planned.diagnostics.some((message) => message.includes("Git root")));
   assert(!planned.changes.some((item) => item.path === "lefthook.yml"));
   await fs.mkdir(path.join(child, ".git"));
@@ -123,11 +121,9 @@ test("local checks exclude independent Git repositories and analysis caches", as
 
 test("npm installation commands stay scoped to selected package owners", async (t) => {
   const root = await temporary(t);
-
   await put(root, "package.json", { name: "root", workspaces: ["packages/*"] });
   await put(root, "packages/selected/package.json", { name: "selected" });
   const planned = await proposal(root, { layout: "workspaces", packages: [{ path: "packages/selected" }] });
-
   assert.deepEqual(planned.installations[0].args, ["install", "--workspaces=false"]);
   assert.deepEqual(planned.installations[1].args, ["install", "--workspace=selected"]);
   assert(planned.installations.every((operation) => operation.cwd === root));
@@ -135,11 +131,9 @@ test("npm installation commands stay scoped to selected package owners", async (
 
 test("workspace registration respects exclusions and later explicit inclusion", async (t) => {
   const root = await temporary(t);
-
   await put(root, "package.json", { name: "root", workspaces: ["./packages/*", "!packages/skip"] });
   await put(root, "packages/skip/package.json", { name: "skip" });
   const selection = { layout: "workspaces", packages: [{ path: "packages/skip" }] };
-
   await assert.rejects(proposal(root, selection), /not a registered npm workspace/);
   await put(root, "package.json", { name: "root", workspaces: ["./packages/*", "!packages/skip", "packages/skip"] });
   assert.equal((await proposal(root, selection)).conflicts.length, 0);

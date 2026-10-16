@@ -101,9 +101,7 @@ function set(value, keys, next) {
 
   for (const key of keys.slice(0, -1)) {
     if (["__proto__", "prototype", "constructor"].includes(key)) throw new Error("Unsafe manifest key");
-
     if (!object(current[key])) current[key] = {};
-
     current = current[key];
   }
 

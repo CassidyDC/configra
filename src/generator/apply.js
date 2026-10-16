@@ -40,7 +40,6 @@ export async function apply(
       result.applied.push(change.path);
     } catch (error) {
       result.failed.push({ path: change.path, error: error.message });
-
       return result;
     }
   }

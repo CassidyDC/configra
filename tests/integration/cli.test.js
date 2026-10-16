@@ -29,7 +29,6 @@ const run = (root, ...args) => spawnSync(process.execPath, [executable, ...args,
 test("CLI init, saved update, and dry run are reproducible", async (t) => {
   const root = await temporary(t);
   let result = run(root, "init", "--project", "wordpress-plugin", "--dry-run", "--json", "--install");
-
   assert.equal(result.status, 0, result.stderr);
   assert(JSON.parse(result.stdout).changes.length > 0);
   assert.deepEqual(await fs.readdir(root), []);
@@ -77,7 +76,6 @@ test("config and argument selections produce equivalent requests", async (t) => 
 
 test("CLI conflicts return failure without writes; explicit force resolves them", async (t) => {
   const root = await temporary(t);
-
   await put(root, ".editorconfig", "custom\n");
   assert.equal(run(root, "init").status, 1);
   assert.deepEqual(await fs.readdir(root), [".editorconfig"]);
@@ -97,7 +95,6 @@ test("invalid CLI selections and missing update state have readable errors", asy
     ["init", "--unknown"],
   ]) {
     const result = run(root, ...args);
-
     assert.equal(result.status, 1);
     assert(result.stderr.trim());
     assert(!result.stderr.includes("at file:"));
@@ -185,20 +182,16 @@ for (const layout of ["nested", "workspaces"]) {
 
 test("root-local ESLint skips selected child files", async (t) => {
   const root = await temporary(t);
-
   await put(root, "child/package.json", { name: "child" });
   const generated = run(root, "init", "--tools", "eslint", "--layout", "nested", "--package", "child");
-
   assert.equal(generated.status, 0, generated.stderr);
   await fs.symlink(fileURLToPath(new URL("../../node_modules", import.meta.url)), path.join(root, "node_modules"));
   await put(root, "root.js", "export const value = 1;\n");
   await put(root, "child/failing.js", "missingGlobal();\n");
   const eslint = fileURLToPath(new URL("../../node_modules/eslint/bin/eslint.js", import.meta.url));
   const local = spawnSync(process.execPath, [eslint, "."], { cwd: root, encoding: "utf8" });
-
   assert.equal(local.status, 0, local.stderr + local.stdout);
   const child = spawnSync(process.execPath, [eslint, "."], { cwd: path.join(root, "child"), encoding: "utf8" });
-
   assert.equal(child.status, 1);
   assert.match(child.stdout, /missingGlobal/);
 });
@@ -206,10 +199,8 @@ test("root-local ESLint skips selected child files", async (t) => {
 test("JSON application output distinguishes the plan from its result", async (t) => {
   const root = await temporary(t);
   const result = run(root, "init", "--json", "--tools", "editorconfig");
-
   assert.equal(result.status, 0, result.stderr);
   const output = JSON.parse(result.stdout);
-
   assert(output.changes.length > 0);
   assert.equal(output.result.generated, true);
   assert.equal(output.result.applied.length, output.changes.length);

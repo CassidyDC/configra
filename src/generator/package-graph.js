@@ -21,7 +21,6 @@ async function gitBoundary(root) {
   while (true) {
     try {
       await fs.lstat(path.join(cursor, ".git"));
-
       return cursor;
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
@@ -66,7 +65,6 @@ export async function discover(root) {
       try {
         await fs.lstat(path.join(root, next, ".git"));
         candidates.push({ path: next, manifests: [], gitBoundary: true });
-
         continue;
       } catch (error) {
         if (error.code !== "ENOENT") throw error;
