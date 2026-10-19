@@ -29,8 +29,7 @@ a pseudo-terminal.
 
 Evidence is marked **reproduced**, **source and upstream metadata**, or
 **coverage/support gap**. Fresh network dependency installations and Windows
-execution were not performed. Python linting and environment installation are
-already explicitly unsupported; they are not counted as implementation defects.
+execution were not performed. Python support is outside the current project scope.
 
 ## Priority 1
 

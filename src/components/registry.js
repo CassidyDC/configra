@@ -5,7 +5,6 @@
 
 import node from "./projects/node.js";
 import php from "./projects/php.js";
-import python from "./projects/python.js";
 import site from "./projects/wordpress/site.js";
 import plugin from "./projects/wordpress/plugin.js";
 import theme from "./projects/wordpress/theme.js";
@@ -17,7 +16,6 @@ import cssCommunity from "./standards/css/community.js";
 import cssWordpress from "./standards/css/wordpress.js";
 import phpCommunity from "./standards/php/community.js";
 import phpWordpress from "./standards/php/wordpress.js";
-import pythonCommunity from "./standards/python/community.js";
 import editorconfig from "./tools/editorconfig/definition.js";
 import renderEditorconfig from "./tools/editorconfig/render.js";
 import gitignore from "./tools/gitignore/definition.js";
@@ -55,7 +53,7 @@ import renderWebpack from "./tools/webpack/render.js";
  *
  * @type {Object<string, ProjectDefinition>}
  */
-export const projects = Object.fromEntries([node, php, python, site, plugin, theme].map((item) => [item.id, item]));
+export const projects = Object.fromEntries([node, php, site, plugin, theme].map((item) => [item.id, item]));
 
 /**
  * Explicitly registered optional language capabilities.
@@ -73,7 +71,6 @@ export const standards = {
   javascript: { community: jsCommunity, wordpress: jsWordpress },
   css: { community: cssCommunity, wordpress: cssWordpress },
   php: { community: phpCommunity, wordpress: phpWordpress },
-  python: { community: pythonCommunity },
 };
 
 /**

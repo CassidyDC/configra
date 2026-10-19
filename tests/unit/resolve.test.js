@@ -73,10 +73,8 @@ test("unsupported selections and inconsistent formatting are rejected", async (t
   for (const input of [
     { project: "unknown" },
     { languages: ["javascript"], standards: { php: "wordpress" } },
-    { project: "python", capabilities: ["react"] },
     { languages: ["css"], tools: ["eslint"] },
     { project: "php", formatting: { indentSize: 2 } },
-    { project: "python", standards: { python: "wordpress" } },
   ])
     await assert.rejects(resolved(t, input));
 

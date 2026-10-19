@@ -140,8 +140,7 @@ function resolvePackage(selection, node) {
   for (const language of languages)
     chosenStandards[language] =
       standards[language][
-        selection.standards?.[language] ??
-          (project.environment === "wordpress" && language !== "python" ? "wordpress" : "community")
+        selection.standards?.[language] ?? (project.environment === "wordpress" ? "wordpress" : "community")
       ];
 
   const defaults = project.tools.filter(
@@ -185,7 +184,7 @@ function resolvePackage(selection, node) {
     ]),
   );
 
-  for (const language of ["php", "python"]) {
+  for (const language of ["php"]) {
     const format = languageFormatting[language];
 
     if (chosenStandards[language]?.id === "community" && (format.indentStyle !== "space" || format.indentSize !== 4))

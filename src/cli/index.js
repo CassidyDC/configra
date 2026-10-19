@@ -22,8 +22,8 @@ const help = `CassidyDC Toolset
 Usage: cdctool <init|update|discover> [options]
 
   --cwd <path>            Existing project directory (default: current directory)
-  --project <id>          node, php, python, wordpress-site, wordpress-plugin, wordpress-theme
-  --languages <list>      Comma-separated javascript,css,php,python
+  --project <id>          node, php, wordpress-site, wordpress-plugin, wordpress-theme
+  --languages <list>      Comma-separated javascript,css,php
   --capabilities <list>   Comma-separated react,typescript (does not select webpack)
   --standard <lang=id>    Repeat per language: javascript=community or php=wordpress
   --tools <list>          Explicit comma-separated tool selection; empty disables all tools

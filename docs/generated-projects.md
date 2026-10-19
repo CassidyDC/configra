@@ -37,7 +37,7 @@ The project environment stays WordPress while the specified languages use
 community standards. CSS retains its WordPress default. The resolver derives
 EditorConfig and formatter options from language-specific formatting choices.
 Explicit formatting overrides must remain compatible with supported standards;
-PSR-12 and Python community indentation require four spaces; WordPress PHP
+PSR-12 indentation requires four spaces; WordPress PHP
 requires tabs with a width of four. PHP standards require LF line endings.
 
 ## Nested packages and overrides

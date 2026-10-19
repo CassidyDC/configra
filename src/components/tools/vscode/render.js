@@ -25,8 +25,6 @@ export default function render(project) {
 
   if (project.languages.includes("php")) recommendations.push("bmewburn.vscode-intelephense-client");
 
-  if (project.languages.includes("python")) recommendations.push("ms-python.python");
-
   return {
     jsonFiles: {
       ".vscode/extensions.json": { recommendations },

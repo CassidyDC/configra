@@ -6,7 +6,7 @@ CassidyDC Toolset overview, installation, usage, and development guidance.
 
 # CassidyDC Toolset
 
-Generate editable development configuration for Node.js, PHP, Python, and WordPress
+Generate editable development configuration for Node.js, PHP, and WordPress
 sites, plugins, and themes. Requires Node.js 24 or newer. PHP tools additionally
 require PHP and Composer when installed or run.
 
@@ -56,9 +56,6 @@ Use `--config selections.json` for per-package project, language, capability,
 standard, tool, and formatting overrides. `--tools` replaces the default tool list.
 Generated `lint:local` scripts check one package; `lint` also delegates to selected
 children. Root checks exclude selected child directories.
-
-Python currently provides editor, ignore, Markdown, and VS Code configuration;
-Python linting and environment installation are not yet integrated.
 
 ## Development and reference
 

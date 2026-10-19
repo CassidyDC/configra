@@ -34,8 +34,6 @@ This CLI creates a toolset based on the arguments passed to it. For example, if 
   - MarkdownLint
 - PHP
   - PHPStan
-- Python
-  - ??
 - React
   - ??
 - SCSS

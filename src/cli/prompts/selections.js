@@ -59,8 +59,7 @@ export async function collect(defaults = {}) {
     for (const language of languages)
       standards[language] = await ask(
         `${language} standard`,
-        defaults.standards?.[language] ??
-          (definition.environment === "wordpress" && language !== "python" ? "wordpress" : "community"),
+        defaults.standards?.[language] ?? (definition.environment === "wordpress" ? "wordpress" : "community"),
       );
 
     const selectedTools = split(

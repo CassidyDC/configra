@@ -182,7 +182,7 @@ export async function directories(root) {
       (entry) =>
         entry.isDirectory() &&
         !entry.name.startsWith(".") &&
-        !["node_modules", "vendor", "dist", "build", "__pycache__"].includes(entry.name),
+        !["node_modules", "vendor", "dist", "build"].includes(entry.name),
     )
     .map((entry) => entry.name)
     .sort();

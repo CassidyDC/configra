@@ -47,9 +47,8 @@ writes. Templates are located relative to the installed module. Prettier is the
 runtime formatting dependency used to render output consistently with generated settings.
 
 The community baselines are ESLint recommended for JavaScript, Stylelint standard
-for CSS, PSR-12 for PHP, and PEP 8 indentation for Python. Python currently has no
-linting or environment-installation integration. These names describe the chosen
-baselines rather than a universal community convention.
+for CSS, and PSR-12 for PHP. These names describe the chosen baselines rather than
+a universal community convention.
 
 ## Ownership and layouts
 

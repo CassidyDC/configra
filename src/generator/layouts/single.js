@@ -28,8 +28,6 @@ export function context(project, resolved) {
       "**/dist/**",
       "**/build/**",
       "**/.phpstan-cache/**",
-      "**/.venv/**",
-      "**/__pycache__/**",
       ...resolved.graph.candidates
         .filter(
           (candidate) =>
