@@ -1,0 +1,9 @@
+**/node_modules/**
+**/vendor/**
+**/.git/**
+**/dist/**
+**/build/**
+**/.phpstan-cache/**
+.cassidydc-toolset-state.json
+package-lock.json
+composer.lock

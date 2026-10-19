@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "files": {
+    ".editorconfig": {
+      "kind": "file",
+      "hash": "ab4913c12e5cf3e0a41b435e7f4666d48bed1d708f153386366a8d241a082104"
+    },
+    ".gitignore": {
+      "kind": "lines",
+      "entries": [
+        "node_modules/",
+        ".DS_Store"
+      ]
+    },
+    ".markdownlint-cli2.jsonc": {
+      "kind": "file",
+      "hash": "0343fb1bd5b6cf158e3010b33e6e3a67e6558e8ce281c2c701f1ebf3e5c5fa7d"
+    },
+    ".prettierignore": {
+      "kind": "file",
+      "hash": "902b6fbd34b63ff8175096f34f963e4793a4f626d0987027e9a94c567e887a3f"
+    },
+    ".vscode/extensions.json": {
+      "kind": "json",
+      "entries": {
+        "[\"recommendations\"]": [
+          "editorconfig.editorconfig",
+          "dbaeumer.vscode-eslint",
+          "esbenp.prettier-vscode"
+        ]
+      }
+    },
+    ".vscode/settings.json": {
+      "kind": "json",
+      "entries": {
+        "[\"editor.insertSpaces\"]": true,
+        "[\"editor.tabSize\"]": 2,
+        "[\"[javascript]\",\"editor.insertSpaces\"]": true,
+        "[\"[javascript]\",\"editor.tabSize\"]": 2
+      }
+    },
+    "eslint.config.mjs": {
+      "kind": "file",
+      "hash": "cbbe67729f2c7f00a07f52f23571c4dac485dc80bea85bad97f918187552722f"
+    },
+    "lefthook.yml": {
+      "kind": "file",
+      "hash": "fa9d2bd63b6a5e88e50f3441cc0cc5203c6b4737463e6bf17a8315a34d699aa4"
+    },
+    "package.json": {
+      "kind": "json",
+      "entries": {
+        "[\"scripts\",\"lint:js\"]": "eslint .",
+        "[\"scripts\",\"lint:markdown\"]": "markdownlint-cli2 \"**/*.md\"",
+        "[\"scripts\",\"format:check\"]": "prettier . --check",
+        "[\"scripts\",\"format\"]": "prettier . --write",
+        "[\"scripts\",\"hooks:install\"]": "lefthook install",
+        "[\"scripts\",\"lint:local\"]": "npm run format:check && npm run lint:js && npm run lint:markdown",
+        "[\"scripts\",\"lint\"]": "npm run lint:local",
+        "[\"devDependencies\",\"eslint\"]": "^10.0.0",
+        "[\"devDependencies\",\"globals\"]": "^17.0.0",
+        "[\"devDependencies\",\"@eslint/js\"]": "^10.0.0",
+        "[\"devDependencies\",\"typescript-eslint\"]": "^8.0.0",
+        "[\"devDependencies\",\"typescript\"]": "^5.0.0",
+        "[\"devDependencies\",\"eslint-config-prettier\"]": "^10.0.0",
+        "[\"devDependencies\",\"markdownlint-cli2\"]": "^0.23.0",
+        "[\"devDependencies\",\"prettier\"]": "^3.0.0",
+        "[\"devDependencies\",\"lefthook\"]": "^2.2.0"
+      }
+    },
+    "prettier.config.cjs": {
+      "kind": "file",
+      "hash": "6c255edd0c4c381eca25d99eedf7a370c08d25d4e70436b9e10cc6995bd71c18"
+    }
+  }
+}

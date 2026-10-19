@@ -1,0 +1,19 @@
+{
+  "config": {
+    "default": true,
+    "line-length": false,
+  },
+  "ignores": [
+    "**/node_modules/**",
+    "**/vendor/**",
+    "**/.git/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.phpstan-cache/**",
+    "packages/node/**",
+    "packages/php/**",
+    "packages/wordpress-plugin/**",
+    "packages/wordpress-site/**",
+    "packages/wordpress-theme/**",
+  ],
+}

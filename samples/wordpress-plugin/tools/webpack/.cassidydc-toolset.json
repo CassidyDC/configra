@@ -1,0 +1,21 @@
+{
+	"version": 1,
+	"project": "wordpress-plugin",
+	"layout": "single",
+	"capabilities": ["react", "typescript"],
+	"tools": [
+		"editorconfig",
+		"eslint",
+		"gitignore",
+		"lefthook",
+		"markdownlint",
+		"parallellint",
+		"phpcs",
+		"phpstan",
+		"prettier",
+		"stylelint",
+		"vscode",
+		"webpack"
+	],
+	"packages": []
+}

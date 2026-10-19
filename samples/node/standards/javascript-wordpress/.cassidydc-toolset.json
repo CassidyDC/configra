@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"project": "node",
+	"layout": "single",
+	"standards": {
+		"javascript": "wordpress"
+	},
+	"packages": []
+}

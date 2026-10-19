@@ -51,6 +51,7 @@
     "lint:docs:fix": "npx markdownlint-cli2 \"**/*.md\" --fix",
     "lint:scripts": "npx eslint",
     "lint:scripts:fix": "npx eslint --fix",
+    "samples:generate": "node scripts/generate-samples.js",
     "test": "node --test tests/unit/*.test.js tests/integration/*.test.js"
   },
   "engines": {

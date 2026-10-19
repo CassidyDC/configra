@@ -1,0 +1,14 @@
+**/node_modules/**
+**/vendor/**
+**/.git/**
+**/dist/**
+**/build/**
+**/.phpstan-cache/**
+packages/node/**
+packages/php/**
+packages/wordpress-plugin/**
+packages/wordpress-site/**
+packages/wordpress-theme/**
+.cassidydc-toolset-state.json
+package-lock.json
+composer.lock

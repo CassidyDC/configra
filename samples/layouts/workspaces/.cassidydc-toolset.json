@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "project": "node",
+  "layout": "workspaces",
+  "packages": [
+    {
+      "path": "packages/node",
+      "project": "node"
+    },
+    {
+      "path": "packages/php",
+      "project": "php"
+    },
+    {
+      "path": "packages/wordpress-plugin",
+      "project": "wordpress-plugin"
+    },
+    {
+      "path": "packages/wordpress-site",
+      "project": "wordpress-site"
+    },
+    {
+      "path": "packages/wordpress-theme",
+      "project": "wordpress-theme"
+    }
+  ]
+}

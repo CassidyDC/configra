@@ -25,6 +25,9 @@
 # IGNORE BUILD FILES
 **/dist
 
+# Preserve generated sample formatting and ownership hashes
+/samples
+
 # IGNORE LOCK FILES
 **/package-lock.json
 

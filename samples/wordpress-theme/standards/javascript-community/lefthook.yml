@@ -1,0 +1,94 @@
+{
+  "glob_matcher": "doublestar",
+  "pre-commit":
+    {
+      "parallel": false,
+      "commands":
+        {
+          ".:eslint":
+            {
+              "glob": ["**/*.{js,mjs,cjs}"],
+              "exclude":
+                [
+                  "**/node_modules/**",
+                  "**/vendor/**",
+                  "**/.git/**",
+                  "**/dist/**",
+                  "**/build/**",
+                  "**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install eslint {staged_files}",
+            },
+          ".:markdownlint":
+            {
+              "glob": ["**/*.md"],
+              "exclude":
+                [
+                  "**/node_modules/**",
+                  "**/vendor/**",
+                  "**/.git/**",
+                  "**/dist/**",
+                  "**/build/**",
+                  "**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install markdownlint-cli2 {staged_files}",
+            },
+          ".:parallel-lint":
+            {
+              "glob": ["**/*.php"],
+              "exclude":
+                [
+                  "**/node_modules/**",
+                  "**/vendor/**",
+                  "**/.git/**",
+                  "**/dist/**",
+                  "**/build/**",
+                  "**/.phpstan-cache/**",
+                ],
+              "run": "vendor/bin/parallel-lint {staged_files}",
+            },
+          ".:phpcs":
+            {
+              "glob": ["**/*.php"],
+              "exclude":
+                [
+                  "**/node_modules/**",
+                  "**/vendor/**",
+                  "**/.git/**",
+                  "**/dist/**",
+                  "**/build/**",
+                  "**/.phpstan-cache/**",
+                ],
+              "run": "vendor/bin/phpcs {staged_files}",
+            },
+          ".:prettier":
+            {
+              "glob": ["**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css,html,json,jsonc,md,yml,yaml}"],
+              "exclude":
+                [
+                  "**/node_modules/**",
+                  "**/vendor/**",
+                  "**/.git/**",
+                  "**/dist/**",
+                  "**/build/**",
+                  "**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install prettier --check {staged_files}",
+            },
+          ".:stylelint":
+            {
+              "glob": ["**/*.css"],
+              "exclude":
+                [
+                  "**/node_modules/**",
+                  "**/vendor/**",
+                  "**/.git/**",
+                  "**/dist/**",
+                  "**/build/**",
+                  "**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install stylelint {staged_files}",
+            },
+        },
+    },
+}

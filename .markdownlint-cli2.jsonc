@@ -23,7 +23,8 @@
   },
   "ignores": [
     "node_modules",
-    "vendor"
+    "vendor",
+    "samples"
   ],
   "gitignore": true,
   "showFound": true

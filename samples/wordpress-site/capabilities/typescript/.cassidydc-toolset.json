@@ -1,0 +1,7 @@
+{
+	"version": 1,
+	"project": "wordpress-site",
+	"layout": "single",
+	"capabilities": ["typescript"],
+	"packages": []
+}

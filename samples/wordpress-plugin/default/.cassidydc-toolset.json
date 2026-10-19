@@ -1,0 +1,6 @@
+{
+	"version": 1,
+	"project": "wordpress-plugin",
+	"layout": "single",
+	"packages": []
+}

@@ -26,7 +26,7 @@ const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url));
  */
 export default defineConfig([
   includeIgnoreFile(gitignorePath, "Imported .gitignore patterns"),
-  globalIgnores(["**/*.min.js", "docs"]),
+  globalIgnores(["**/*.min.js", "docs", "samples"]),
   {
     plugins: {
       "import-x": importX,

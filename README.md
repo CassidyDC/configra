@@ -59,6 +59,19 @@ children. Root checks exclude selected child directories.
 
 ## Development and reference
 
+Browse the [configuration sample catalog](samples/README.md) for generated files
+covering every registered project, alternative standards, compatible capabilities,
+optional tools, and package layouts. Regenerate it after changing components:
+
+```sh
+npm run samples:generate
+```
+
+The script discovers components through the registry, generates into a temporary
+catalog, then replaces `samples/` after all setups succeed. Dependencies and hooks
+are not installed. Samples are generated artifacts; regeneration replaces manual
+edits and removes obsolete setups.
+
 ```sh
 npm ci
 npm test

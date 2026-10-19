@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "files": {
+    ".editorconfig": {
+      "kind": "file",
+      "hash": "4d63994fea5dfc75aafcfea04d69184edb33a7955e4544e3b2cdb16bfa038e02"
+    },
+    ".gitignore": {
+      "kind": "lines",
+      "entries": [
+        "node_modules/",
+        ".DS_Store",
+        "vendor/",
+        ".phpstan-cache/"
+      ]
+    },
+    ".markdownlint-cli2.jsonc": {
+      "kind": "file",
+      "hash": "f9cd0306349fe32c1e6a5eac305045dd9875e53a456102eac20c84d7821b2599"
+    },
+    ".prettierignore": {
+      "kind": "file",
+      "hash": "902b6fbd34b63ff8175096f34f963e4793a4f626d0987027e9a94c567e887a3f"
+    },
+    ".vscode/extensions.json": {
+      "kind": "json",
+      "entries": {
+        "[\"recommendations\"]": [
+          "editorconfig.editorconfig",
+          "dbaeumer.vscode-eslint",
+          "esbenp.prettier-vscode",
+          "stylelint.vscode-stylelint",
+          "bmewburn.vscode-intelephense-client"
+        ]
+      }
+    },
+    ".vscode/settings.json": {
+      "kind": "json",
+      "entries": {
+        "[\"editor.insertSpaces\"]": false,
+        "[\"editor.tabSize\"]": 4,
+        "[\"[css]\",\"editor.insertSpaces\"]": false,
+        "[\"[css]\",\"editor.tabSize\"]": 4,
+        "[\"[javascript]\",\"editor.insertSpaces\"]": false,
+        "[\"[javascript]\",\"editor.tabSize\"]": 4,
+        "[\"[php]\",\"editor.insertSpaces\"]": true,
+        "[\"[php]\",\"editor.tabSize\"]": 4
+      }
+    },
+    "composer.json": {
+      "kind": "json",
+      "entries": {
+        "[\"require-dev\",\"php-parallel-lint/php-parallel-lint\"]": "^1.4",
+        "[\"require-dev\",\"squizlabs/php_codesniffer\"]": "^3.13",
+        "[\"require-dev\",\"phpstan/phpstan\"]": "^2.0",
+        "[\"require-dev\",\"szepeviktor/phpstan-wordpress\"]": "^2.0"
+      }
+    },
+    "eslint.config.mjs": {
+      "kind": "file",
+      "hash": "31b080230eb48745fa6c54a93fd42d89f8351f1c31a7af445d7d43ea9755c23f"
+    },
+    "lefthook.yml": {
+      "kind": "file",
+      "hash": "3ba9cf364b24ac6bd92795b29cc60a26081f87727fdd89c641656f09d32fe724"
+    },
+    "package.json": {
+      "kind": "json",
+      "entries": {
+        "[\"scripts\",\"lint:js\"]": "eslint .",
+        "[\"scripts\",\"lint:markdown\"]": "markdownlint-cli2 \"**/*.md\"",
+        "[\"scripts\",\"lint:php:syntax\"]": "vendor/bin/parallel-lint --exclude 'node_modules' --exclude 'vendor' --exclude '.git' --exclude 'dist' --exclude 'build' --exclude '.phpstan-cache' .",
+        "[\"scripts\",\"lint:php:style\"]": "vendor/bin/phpcs",
+        "[\"scripts\",\"lint:php:types\"]": "vendor/bin/phpstan analyse --no-progress",
+        "[\"scripts\",\"format:check\"]": "prettier . --check",
+        "[\"scripts\",\"format\"]": "prettier . --write",
+        "[\"scripts\",\"lint:css\"]": "stylelint \"**/*.css\" --allow-empty-input",
+        "[\"scripts\",\"hooks:install\"]": "lefthook install",
+        "[\"scripts\",\"lint:local\"]": "npm run format:check && npm run lint:css && npm run lint:js && npm run lint:markdown && npm run lint:php:style && npm run lint:php:syntax && npm run lint:php:types",
+        "[\"scripts\",\"lint\"]": "npm run lint:local",
+        "[\"devDependencies\",\"eslint\"]": "^10.0.0",
+        "[\"devDependencies\",\"globals\"]": "^17.0.0",
+        "[\"devDependencies\",\"@wordpress/eslint-plugin\"]": "^27.1.0",
+        "[\"devDependencies\",\"eslint-config-prettier\"]": "^10.0.0",
+        "[\"devDependencies\",\"markdownlint-cli2\"]": "^0.23.0",
+        "[\"devDependencies\",\"prettier\"]": "^3.0.0",
+        "[\"devDependencies\",\"@wordpress/prettier-config\"]": "^4.0.0",
+        "[\"devDependencies\",\"stylelint-scss\"]": "^7.2.0",
+        "[\"devDependencies\",\"stylelint\"]": "^17.14.1",
+        "[\"devDependencies\",\"@wordpress/stylelint-config\"]": "^26.1.0",
+        "[\"devDependencies\",\"lefthook\"]": "^2.2.0"
+      }
+    },
+    "phpcs.xml.dist": {
+      "kind": "file",
+      "hash": "74b24209bdd6ec6f6777efaee244f8879176d102a2b02d3c7b6b8a2ce1ad04c9"
+    },
+    "phpstan.neon.dist": {
+      "kind": "file",
+      "hash": "4ccd347c72504859bf1840ad6b4a0eed2873fe7fa44d4b67508179401514183e"
+    },
+    "prettier.config.cjs": {
+      "kind": "file",
+      "hash": "c3adccc80d4d6db63a2b7137f729c5f2929b6e3e931e572c2739cbed6bc9ddda"
+    },
+    "stylelint.config.mjs": {
+      "kind": "file",
+      "hash": "e28df7ebb70614693d70a0f437524969c6afdff393e73c79c17ca994f1891198"
+    }
+  }
+}
