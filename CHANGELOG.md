@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
+- Explain how components combine into generated tool configuration in `docs/how-it-works.md`.
+
 - Document prioritized repository review findings and proposed fixes in `docs/issues.md`.
 
 - Document component definitions, named functions, and shared internal contracts with JSDoc types.
