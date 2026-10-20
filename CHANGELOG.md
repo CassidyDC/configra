@@ -1,19 +1,13 @@
-<!--
-Changelog
-
-Release history and notable changes to CassidyDC Toolset.
--->
-
-# Changelog
+# Changelog for CassidyDC Toolset
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-[UNRELEASED]
+## [UNRELEASED]
 
-## Added
+### Added
 
 - Add a registry-driven configuration sample catalog and `npm run samples:generate` to regenerate it.
 
@@ -28,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add dry-run previews, saved selections, safe updates, conflict detection, and optional npm and Composer installation.
 - Add automated CLI, generation, safety, layout, and packed-artifact validation.
 
-## Changed
+### Changed
 
 - Add descriptive titles to file documentation headers throughout the repository.
 
@@ -36,12 +30,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Move the `cdctool` executable to `bin/cdctool.js` and package the component-based implementation and templates.
 
-## Fixed
+### Fixed
 
 - Keep nested workspace checks from running twice by delegating with exact package names.
 - Format generated files consistently with their selected standards and exclude Git boundaries and analysis caches from recursive checks.
 - Detect competing active configurations and preserve structured installation failure results in JSON output.
 
-## Removed
+### Removed
 
 - Remove Python project and language options until Python support is ready.
