@@ -23,9 +23,9 @@ import { generate } from "./generate.js";
  * @throws {Error} If saved selections are absent or invalid.
  */
 export async function update(root, selections, options, io) {
-  const saved = await readJson(root, ".cassidydc-toolset.json");
+  const saved = await readJson(root, ".configra.json");
 
-  if (!saved) throw new Error("No saved selections; run cdctool init first");
+  if (!saved) throw new Error("No saved selections; run configra init first");
 
   return generate(
     root,

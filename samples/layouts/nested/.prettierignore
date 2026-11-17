@@ -9,6 +9,6 @@ packages/php/**
 packages/wordpress-plugin/**
 packages/wordpress-site/**
 packages/wordpress-theme/**
-.cassidydc-toolset-state.json
+.configra-state.json
 package-lock.json
 composer.lock

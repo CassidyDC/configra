@@ -1,10 +1,10 @@
 <!--
-CassidyDC Toolset
+Configra
 
-CassidyDC Toolset overview, installation, usage, and development guidance.
+Configra overview, installation, usage, and development guidance.
 -->
 
-# CassidyDC Toolset
+# Configra
 
 Generate editable development configuration for Node.js, PHP, and WordPress
 sites, plugins, and themes. Requires Node.js 24 or newer. PHP tools additionally
@@ -13,9 +13,9 @@ require PHP and Composer when installed or run.
 ## Installation and usage
 
 ```sh
-npm install --global @cassidydc/cassidydc-toolset
-cdctool init --project wordpress-plugin --dry-run
-cdctool init --project wordpress-plugin
+npm install --global @cassidydc/configra
+configra init --project wordpress-plugin --dry-run
+configra init --project wordpress-plugin
 npm run lint
 ```
 
@@ -24,17 +24,17 @@ to install dependencies after generation, or run npm and Composer yourself befor
 running the generated checks. Webpack is enabled only when explicitly selected.
 
 ```sh
-cdctool init --project wordpress-theme --capabilities react,typescript
-cdctool init --project wordpress-plugin --standard javascript=community --standard php=community
-cdctool init --interactive
-cdctool discover
-cdctool update --dry-run
-cdctool update
-cdctool --help
+configra init --project wordpress-theme --capabilities react,typescript
+configra init --project wordpress-plugin --standard javascript=community --standard php=community
+configra init --interactive
+configra discover
+configra update --dry-run
+configra update
+configra --help
 ```
 
-Selections are saved in `.cassidydc-toolset.json`; generation ownership is tracked
-separately in `.cassidydc-toolset-state.json`. Keep both under version control.
+Selections are saved in `.configra.json`; generation ownership is tracked
+separately in `.configra-state.json`. Keep both under version control.
 Edited generated files and conflicting manifest entries stop application until
 resolved. `--force` explicitly replaces the reported conflicting generated content.
 Competing configuration filenames are also reported for explicit replacement.
@@ -48,8 +48,8 @@ Use `single` for one package, `nested` for independent child packages, or
 Only explicitly selected children are configured.
 
 ```sh
-cdctool init --project wordpress-site --layout nested --package plugins/example --package themes/example
-cdctool init --project node --layout workspaces --package packages/example
+configra init --project wordpress-site --layout nested --package plugins/example --package themes/example
+configra init --project node --layout workspaces --package packages/example
 ```
 
 Use `--config selections.json` for per-package project, language, capability,

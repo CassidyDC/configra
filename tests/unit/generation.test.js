@@ -118,7 +118,7 @@ test("installation failure is separate from successful generation", async (t) =>
   assert(result.generated);
   assert.equal(result.failed[0].phase, "installation");
   assert.equal(result.installations.length, 2);
-  assert(await read(root, ".cassidydc-toolset-state.json"));
+  assert(await read(root, ".configra-state.json"));
 });
 
 test("unrequested installations never execute", async (t) => {
@@ -155,7 +155,7 @@ test("new output already matches the generated formatter configuration", async (
     const { planned } = await generate(root, selection);
 
     for (const change of planned.changes.filter(
-      (item) => /\.(?:[cm]?js|jsonc?|ya?ml)$/.test(item.path) && item.path !== ".cassidydc-toolset-state.json",
+      (item) => /\.(?:[cm]?js|jsonc?|ya?ml)$/.test(item.path) && item.path !== ".configra-state.json",
     )) {
       const filename = path.join(root, change.path);
 
@@ -184,7 +184,7 @@ test("a write failure reports partial progress without recording successful stat
   assert.equal(result.generated, false);
   assert.deepEqual(result.applied, [".editorconfig"]);
   assert.equal(result.failed[0].path, second);
-  await assert.rejects(read(root, ".cassidydc-toolset-state.json"), { code: "ENOENT" });
+  await assert.rejects(read(root, ".configra-state.json"), { code: "ENOENT" });
 });
 
 test("competing active configuration is reported before explicit replacement", async (t) => {

@@ -27,7 +27,7 @@ import { apply } from "../src/generator/apply.js";
  * @returns {Promise<string>} Canonical absolute temporary directory.
  */
 export async function temporary(t) {
-  const root = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "cdctool-test-")));
+  const root = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "configra-test-")));
   t.after(() => fs.rm(root, { recursive: true, force: true }));
   return root;
 }

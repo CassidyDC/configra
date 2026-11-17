@@ -1,14 +1,14 @@
 <!--
-Toolset Organization Plan
+Configra Organization Plan
 
-Reference directory organization plan for the toolset implementation.
+Reference directory organization plan for Configra implementation.
 -->
 
 # Organization Plan
 
 ```text
 bin/
-  cdctool.js
+  configra.js
 src/
   cli/
     commands/

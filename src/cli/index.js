@@ -18,8 +18,8 @@ import { update } from "./commands/update.js";
  *
  * @constant {string}
  */
-const help = `CassidyDC Toolset
-Usage: cdctool <init|update|discover> [options]
+const help = `Configra
+Usage: configra <init|update|discover> [options]
 
   --cwd <path>            Existing project directory (default: current directory)
   --project <id>          node, php, wordpress-site, wordpress-plugin, wordpress-theme
@@ -29,7 +29,7 @@ Usage: cdctool <init|update|discover> [options]
   --tools <list>          Explicit comma-separated tool selection; empty disables all tools
   --layout <id>           single, nested, workspaces
   --package <path>        Repeat for selected child packages; use --config for child overrides
-  --config <file>         JSON selections (same schema as .cassidydc-toolset.json)
+  --config <file>         JSON selections (same schema as .configra.json)
   --interactive          Collect selections in the terminal
   --dry-run              Preview without writing or installing
   --json                 Machine-readable proposal (combine with --dry-run for preview)
@@ -132,7 +132,7 @@ export async function run(
 
       if (positionals[0] === "update") {
         const { readJson } = await import("../platform/filesystem.js");
-        selections = { ...(await readJson(root, ".cassidydc-toolset.json", {})), ...selections };
+        selections = { ...(await readJson(root, ".configra.json", {})), ...selections };
       }
 
       selections = await collect(selections);

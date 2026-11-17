@@ -4,11 +4,11 @@ CLI System Design Reference
 Reference description of the original CLI system design.
 -->
 
-# CassidyDC Toolsets System Design
+# Configra System Design
 
-## How the Toolset works
+## How Configra works
 
-This CLI creates a toolset based on the arguments passed to it. For example, if you choose WordPress Standards, WordPress Site Script, the toolset created will include all the linting, formatting, and scripting files for a WordPress site, following WordPress standard. You can choose WordPress Modernized Standards to have namespacing, no-yoda expressions, etc. You can also choose community standards and apply that to your WordPress site. It's very customizable.
+Configra generates project configuration based on the arguments passed to it. For example, if you choose WordPress Standards, WordPress Site Script, the generated configuration will include all the linting, formatting, and scripting files for a WordPress site, following WordPress standard. You can choose WordPress Modernized Standards to have namespacing, no-yoda expressions, etc. You can also choose community standards and apply that to your WordPress site. It's very customizable.
 
 ## Scripts
 

@@ -31,7 +31,7 @@ test("packed npm artifact runs independently and locates module-relative templat
   const packed = JSON.parse(pack.stdout);
   const artifact = Array.isArray(packed) ? packed[0] : Object.values(packed)[0];
 
-  assert(artifact.files.some((entry) => entry.path === "bin/cdctool.js"));
+  assert(artifact.files.some((entry) => entry.path === "bin/configra.js"));
   assert(artifact.files.some((entry) => entry.path === "src/components/tools/webpack/templates/webpack.config.mjs"));
   assert(!artifact.files.some((entry) => entry.path.startsWith("docs/reference/")));
 
@@ -65,7 +65,7 @@ test("packed npm artifact runs independently and locates module-relative templat
   );
 
   assert.equal(install.status, 0, install.stderr);
-  const executable = path.join(consumer, "node_modules/@cassidydc/cassidydc-toolset/bin/cdctool.js");
+  const executable = path.join(consumer, "node_modules/@cassidydc/configra/bin/configra.js");
   const project = await temporary(t);
 
   const generate = spawnSync(

@@ -26,14 +26,14 @@ import * as workspaces from "./layouts/workspaces.js";
  *
  * @constant {string}
  */
-const STATE = ".cassidydc-toolset-state.json";
+const STATE = ".configra-state.json";
 
 /**
  * Versioned project selection filename.
  *
  * @constant {string}
  */
-const SELECTIONS = ".cassidydc-toolset.json";
+const SELECTIONS = ".configra.json";
 
 /**
  * Compare values using their serialized JSON representation.

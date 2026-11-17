@@ -206,7 +206,7 @@ The planner then performs the remaining composition:
    output that is no longer needed can be removed.
 5. When Prettier is selected for the owning package, format supported generated
    JavaScript, JSON, YAML, and Markdown files with its resolved options. This uses
-   the shared `tools/prettier/options.js` helper and the toolset's own Prettier
+   the shared `tools/prettier/options.js` helper and Configra's own Prettier
    dependency during planning.
 
 The resulting `GenerationPlan` contains proposed writes and deletions, conflicts,
@@ -218,7 +218,7 @@ reports this proposal and stops before application.
 Consider this invocation in an existing plugin directory:
 
 ```sh
-cdctool init --project wordpress-plugin --capabilities react,typescript --standard php=community --dry-run
+configra init --project wordpress-plugin --capabilities react,typescript --standard php=community --dry-run
 ```
 
 The plugin definition supplies JavaScript, CSS, PHP, and its default tools.
@@ -253,13 +253,13 @@ generation state last. Package managers run afterward only with `--install`.
 
 Two files make subsequent updates reproducible:
 
-- `.cassidydc-toolset.json` stores the normalized selections.
-- `.cassidydc-toolset-state.json` tracks owned file hashes, JSON entries, and
+- `.configra.json` stores the normalized selections.
+- `.configra-state.json` tracks owned file hashes, JSON entries, and
   ignore lines so later plans can distinguish generated content from user edits.
 
 The generated configurations refer to dependencies declared in the consumer
 package's manifests. Once those dependencies are installed, its scripts and tools
-run directly; they do not need the toolset present to interpret components at
+run directly; they do not need Configra present to interpret components at
 runtime. An update reruns the same resolution and rendering process against saved
 selections and current ownership state.
 

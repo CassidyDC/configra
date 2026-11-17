@@ -1,4 +1,4 @@
-# Changelog for CassidyDC Toolset
+# Changelog for Configra
 
 All notable changes to this project will be documented in this file.
 
@@ -24,11 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Rename the project, npm package, CLI, and saved configuration files to Configra.
+
 - Add descriptive titles to file documentation headers throughout the repository.
 
 - Declare imported JSDoc types once per file with local aliases for readable annotations.
 
-- Move the `cdctool` executable to `bin/cdctool.js` and package the component-based implementation and templates.
+- Move the `configra` executable to `bin/configra.js` and package the component-based implementation and templates.
 
 ### Fixed
 

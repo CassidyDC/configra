@@ -20,7 +20,7 @@ import { temporary, put, read, readJson } from "../helpers.js";
  *
  * @constant {string}
  */
-const executable = fileURLToPath(new URL("../../bin/cdctool.js", import.meta.url));
+const executable = fileURLToPath(new URL("../../bin/configra.js", import.meta.url));
 
 /**
  * Run the packaged CLI entry point against an isolated project directory.
@@ -240,6 +240,6 @@ test("real process failures remain machine-readable after successful generation"
     assert.equal(output.result.failed[0].phase, "installation");
     assert.equal(output.result.installations[0].code, 7);
     assert.match(result.stderr, new RegExp(`simulated ${command} failure`));
-    assert(await read(root, ".cassidydc-toolset-state.json"));
+    assert(await read(root, ".configra-state.json"));
   }
 });

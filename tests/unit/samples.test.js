@@ -87,7 +87,7 @@ test("samples contain real CLI output and regeneration is deterministic", async 
 
   for (const entry of entries) {
     const directory = path.join(destination, entry.path);
-    const request = normalizeRequest(await readJson(directory, ".cassidydc-toolset.json"));
+    const request = normalizeRequest(await readJson(directory, ".configra.json"));
     const proposal = await plan(resolve(request, await packageGraph(directory, request)));
 
     assert.equal(proposal.conflicts.length, 0, entry.path);

@@ -4,7 +4,7 @@ Architecture Implementation Plan
 Architecture implementation plan and completion status.
 -->
 
-# CassidyDC Toolset organization plan
+# Configra organization plan
 
 ## Implementation status
 
@@ -25,7 +25,7 @@ TypeScript Webpack build.
 
 ```text
 bin/
-  cdctool.js
+  configra.js
 src/
   cli/
     commands/
@@ -130,7 +130,7 @@ docs/
   generated-projects.md
 ```
 
-The tree describes the proposed toolset architecture. Each tool's `templates/` directory is optional and should be created only when that integration needs templates.
+The tree describes the proposed Configra architecture. Each tool's `templates/` directory is optional and should be created only when that integration needs templates.
 
 ## Summary
 
@@ -146,15 +146,15 @@ This plan defines the organization and responsibilities of the codebase. Individ
 
 ```text
 bin/
-  cdctool.js
+  configra.js
 ```
 
-| Path         | Responsibility                                                                                                                                                                       |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `bin/`       | Contains executable entry points distributed with the npm package.                                                                                                                   |
-| `cdctool.js` | Provides the Node.js executable header, starts the CLI, and translates completion or failure into a process exit code. Keep argument handling and generation logic out of this file. |
+| Path          | Responsibility                                                                                                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `bin/`        | Contains executable entry points distributed with the npm package.                                                                                                                   |
+| `configra.js` | Provides the Node.js executable header, starts the CLI, and translates completion or failure into a process exit code. Keep argument handling and generation logic out of this file. |
 
-Keep the existing public command name, `cdctool`, and point its `package.json` `bin` entry to `bin/cdctool.js`. The executable filename does not require renaming the command.
+Expose the public command `configra` through its `package.json` `bin` entry pointing to `bin/configra.js`.
 
 ### CLI
 
@@ -286,7 +286,7 @@ src/components/standards/
 | Directory or file         | Responsibility                                                                                                                        |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | `javascript/`             | Groups JavaScript coding standards. TypeScript-specific adjustments come from the TypeScript capability and compatible tool settings. |
-| `javascript/community.js` | Defines the toolset's documented community JavaScript baseline.                                                                       |
+| `javascript/community.js` | Defines Configra's documented community JavaScript baseline.                                                                          |
 | `javascript/wordpress.js` | Defines the WordPress JavaScript baseline.                                                                                            |
 | `css/`                    | Groups stylesheet coding standards.                                                                                                   |
 | `css/community.js`        | Defines the community stylesheet baseline.                                                                                            |
@@ -434,7 +434,7 @@ Keep the organization plan under `docs/plans/`. Use the root `README.md` for ins
 6. The CLI presents proposed changes and any conflicts.
 7. The application step writes validated changes and optionally installs dependencies.
 
-Generated files are self-contained and user-editable. Store reproducible selections in a versioned `.cassidydc-toolset.json` and generation metadata separately in `.cassidydc-toolset-state.json`.
+Generated files are self-contained and user-editable. Store reproducible selections in a versioned `.configra.json` and generation metadata separately in `.configra-state.json`.
 
 Updates may replace unchanged generated content automatically. Modified files and conflicting manifest entries must be presented for resolution before writing. Preserve unrelated manifest fields, scripts, and dependencies.
 

@@ -30,7 +30,7 @@ export default function render(project) {
     files: {
       "prettier.config.cjs": source,
       ".prettierignore":
-        [...project.excludes, ".cassidydc-toolset-state.json", "package-lock.json", "composer.lock"].join("\n") + "\n",
+        [...project.excludes, ".configra-state.json", "package-lock.json", "composer.lock"].join("\n") + "\n",
     },
     npm,
     scripts: { "format:check": "prettier . --check", format: "prettier . --write" },

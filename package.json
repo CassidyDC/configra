@@ -1,28 +1,28 @@
 {
-  "name": "@cassidydc/cassidydc-toolset",
-  "displayName": "CassidyDC Toolset",
+  "name": "@cassidydc/configra",
+  "displayName": "Configra",
   "version": "1.0.0",
-  "description": "CassidyDC's code formatting, linting, and scripting development toolset.",
+  "description": "Configurable code formatting, linting, and scripting for development projects.",
   "author": {
     "name": "CassidyDC",
     "email": "hello@cassidydc.com",
     "url": "https://cassidydc.com"
   },
   "bin": {
-    "cdctool": "./bin/cdctool.js"
+    "configra": "./bin/configra.js"
   },
   "files": [
     "bin",
     "src"
   ],
   "type": "module",
-  "homepage": "https://github.com/CassidyDC/cassidydc-toolset/blob/main/README.md",
+  "homepage": "https://github.com/CassidyDC/configra/blob/main/README.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CassidyDC/cassidydc-toolset"
+    "url": "https://github.com/CassidyDC/configra"
   },
   "bugs": {
-    "url": "https://github.com/CassidyDC/cassidydc-toolset/issues"
+    "url": "https://github.com/CassidyDC/configra/issues"
   },
   "license": "MIT",
   "keywords": [

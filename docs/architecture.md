@@ -1,18 +1,18 @@
 <!--
-Toolset Architecture
+Configra Architecture
 
 Overview of the generation pipeline, internal contracts, and package ownership.
 -->
 
 # Architecture
 
-The toolset turns selections into editable, self-contained project files. Its
+Configra turns selections into editable, self-contained project files. Its
 internal JavaScript interfaces are documented with JSDoc in `src/contracts.js`;
 they are not a public package API.
 
 ## Pipeline
 
-1. `bin/cdctool.js` starts `src/cli/index.js` and sets the exit code.
+1. `bin/configra.js` starts `src/cli/index.js` and sets the exit code.
 2. The CLI parses flags or collects structured interactive selections. Prompt
    modules are loaded only for interactive runs.
 3. `package-graph.js` discovers candidate manifests and WordPress package paths.
@@ -69,8 +69,8 @@ is a separate, explicit `npm run hooks:install` operation.
 
 ## State and safe application
 
-`.cassidydc-toolset.json` stores versioned selections.
-`.cassidydc-toolset-state.json` separately tracks generated-file hashes, managed
+`.configra.json` stores versioned selections.
+`.configra-state.json` separately tracks generated-file hashes, managed
 JSON entries, and owned ignore lines. Updates preserve unrelated JSON keys,
 scripts, dependency entries, ignore lines, and VS Code extension recommendations.
 Competing active configuration files are reported as conflicts rather than leaving

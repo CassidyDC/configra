@@ -4,7 +4,7 @@ Repository and Generated Project Organization Plan
 Reference proposal comparing repository and generated-project structures.
 -->
 
-# Two recommended structures for CassidyDC Toolset
+# Two recommended structures for Configra
 
 ## 1. Assessment of the current project
 
@@ -18,8 +18,8 @@ The main improvements I recommend are:
 - **Rename `src/packages` to `src/projects`.** These directories describe generated project setups, rather than npm packages belonging to this repository.
 - **Keep project identity independent of package position.** A WordPress plugin can be standalone or a child package. It should reuse the same project definition.
 - **Add a resolution and generation layer.** Tool modules should receive resolved settings rather than independently interpreting CLI answers.
-- **Separate this package’s own configuration from generated configuration assets.** Root ESLint, Prettier, and Lefthook files configure development of the toolset itself.
-- **Treat generated-project dependencies separately from generator dependencies.** The toolset’s `devDependencies` are not the dependency list to install in a consumer project.
+- **Separate this package’s own configuration from generated configuration assets.** Root ESLint, Prettier, and Lefthook files configure development of Configra itself.
+- **Treat generated-project dependencies separately from generator dependencies.** Configra’s `devDependencies` are not the dependency list to install in a consumer project.
 
 Your selected defaults are editable generated files, support for both nested-package layouts, and standards overrides by language and package.
 
@@ -105,7 +105,7 @@ I would build a **configuration generator with a declarative catalog**, shipped 
 
 ```text
 bin/
-  cdctool.js
+  configra.js
 src/
   cli/
     commands/
@@ -177,13 +177,13 @@ CLI answers + saved selections + discovered project information
 
 Define internal contracts for `ProjectRequest`, `ResolvedProject`, `ToolContribution`, and `GenerationPlan`. JSDoc types are sufficient for the existing JavaScript codebase.
 
-Expose `cdctool init`, `cdctool update`, and a non-writing `--dry-run`. Use distinct selectors for projects, languages, tools, standards, and layouts. Replace the documented `--script=wordpress-site` terminology with `--project=wordpress-site`.
+Expose `configra init`, `configra update`, and a non-writing `--dry-run`. Use distinct selectors for projects, languages, tools, standards, and layouts. Replace the documented `--script=wordpress-site` terminology with `--project=wordpress-site`.
 
 Important behavior:
 
 - **Inheritance:** Project definitions provide defaults; explicit user selections override them. Children inherit resolved parent choices unless explicitly overridden.
-- **Saved selections:** Store the chosen setup and package paths in a versioned `.cassidydc-toolset.json`. Detect candidates, but configure only selected packages; exclude dependency and build directories.
-- **Editable output:** Generate self-contained files without imports from the toolset. Record generation state separately. On updates, automatically replace unchanged generated content; present conflicts for user-modified content before writing.
+- **Saved selections:** Store the chosen setup and package paths in a versioned `.configra.json`. Detect candidates, but configure only selected packages; exclude dependency and build directories.
+- **Editable output:** Generate self-contained files without imports from Configra. Record generation state separately. On updates, automatically replace unchanged generated content; present conflicts for user-modified content before writing.
 - **Manifest preservation:** Preserve unrelated scripts, dependencies, and manifest fields. Conflicting existing script names require resolution rather than silent replacement.
 - **Dependency ecosystems:** Track npm, Composer, and Python requirements separately. Show installation commands by default; an explicit `--install` performs installation.
 - **Package boundaries:** Generate local commands that exclude registered child packages, plus root aggregate commands that call child scripts. This prevents duplicate linting.

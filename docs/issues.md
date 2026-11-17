@@ -86,7 +86,7 @@ execution were not performed. Python support is outside the current project scop
   then update with `tools: []`. Both pre-existing entries are deleted without a
   conflict because their matching initial values were recorded as owned.
 - **Impact:** Deselecting a tool can remove dependencies, scripts, and settings
-  that existed before the toolset managed the project.
+  that existed before Configra managed the project.
 - **Fix:** Track whether a JSON leaf was created, explicitly adopted, or already
   present. Preserve pre-existing entries on removal unless adoption was explicit,
   consistent with the existing treatment of ignore lines and recommendations.
@@ -352,7 +352,7 @@ execution were not performed. Python support is outside the current project scop
 
 - **Location:** [README quickstart](../README.md#L15).
 - **Evidence — source:** The first copyable command sequence uses
-  `cdctool init --project wordpress-plugin` followed immediately by `npm run lint`.
+  `configra init --project wordpress-plugin` followed immediately by `npm run lint`.
   Generation does not install the required npm or Composer tools without
   `--install`; that explanation appears after the command sequence.
 - **Impact:** Following the complete introductory example in a fresh project

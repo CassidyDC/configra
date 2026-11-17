@@ -9,8 +9,8 @@ Usage examples and expected output for generated project configurations.
 ## Standalone WordPress plugin
 
 ```sh
-cdctool init --project wordpress-plugin --dry-run
-cdctool init --project wordpress-plugin --install
+configra init --project wordpress-plugin --dry-run
+configra init --project wordpress-plugin --install
 npm run lint:local
 npm run hooks:install
 ```
@@ -19,7 +19,7 @@ The setup includes EditorConfig, gitignore, ESLint, Prettier, Stylelint,
 Markdownlint, PHP Parallel Lint, PHPCS, PHPStan, VS Code recommendations, and root
 Lefthook configuration when the selected boundary permits it. npm development
 dependencies belong to `package.json`; PHP dependencies belong to `composer.json`.
-The generated project does not need the toolset installed to run its checks.
+The generated project does not need Configra installed to run its checks.
 Initialize a Git repository before installing hooks when starting outside Git.
 
 JavaScript configurations use explicit module extensions. PHP checks run through
@@ -30,7 +30,7 @@ a `src/index.js` entry (or `.jsx`, `.ts`, `.tsx` for capabilities), and writes t
 ## Standards and formatting
 
 ```sh
-cdctool init --project wordpress-plugin --standard javascript=community --standard php=community
+configra init --project wordpress-plugin --standard javascript=community --standard php=community
 ```
 
 The project environment stays WordPress while the specified languages use
@@ -66,8 +66,8 @@ Create `selections.json` in a WordPress `wp-content` project:
 ```
 
 ```sh
-cdctool init --config selections.json --dry-run
-cdctool init --config selections.json --install
+configra init --config selections.json --dry-run
+configra init --config selections.json --install
 npm run lint
 npm --prefix plugins/example run lint:local
 ```
@@ -94,10 +94,10 @@ Given a root `package.json` containing `"workspaces": ["packages/*"]` and existi
 workspace manifests:
 
 ```sh
-cdctool init --project node --layout workspaces --package packages/a --package packages/b
+configra init --project node --layout workspaces --package packages/a --package packages/b
 ```
 
-The toolset preserves workspace declarations and requires every selected workspace
+Configra preserves workspace declarations and requires every selected workspace
 to be registered. The root aggregate invokes each selected workspace's
 `lint:local` once using its exact package name, including when workspaces nest.
 The root's local configurations exclude selected packages.
@@ -107,12 +107,12 @@ installation uses `--workspaces=false` to avoid installing unselected workspaces
 
 ## Updates, conflicts, and failure results
 
-Keep both toolset JSON files in version control. Edit saved selections or pass
+Keep both Configra JSON files in version control. Edit saved selections or pass
 selection flags to `update`:
 
 ```sh
-cdctool update --dry-run --json
-cdctool update --standard javascript=community
+configra update --dry-run --json
+configra update --standard javascript=community
 ```
 
 Unchanged generated content can be replaced automatically. Manually edited files,
