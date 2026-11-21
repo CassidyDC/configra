@@ -15,16 +15,20 @@ Publish `@cassidydc/configra` for developers who want to set up linting, formatt
 ### Python setup
 
 - Use Ruff for linting and formatting with shared settings across both installation paths. Support existing Ruff settings in `pyproject.toml` or a standalone Ruff config. Choose the default location for new Ruff configuration before implementing the preset.
+- Offer mypy as an opt-in for static type checking. Use `pyproject.toml` or `mypy.ini` for settings, respect the project's existing configuration, and install mypy as a development dependency through the selected Python installer.
 - Recommend `uv` for fresh setups and use the existing `uv` workflow when the project has a `uv.lock`. Declare Ruff in the development dependency group and let `uv` manage the lockfile and virtual environment when installation is approved.
 - Offer `pip` for an existing virtual environment selected by the user. Install through that environment's Python interpreter and follow the project's development requirements workflow when present. When the installation workflow is unclear, offer configuration generation and request a choice before installing.
 
-### Optional language and Git configuration
+### Optional integrations
 
 - **SCSS.** Format SCSS with Prettier. Offer SCSS linting as a separate opt-in that adds the necessary Stylelint configuration and dependencies for `.scss` files.
 - **TypeScript.** Offer an opt-in `typecheck` script that runs `tsc --noEmit` using the project's `tsconfig.json`. Offer to generate a starter `tsconfig.json` when the project lacks one. Use the existing config when present.
 - **Bash and POSIX shell.** Offer opt-in ShellCheck linting and `shfmt` formatting for shell scripts. Generate `.shellcheckrc` and add shell formatting settings to `.editorconfig`.
 - **SQL.** Offer opt-in SQLFluff linting and formatting for `.sql` files. Generate `.sqlfluff` using a dialect the user selects, such as MySQL, PostgreSQL, or SQLite.
 - **Go and Rust.** Offer each as an independently selectable standalone preset. Wire `gofmt` and `rustfmt` into their respective project checks and Git hooks.
+- **GitHub Actions.** Offer a `.github/workflows/quality.yml` workflow that runs the generated project checks on pull requests. Offer `actionlint` as a separate option for checking workflow files.
+- **Dockerfiles.** Offer Hadolint for existing Dockerfiles and generate `.hadolint.yaml` for project-specific rules.
+- **PowerShell.** Offer PSScriptAnalyzer for PowerShell scripts and generate `PSScriptAnalyzerSettings.psd1` for project-specific rules.
 - **Git line endings.** Offer a root `.gitattributes` file as an opt-in. Show the proposed line-ending rules in the preview and preserve unrelated attributes already present in the file.
 
 ## CLI and safe updates
@@ -76,5 +80,5 @@ Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM packag
 ## Implementation and release checks
 
 1. Build the CLI, planner, and safe-update flow around a standalone Node.js project. Verify dry runs, idempotent reruns, legacy metadata rejection, conflict handling, and protection of user edits and nested Git repositories.
-2. Add PHP, Python, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and the React/TypeScript ESLint combination. Test Ruff through both Python installation paths, including `uv` lockfile updates and `pip` installation into the selected environment. Exercise shell checks, SQL dialect selection, and Go and Rust formatting in fixtures. Check that optional setups appear only when selected, including preservation of existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
+2. Add PHP, Python, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and the React/TypeScript ESLint combination. Test Ruff and opt-in mypy through both Python installation paths, including `uv` lockfile updates and `pip` installation into the selected environment. Exercise shell, Dockerfile, and PowerShell checks, SQL dialect selection, and Go and Rust formatting in fixtures. Validate the generated GitHub Actions workflow with `actionlint` and verify that it runs the same checks as the corresponding local setup. Check that optional setups appear only when selected, including preservation of existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
 3. Run `npm pack`, install the tarball into a clean consumer, and test the CLI and packaged templates. Verify the packed CLI on Linux, macOS, and Windows. Update `README.md` and `CHANGELOG.md`, and commit each completed implementation task using the repository’s existing commit style. Check the registry before choosing the release version, and publish the verified artifact under the existing scope. [Publishing a public scoped npm package](https://docs.npmjs.com/creating-and-publishing-an-organization-scoped-package/)
