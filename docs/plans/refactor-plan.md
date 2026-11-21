@@ -4,20 +4,22 @@
 
 Publish `@cassidydc/configra` for developers who want to set up linting, formatting, and Git hooks in new or existing projects. Configra generates editable files and declares the required development dependencies. The generated checks run independently of Configra.
 
-| Feature            | First release                                                                                                                                                                                                                                           |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Project presets    | Node.js, PHP, Python, Go, Rust, Laravel, Next.js, standalone web frontends, Django, and WordPress sites, plugins, and themes. Offer React, TypeScript, and Vue as selectable capabilities and community or WordPress standards where applicable.        |
-| Tooling            | EditorConfig, Prettier, Markdownlint, and `.gitignore` as the baseline. Add ESLint for JavaScript and TypeScript, Stylelint for CSS, and `php -l`, PHP_CodeSniffer, and PHPStan for PHP. Offer VS Code and opt-in build tooling.                        |
-| Repository layouts | Standalone projects, explicitly selected nested packages, and existing npm workspaces. Discovery suggests packages for the user to select.                                                                                                              |
-| Git hooks          | Lefthook runs checks on staged paths. The `commit-msg` hook defaults to plain sentence-case subjects and offers Conventional Commits or validation off. Release automation stays outside launch scope.                                                  |
-| Installation       | npm for JavaScript tooling, Composer for PHP tooling, and uv or pip for Python tooling. The interactive flow previews file changes, dependency installation, and hook activation for approval. Scripts opt into installation and activation separately. |
+| Feature            | First release                                                                                                                                                                                                                                                  |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Project presets    | Node.js, PHP, Python, Go, Rust, Laravel, Next.js, standalone web frontends, Django, Tauri, Wails, and WordPress sites, plugins, and themes. Offer React, TypeScript, and Vue as selectable capabilities and community or WordPress standards where applicable. |
+| Tooling            | EditorConfig, Prettier, Markdownlint, and `.gitignore` as the baseline. Add ESLint for JavaScript and TypeScript, Stylelint for CSS, and `php -l`, PHP_CodeSniffer, and PHPStan for PHP. Offer VS Code and opt-in build tooling.                               |
+| Repository layouts | Standalone projects, explicitly selected nested packages, and existing npm workspaces. Discovery suggests packages for the user to select.                                                                                                                     |
+| Git hooks          | Lefthook runs checks on staged paths. The `commit-msg` hook defaults to plain sentence-case subjects and offers Conventional Commits or validation off. Release automation stays outside launch scope.                                                         |
+| Installation       | npm for JavaScript tooling, Composer for PHP tooling, and uv or pip for Python tooling. The interactive flow previews file changes, dependency installation, and hook activation for approval. Scripts opt into installation and activation separately.        |
 
-### Framework and frontend presets
+### Framework and application presets
 
 - **Laravel (`laravel`).** Use `php -l` for syntax and Laravel Pint for PHP style checks and explicit fixes. Reuse Laravel's existing Vite config for frontend assets. Offer PHPStan with Larastan for opt-in Laravel-aware analysis. [Laravel Pint](https://laravel.com/docs/13.x/pint) · [Laravel Vite](https://laravel.com/docs/13.x/vite) · [Larastan](https://github.com/larastan/larastan)
 - **Next.js (`nextjs`).** Generate an ESLint flat config using `eslint-config-next/core-web-vitals` and add `eslint-config-next/typescript` when TypeScript is selected. Run lint through the ESLint CLI and retain the project's Next.js development and build commands. [Next.js ESLint setup](https://nextjs.org/docs/app/api-reference/config/eslint)
 - **Standalone web frontend (`web-frontend`).** Configure browser globals and frontend asset checks for vanilla JavaScript or TypeScript, with React and Vue as selectable capabilities. Suggest Vite when the user opts into a build setup. [Vite project templates](https://vite.dev/guide/)
 - **Django (`django`).** Reuse Ruff and the selected `uv` or `pip` workflow. Run `manage.py check` with the project's Python environment and settings. Offer `django-stubs` when the user enables Django-aware mypy checking. [Django system checks](https://docs.djangoproject.com/en/dev/topics/checks/) · [Django stubs](https://github.com/typeddjango/django-stubs)
+- **Tauri (`tauri`).** Reuse the web frontend tooling for the app's JavaScript or TypeScript and run Rust formatting and optional Clippy in `src-tauri/`. Respect the project's Tauri build commands and frontend configuration. [Tauri frontend setup](https://v2.tauri.app/start/frontend/)
+- **Wails (`wails`).** Run Go formatting and optional `go vet` in the app's Go module. Reuse the web frontend tooling in the app's frontend directory, typically `frontend/`. Exclude generated Wails bindings from frontend lint and format checks and respect the project's Wails build commands. [Wails project structure](https://wails.io/guides/dev/project-structure/)
 
 ### JavaScript and PHP checks
 
@@ -84,13 +86,17 @@ src/
     registry.ts              # Explicit list of supported integrations
     projects/
       django.ts
-      go.ts
+      go/
+        index.ts
+        wails.ts
       laravel.ts
       nextjs.ts
       node.ts
       php.ts
       python.ts
-      rust.ts
+      rust/
+        index.ts
+        tauri.ts
       web-frontend.ts
       wordpress/
         plugin.ts
@@ -212,6 +218,7 @@ Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM packag
    - Test inheritance and per-language overrides in a WordPress site with a plugin and theme. Verify that parent-local checks exclude selected children, aggregate checks visit each selected child once, and staged paths go to their owning package.
    - Build a standalone frontend with Vite. In a mixed WordPress fixture, run Vite and `wp-scripts build` in both orders and verify that each preserves the other build's outputs and metadata.
    - Exercise the framework presets in fixtures. Run Pint and optional Larastan for Laravel, lint a Next.js TypeScript project with its flat config, and run Django system checks with optional framework-aware mypy.
+   - Verify Tauri and Wails in desktop fixtures. Route frontend and native checks to their respective package directories, skip generated Wails bindings, and combine the checks under one Git hook configuration when both directories share a repository.
    - Verify dependency removal and retry and generated checks for each preset. Run clean npm installs and JSX, TSX, and Vue lint fixtures against the current ESLint release. Test Ruff and opt-in mypy through both Python installation paths, including `uv` lockfile updates and `pip` installation into the selected environment.
    - Exercise shell, Dockerfile, and PowerShell checks, SQL dialect selection, and Go and Rust formatting and opt-in analysis in fixtures. Check Tombi formatting and validation and verify that CSpell respects the project vocabulary. Validate the generated GitHub Actions workflow with `actionlint` and verify that it runs the same checks as the corresponding local setup.
    - Check that optional setups appear only when selected and preserve existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
