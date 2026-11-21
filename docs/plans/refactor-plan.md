@@ -4,15 +4,19 @@
 
 Publish `@cassidydc/configra` for developers who want to set up linting, formatting, and Git hooks in new or existing projects. Configra generates editable files and declares the required development dependencies. The generated checks run independently of Configra.
 
-| Feature            | First release                                                                                                                                                                                                                                       |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Project presets    | Node.js, PHP, Python, and WordPress sites, plugins, and themes. Offer React and TypeScript as selectable capabilities and community or WordPress standards where applicable.                                                                        |
-| Tooling            | EditorConfig, Prettier, Markdownlint, and `.gitignore` as the baseline. Add ESLint for JavaScript and TypeScript, Stylelint for CSS, and PHP Parallel Lint, PHP_CodeSniffer, and PHPStan for PHP. Offer VS Code and Webpack as independent options. |
-| Repository layouts | Standalone projects, explicitly selected nested packages, and existing npm workspaces. Discovery suggests packages for the user to select.                                                                                                          |
-| Git hooks          | Lefthook runs checks on staged paths. The `commit-msg` hook defaults to plain sentence-case subjects and offers Conventional Commits or validation off. Release automation stays outside launch scope.                                              |
-| Installation       | npm for JavaScript tooling and Composer for PHP tooling. The interactive flow previews file changes, dependency installation, and hook activation for approval. Scripts opt into installation and activation separately.                            |
+| Feature            | First release                                                                                                                                                                                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Project presets    | Node.js, PHP, Python, and WordPress sites, plugins, and themes. Offer React and TypeScript as selectable capabilities and community or WordPress standards where applicable.                                                                            |
+| Tooling            | EditorConfig, Prettier, Markdownlint, and `.gitignore` as the baseline. Add ESLint for JavaScript and TypeScript, Stylelint for CSS, and PHP Parallel Lint, PHP_CodeSniffer, and PHPStan for PHP. Offer VS Code and Webpack as independent options.     |
+| Repository layouts | Standalone projects, explicitly selected nested packages, and existing npm workspaces. Discovery suggests packages for the user to select.                                                                                                              |
+| Git hooks          | Lefthook runs checks on staged paths. The `commit-msg` hook defaults to plain sentence-case subjects and offers Conventional Commits or validation off. Release automation stays outside launch scope.                                                  |
+| Installation       | npm for JavaScript tooling, Composer for PHP tooling, and uv or pip for Python tooling. The interactive flow previews file changes, dependency installation, and hook activation for approval. Scripts opt into installation and activation separately. |
 
-The Python preset will generate linting and formatting configuration. Choose the Python tools, config file, and dependency installation workflow before implementing the preset.
+### Python setup
+
+- Use Ruff for linting and formatting with shared settings across both installation paths. Support existing Ruff settings in `pyproject.toml` or a standalone Ruff config. Choose the default location for new Ruff configuration before implementing the preset.
+- Recommend `uv` for fresh setups and use the existing `uv` workflow when the project has a `uv.lock`. Declare Ruff in the development dependency group and let `uv` manage the lockfile and virtual environment when installation is approved.
+- Offer `pip` for an existing virtual environment selected by the user. Install through that environment's Python interpreter and follow the project's development requirements workflow when present. When the installation workflow is unclear, offer configuration generation and request a choice before installing.
 
 ### Optional language and Git configuration
 
@@ -57,7 +61,7 @@ src/
       lefthook/
       commitlint/
       …                       # One folder per remaining tool
-  platform/                  # Filesystem, Git, subprocess, npm, Composer
+  platform/                  # Filesystem, Git, subprocess, npm, Composer, uv, pip
 tests/
   unit/
   integration/
@@ -72,5 +76,5 @@ Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM packag
 ## Implementation and release checks
 
 1. Build the CLI, planner, and safe-update flow around a standalone Node.js project. Verify dry runs, idempotent reruns, legacy metadata rejection, conflict handling, and protection of user edits and nested Git repositories.
-2. Add PHP, Python, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and the React/TypeScript ESLint combination. Test the Python setup in a standalone project. Exercise shell checks, SQL dialect selection, and Go and Rust formatting in fixtures. Check that optional setups appear only when selected, including preservation of existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
+2. Add PHP, Python, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and the React/TypeScript ESLint combination. Test Ruff through both Python installation paths, including `uv` lockfile updates and `pip` installation into the selected environment. Exercise shell checks, SQL dialect selection, and Go and Rust formatting in fixtures. Check that optional setups appear only when selected, including preservation of existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
 3. Run `npm pack`, install the tarball into a clean consumer, and test the CLI and packaged templates. Verify the packed CLI on Linux, macOS, and Windows. Update `README.md` and `CHANGELOG.md`, and commit each completed implementation task using the repository’s existing commit style. Check the registry before choosing the release version, and publish the verified artifact under the existing scope. [Publishing a public scoped npm package](https://docs.npmjs.com/creating-and-publishing-an-organization-scoped-package/)
