@@ -6,11 +6,13 @@ Publish `@cassidydc/configra` for developers who want to set up linting, formatt
 
 | Feature            | First release                                                                                                                                                                                                                                       |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Project presets    | Node.js, PHP, and WordPress sites, plugins, and themes. Offer React and TypeScript as selectable capabilities and community or WordPress standards where applicable.                                                                                |
+| Project presets    | Node.js, PHP, Python, and WordPress sites, plugins, and themes. Offer React and TypeScript as selectable capabilities and community or WordPress standards where applicable.                                                                        |
 | Tooling            | EditorConfig, Prettier, Markdownlint, and `.gitignore` as the baseline. Add ESLint for JavaScript and TypeScript, Stylelint for CSS, and PHP Parallel Lint, PHP_CodeSniffer, and PHPStan for PHP. Offer VS Code and Webpack as independent options. |
 | Repository layouts | Standalone projects, explicitly selected nested packages, and existing npm workspaces. Discovery suggests packages for the user to select.                                                                                                          |
 | Git hooks          | Lefthook runs checks on staged paths. The `commit-msg` hook defaults to plain sentence-case subjects and offers Conventional Commits or validation off. Release automation stays outside launch scope.                                              |
 | Installation       | npm for JavaScript tooling and Composer for PHP tooling. The interactive flow previews file changes, dependency installation, and hook activation for approval. Scripts opt into installation and activation separately.                            |
+
+The Python preset will generate linting and formatting configuration. Choose the Python tools, config file, and dependency installation workflow before implementing the preset.
 
 ### Optional language and Git configuration
 
@@ -41,7 +43,7 @@ src/
     state/                   # Selection and ownership schemas
   components/
     registry.ts              # Explicit list of supported integrations
-    projects/                # Node.js, PHP, and WordPress presets
+    projects/                # Node.js, PHP, Python, and WordPress presets
     capabilities/            # React and TypeScript
     standards/               # Language-specific coding standards
     tools/
@@ -67,5 +69,5 @@ Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM packag
 ## Implementation and release checks
 
 1. Build the CLI, planner, and safe-update flow around a standalone Node.js project. Verify dry runs, idempotent reruns, legacy metadata rejection, conflict handling, and protection of user edits and nested Git repositories.
-2. Add PHP, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and the React/TypeScript ESLint combination. Check that SCSS linting, TypeScript type checking, starter configuration, and Git attributes follow their opt-in selections, including preservation of existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
+2. Add PHP, Python, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and the React/TypeScript ESLint combination. Test the Python setup in a standalone project. Check that SCSS linting, TypeScript type checking, starter configuration, and Git attributes follow their opt-in selections, including preservation of existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
 3. Run `npm pack`, install the tarball into a clean consumer, and test the CLI and packaged templates. Verify the packed CLI on Linux, macOS, and Windows. Update `README.md` and `CHANGELOG.md`, and commit each completed implementation task using the repository’s existing commit style. Check the registry before choosing the release version, and publish the verified artifact under the existing scope. [Publishing a public scoped npm package](https://docs.npmjs.com/creating-and-publishing-an-organization-scoped-package/)
