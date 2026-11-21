@@ -198,7 +198,17 @@ src/
         index.ts
         templates/
           webpack.config.js  # Extends the WordPress config
-  platform/                  # Filesystem, Git, subprocess, npm, Composer, uv, pip
+  platform/
+    filesystem.ts            # Safe paths, file snapshots, and atomic writes
+    git.ts                   # Repository boundaries, worktrees, and hook paths
+    process.ts               # Command execution, output, exit codes, and signals
+    package-managers/
+      composer.ts            # Composer dependency and lockfile operations
+      npm.ts                 # npm dependency installs and workspace lookup
+      python/
+        environment.ts       # Selected virtual environment and Python interpreter
+        pip.ts               # Installs into the selected virtual environment
+        uv.ts                # Development dependencies and lockfile sync
   contracts.ts               # Internal request, tool contribution, and plan types
 tests/
   unit/
