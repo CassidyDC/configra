@@ -85,23 +85,26 @@ src/
   components/
     registry.ts              # Explicit list of supported integrations
     projects/
-      django.ts
       go/
         index.ts
         wails.ts
-      laravel.ts
-      nextjs.ts
-      node.ts
-      php.ts
-      python.ts
+      javascript/
+        node.ts
+        nextjs.ts
+        web-frontend.ts
+      php/
+        index.ts            # General PHP preset
+        laravel.ts
+        wordpress/
+          plugin.ts
+          site.ts
+          theme.ts
+      python/
+        index.ts            # General Python preset
+        django.ts
       rust/
         index.ts
         tauri.ts
-      web-frontend.ts
-      wordpress/
-        plugin.ts
-        site.ts
-        theme.ts
     capabilities/
       react.ts
       scss.ts
