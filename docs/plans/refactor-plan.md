@@ -75,17 +75,105 @@ src/
     state/                   # Selection and ownership schemas
   components/
     registry.ts              # Explicit list of supported integrations
-    projects/                # Node.js, PHP, Python, WordPress, Go, and Rust presets
-    capabilities/            # React, TypeScript, and Vue
-    standards/               # Language-specific coding standards
+    projects/
+      go.ts
+      node.ts
+      php.ts
+      python.ts
+      rust.ts
+      wordpress/
+        plugin.ts
+        site.ts
+        theme.ts
+    capabilities/
+      react.ts
+      scss.ts
+      typescript.ts
+      vue.ts
+    standards/
+      css/
+        community.ts
+        wordpress.ts
+      javascript/
+        community.ts
+        wordpress.ts
+      php/
+        community.ts
+        wordpress.ts
+      python/
+        community.ts
     tools/
-      eslint/
-        index.ts             # Tool metadata and renderer
-        templates/           # Only where the tool needs static assets
-      prettier/
-      lefthook/
+      actionlint/
+        index.ts
+      clippy/
+        index.ts
       commitlint/
-      …                       # One folder per remaining tool
+        index.ts
+      cspell/
+        index.ts
+      editorconfig/
+        index.ts
+      eslint/
+        index.ts
+      gitattributes/
+        index.ts
+      github-actions/
+        index.ts
+      gitignore/
+        index.ts
+      go-vet/
+        index.ts
+      gofmt/
+        index.ts
+      hadolint/
+        index.ts
+      lefthook/
+        index.ts
+      markdownlint/
+        index.ts
+      mypy/
+        index.ts
+      php-lint/
+        index.ts             # Native php -l
+      phpcs/
+        index.ts
+      phpstan/
+        index.ts
+      prettier/
+        index.ts
+        options.ts
+      psscriptanalyzer/
+        index.ts
+      ruff/
+        index.ts
+      rustfmt/
+        index.ts
+      shellcheck/
+        index.ts
+      shfmt/
+        index.ts
+      sqlfluff/
+        index.ts
+      stylelint/
+        index.ts
+      tombi/
+        index.ts
+      typescript/
+        index.ts             # Optional typecheck and starter tsconfig.json
+      vite/
+        index.ts
+      vscode/
+        index.ts
+      webpack/
+        index.ts
+        templates/
+          webpack.config.js
+      wordpress-build/
+        index.ts
+      wordpress-scripts/
+        index.ts
+        templates/
+          webpack.config.js  # Extends the WordPress config
   platform/                  # Filesystem, Git, subprocess, npm, Composer, uv, pip
   contracts.ts               # Internal request, tool contribution, and plan types
 tests/
@@ -97,7 +185,7 @@ docs/                        # User guide and tool authoring guide
 dist/                        # Compiled ESM and runtime templates for npm
 ```
 
-Each tool renderer takes resolved package settings and returns typed contributions for configuration files, dependencies, scripts, ignore rules, and hook requirements. The generator combines contributions, and platform adapters handle writes and process execution. Resolve shared formatting settings once for EditorConfig, formatters, and linters. Report incompatible combinations during preview.
+Each tool's `index.ts` holds its metadata and renderer. The renderer takes resolved package settings and returns typed contributions for configuration files, dependencies, scripts, ignore rules, and hook requirements. Keep static assets in the owning tool's `templates/` directory. The generator combines contributions, and platform adapters handle writes and process execution. Resolve shared formatting settings once for EditorConfig, formatters, and linters. Report incompatible combinations during preview.
 
 Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM package, point the npm `configra` executable at `dist/cli/index.js`, and copy templates beside their compiled integrations so they work from an installed tarball. Pack runtime files, README, changelog, and license. Set `publishConfig.access` to `public`. [npm package metadata](https://docs.npmjs.com/cli/configuring-npm/package-json/)
 
