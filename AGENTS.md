@@ -2,6 +2,7 @@
 
 ## Repository guidance
 
+- This project uses ECMAScript modules (ESM). Prefer `.js` for JavaScript files. Use `.mjs` when the file needs to declare ESM explicitly. Reserve `.cjs` for tools that require CommonJS.
 - Finish each task or feature by committing its completed changes.
 - Match the existing commit message style and formatting; use a plain, sentence-case imperative subject without adding prefixes or changing the format.
 - When relevant, document completed tasks or features in `CHANGELOG.md` and `README.md`.
