@@ -105,23 +105,35 @@ src/
       rust/
         index.ts
         tauri.ts
+    languages/
+      javascript/
+        index.ts
+        standards/
+          community.ts
+          wordpress.ts
+      typescript.ts
+      css/
+        index.ts
+        standards/
+          community.ts
+          wordpress.ts
+      scss.ts
+      php/
+        index.ts
+        standards/
+          community.ts
+          wordpress.ts
+      python/
+        index.ts
+        standards/
+          community.ts
+      go.ts
+      rust.ts
     capabilities/
       react.ts
       scss.ts
       typescript.ts
       vue.ts
-    standards/
-      css/
-        community.ts
-        wordpress.ts
-      javascript/
-        community.ts
-        wordpress.ts
-      php/
-        community.ts
-        wordpress.ts
-      python/
-        community.ts
     tools/
       actionlint/
         index.ts
@@ -218,6 +230,8 @@ examples/                    # Representative selections and generated output
 docs/                        # User guide and tool authoring guide
 dist/                        # Compiled ESM and runtime templates for npm
 ```
+
+Language definitions provide shared file patterns for project presets, capabilities, and tools. Keep optional coding policies in each language's `standards/` folder. TypeScript can reuse JavaScript standards, and SCSS can reuse CSS standards. Validate languages against the language registry independently of standards so Go and Rust can use their toolchain defaults.
 
 Each tool's `index.ts` holds its metadata and renderer. The renderer takes resolved package settings and returns typed contributions for configuration files, dependencies, scripts, ignore rules, and hook requirements. Keep static assets in the owning tool's `templates/` directory. The generator combines contributions, and platform adapters handle writes and process execution. Resolve shared formatting settings once for EditorConfig, formatters, and linters. Report incompatible combinations during preview.
 
