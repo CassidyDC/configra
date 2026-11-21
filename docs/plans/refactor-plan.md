@@ -12,6 +12,12 @@ Publish `@cassidydc/configra` for developers who want to set up linting, formatt
 | Git hooks          | Lefthook runs checks on staged paths. The `commit-msg` hook defaults to plain sentence-case subjects and offers Conventional Commits or validation off. Release automation stays outside launch scope.                                              |
 | Installation       | npm for JavaScript tooling and Composer for PHP tooling. The interactive flow previews file changes, dependency installation, and hook activation for approval. Scripts opt into installation and activation separately.                            |
 
+### Optional language and Git configuration
+
+- **SCSS.** Format SCSS with Prettier. Offer SCSS linting as a separate opt-in that adds the necessary Stylelint configuration and dependencies for `.scss` files.
+- **TypeScript.** Offer an opt-in `typecheck` script that runs `tsc --noEmit` using the project's `tsconfig.json`. Offer to generate a starter `tsconfig.json` when the project lacks one. Use the existing config when present.
+- **Git line endings.** Offer a root `.gitattributes` file as an opt-in. Show the proposed line-ending rules in the preview and preserve unrelated attributes already present in the file.
+
 ## CLI and safe updates
 
 - Keep `configra init`, `configra update`, and `configra discover`, plus `--help` and `--version`. Support `--cwd`, `--config`, and selection flags for project type, layout, packages, languages, capabilities, standards, and tools. Use `--commit-messages plain|conventional|off`, `--install`, and `--install-hooks`. `--dry-run --json` emits a versioned plan containing changes, conflicts, diagnostics, and proposed commands without writing files or running installers. The CLI and documented JSON are the public interfaces.
@@ -61,5 +67,5 @@ Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM packag
 ## Implementation and release checks
 
 1. Build the CLI, planner, and safe-update flow around a standalone Node.js project. Verify dry runs, idempotent reruns, legacy metadata rejection, conflict handling, and protection of user edits and nested Git repositories.
-2. Add PHP, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and the React/TypeScript ESLint combination. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
+2. Add PHP, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and the React/TypeScript ESLint combination. Check that SCSS linting, TypeScript type checking, starter configuration, and Git attributes follow their opt-in selections, including preservation of existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
 3. Run `npm pack`, install the tarball into a clean consumer, and test the CLI and packaged templates. Verify the packed CLI on Linux, macOS, and Windows. Update `README.md` and `CHANGELOG.md`, and commit each completed implementation task using the repository’s existing commit style. Check the registry before choosing the release version, and publish the verified artifact under the existing scope. [Publishing a public scoped npm package](https://docs.npmjs.com/creating-and-publishing-an-organization-scoped-package/)
