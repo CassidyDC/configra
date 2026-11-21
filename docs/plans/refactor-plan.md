@@ -37,9 +37,15 @@ Publish `@cassidydc/configra` for developers who want to set up linting, formatt
 ## CLI and safe updates
 
 - Keep `configra init`, `configra update`, and `configra discover`, plus `--help` and `--version`. Support `--cwd`, `--config`, and selection flags for project type, layout, packages, languages, capabilities, standards, and tools. Use `--commit-messages plain|conventional|off`, `--install`, and `--install-hooks`. `--dry-run --json` emits a versioned plan containing changes, conflicts, diagnostics, and proposed commands without writing files or running installers. The CLI and documented JSON are the public interfaces.
-- Resolve selections and package ownership, render a plan without writes, then preflight and apply it. Keep dependencies and local scripts in their owning package. Delegate to each selected child once, and generate one hook configuration at the Git root. Allow generating hook configuration before Git initialization, but require an existing Git root for activation. Run target npm installs with lifecycle scripts disabled so Lefthook’s postinstall cannot activate hooks before approval. Activate hooks explicitly without replacing other hook managers or custom hook paths. [Lefthook installation behavior](https://lefthook.dev/usage/commands/install/)
+- Normalize prompts, flags, and saved selections into the same typed project request. Resolve selections and package ownership, render a plan without writes, then preflight and apply it.
+- Generate one hook configuration at the Git root. Allow generating hook configuration before Git initialization, but require an existing Git root for activation. Run target npm installs with lifecycle scripts disabled so Lefthook’s postinstall cannot activate hooks before approval. Activate hooks explicitly without replacing other hook managers or custom hook paths. [Lefthook installation behavior](https://lefthook.dev/usage/commands/install/)
 - Store choices in `.configra.json` and ownership in `.configra-state.json`, both at schema version `2`. Reject legacy metadata with fresh-setup instructions. Preserve unrelated manifest entries and leave matching pre-existing content unowned. Update or remove unchanged owned content automatically. Require an explicit interactive decision for each conflict, and stop before writes on unresolved conflicts in noninteractive runs.
 - Recheck file snapshots and Git boundaries before applying, preserve file permissions, and write ownership state last. Report file, installation, and hook failures separately. Keep successfully generated files after an install failure so users can retry without recreating them.
+
+## Package settings and ownership
+
+- Let `--config` set standards and formatting per language and per package. Children inherit applicable settings from their nearest selected parent. Explicit child standards merge by language, and explicit child tool and capability lists replace the inherited lists. A WordPress site can use WordPress defaults while a selected plugin uses community JavaScript rules.
+- Use a package graph to track selected package roots, their relationships, workspace membership, and Git boundaries. Keep dependencies and local scripts in the owning package. Exclude selected child directories from parent-local checks and have aggregate checks delegate to each child once. Use paths for independent nested packages and exact registered names for npm workspaces. Route staged paths to their owning package through the same graph.
 
 ## Filesystem structure
 
@@ -51,6 +57,7 @@ src/
     prompts/                 # Selections, preview approval, conflicts
   generator/
     resolve.ts               # Presets, capabilities, and explicit choices
+    package-graph.ts         # Selected packages, workspaces, and Git boundaries
     plan.ts                  # Proposed files, dependencies, and conflicts
     apply.ts                 # Preflight, writes, installation, activation
     layouts/                 # Standalone, nested, npm workspaces
@@ -69,6 +76,7 @@ src/
       commitlint/
       …                       # One folder per remaining tool
   platform/                  # Filesystem, Git, subprocess, npm, Composer, uv, pip
+  contracts.ts               # Internal request, tool contribution, and plan types
 tests/
   unit/
   integration/
@@ -78,10 +86,17 @@ docs/                        # User guide and tool authoring guide
 dist/                        # Compiled ESM and runtime templates for npm
 ```
 
+Each tool renderer takes resolved package settings and returns typed contributions for configuration files, dependencies, scripts, ignore rules, and hook requirements. The generator combines contributions, and platform adapters handle writes and process execution. Resolve shared formatting settings once for EditorConfig, formatters, and linters. Report incompatible combinations during preview.
+
 Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM package, point the npm `configra` executable at `dist/cli/index.js`, and copy templates beside their compiled integrations so they work from an installed tarball. Pack runtime files, README, changelog, and license. Set `publishConfig.access` to `public`. [npm package metadata](https://docs.npmjs.com/cli/configuring-npm/package-json/)
 
 ## Implementation and release checks
 
 1. Build the CLI, planner, and safe-update flow around a standalone Node.js project. Verify dry runs, idempotent reruns, legacy metadata rejection, conflict handling, and protection of user edits and nested Git repositories.
-2. Add PHP, Python, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and React and Vue cases with TypeScript enabled. Test Ruff and opt-in mypy through both Python installation paths, including `uv` lockfile updates and `pip` installation into the selected environment. Exercise shell, Dockerfile, and PowerShell checks, SQL dialect selection, and Go and Rust formatting in fixtures. Check Taplo formatting and validation and verify that CSpell respects the project vocabulary. Validate the generated GitHub Actions workflow with `actionlint` and verify that it runs the same checks as the corresponding local setup. Check that optional setups appear only when selected, including preservation of existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
-3. Run `npm pack`, install the tarball into a clean consumer, and test the CLI and packaged templates. Verify the packed CLI on Linux, macOS, and Windows. Update `README.md` and `CHANGELOG.md`, and commit each completed implementation task using the repository’s existing commit style. Check the registry before choosing the release version, and publish the verified artifact under the existing scope. [Publishing a public scoped npm package](https://docs.npmjs.com/creating-and-publishing-an-organization-scoped-package/)
+2. Generate one standalone WordPress plugin under both WordPress and community standards. Verify clean npm and Composer installs and run the generated checks with both standards. Load and run generated JavaScript configuration in both ESM and CommonJS consumer projects.
+3. Add nested packages, npm workspaces, the remaining project presets, and optional integrations.
+   - Test inheritance and per-language overrides in a WordPress site with a plugin and theme. Verify that parent-local checks exclude selected children, aggregate checks visit each selected child once, and staged paths go to their owning package.
+   - Verify dependency removal and retry, generated checks for each preset, and React and Vue cases with TypeScript enabled. Test Ruff and opt-in mypy through both Python installation paths, including `uv` lockfile updates and `pip` installation into the selected environment.
+   - Exercise shell, Dockerfile, and PowerShell checks, SQL dialect selection, and Go and Rust formatting in fixtures. Check Taplo formatting and validation and verify that CSpell respects the project vocabulary. Validate the generated GitHub Actions workflow with `actionlint` and verify that it runs the same checks as the corresponding local setup.
+   - Check that optional setups appear only when selected and preserve existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
+4. Run `npm pack`, install the tarball into a clean consumer, and test the CLI and packaged templates. Verify the packed CLI on Linux, macOS, and Windows. Update `README.md` and `CHANGELOG.md`, and commit each completed implementation task using the repository’s existing commit style. Check the registry before choosing the release version, and publish the verified artifact under the existing scope. [Publishing a public scoped npm package](https://docs.npmjs.com/creating-and-publishing-an-organization-scoped-package/)
