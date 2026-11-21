@@ -18,6 +18,9 @@ The Python preset will generate linting and formatting configuration. Choose the
 
 - **SCSS.** Format SCSS with Prettier. Offer SCSS linting as a separate opt-in that adds the necessary Stylelint configuration and dependencies for `.scss` files.
 - **TypeScript.** Offer an opt-in `typecheck` script that runs `tsc --noEmit` using the project's `tsconfig.json`. Offer to generate a starter `tsconfig.json` when the project lacks one. Use the existing config when present.
+- **Bash and POSIX shell.** Offer opt-in ShellCheck linting and `shfmt` formatting for shell scripts. Generate `.shellcheckrc` and add shell formatting settings to `.editorconfig`.
+- **SQL.** Offer opt-in SQLFluff linting and formatting for `.sql` files. Generate `.sqlfluff` using a dialect the user selects, such as MySQL, PostgreSQL, or SQLite.
+- **Go and Rust.** Offer each as an independently selectable standalone preset. Wire `gofmt` and `rustfmt` into their respective project checks and Git hooks.
 - **Git line endings.** Offer a root `.gitattributes` file as an opt-in. Show the proposed line-ending rules in the preview and preserve unrelated attributes already present in the file.
 
 ## CLI and safe updates
@@ -43,7 +46,7 @@ src/
     state/                   # Selection and ownership schemas
   components/
     registry.ts              # Explicit list of supported integrations
-    projects/                # Node.js, PHP, Python, and WordPress presets
+    projects/                # Node.js, PHP, Python, WordPress, Go, and Rust presets
     capabilities/            # React and TypeScript
     standards/               # Language-specific coding standards
     tools/
@@ -69,5 +72,5 @@ Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM packag
 ## Implementation and release checks
 
 1. Build the CLI, planner, and safe-update flow around a standalone Node.js project. Verify dry runs, idempotent reruns, legacy metadata rejection, conflict handling, and protection of user edits and nested Git repositories.
-2. Add PHP, Python, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and the React/TypeScript ESLint combination. Test the Python setup in a standalone project. Check that SCSS linting, TypeScript type checking, starter configuration, and Git attributes follow their opt-in selections, including preservation of existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
+2. Add PHP, Python, WordPress, nested packages, npm workspaces, and the remaining tools. Verify clean npm and Composer installs, dependency removal and retry, generated checks for each preset, and the React/TypeScript ESLint combination. Test the Python setup in a standalone project. Exercise shell checks, SQL dialect selection, and Go and Rust formatting in fixtures. Check that optional setups appear only when selected, including preservation of existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
 3. Run `npm pack`, install the tarball into a clean consumer, and test the CLI and packaged templates. Verify the packed CLI on Linux, macOS, and Windows. Update `README.md` and `CHANGELOG.md`, and commit each completed implementation task using the repository’s existing commit style. Check the registry before choosing the release version, and publish the verified artifact under the existing scope. [Publishing a public scoped npm package](https://docs.npmjs.com/creating-and-publishing-an-organization-scoped-package/)
