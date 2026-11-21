@@ -14,7 +14,8 @@ Publish `@cassidydc/configra` for developers who want to set up linting, formatt
 
 ### JavaScript and PHP checks
 
-- Prefer `.js` for generated ESM configuration when the target package declares `"type": "module"`. Use `.mjs` to declare ESM explicitly in CommonJS projects and projects without an explicit module type. Reserve `.cjs` for tools that require CommonJS.
+- Default each `package.json` that Configra creates to `"type": "module"`. Preserve the module behavior of existing manifests.
+- Choose generated config filenames using the planned package manifest. Prefer `.js` for ESM configuration when the manifest declares `"type": "module"`. Use `.mjs` to declare ESM explicitly in CommonJS projects and projects without an explicit module type. Reserve `.cjs` for tools that require CommonJS.
 - Use the latest stable ESLint release with flat config in `eslint.config.js` or `eslint.config.mjs`, following the target package's module type. Verify compatible dependency ranges for each generated preset when updating the ESLint version.
 - Use `@eslint-react/eslint-plugin` and React's `eslint-plugin-react-hooks` for the community React setup on ESLint 10 and later. Use the official WordPress ESLint preset for the WordPress standard and verify its React and TypeScript combination separately.
 - Use native `php -l` for staged and full-project syntax checks. Batch files with PHP 8.3 or later and check one file per invocation with older interpreters. Keep PHP_CodeSniffer for the selected PHP coding standard and PHPStan for static analysis.
@@ -102,7 +103,7 @@ Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM packag
 
 ## Implementation and release checks
 
-1. Build the CLI, planner, and safe-update flow around a standalone Node.js project. Verify dry runs, idempotent reruns, legacy metadata rejection, conflict handling, and protection of user edits and nested Git repositories.
+1. Build the CLI, planner, and safe-update flow around a standalone Node.js project. Verify dry runs, idempotent reruns, legacy metadata rejection, conflict handling, and protection of user edits and nested Git repositories. Verify that a newly generated `package.json` declares `"type": "module"` and that the corresponding ESM config uses `.js`.
 2. Generate one standalone WordPress plugin under both WordPress and community standards. Verify clean npm and Composer installs and run the generated checks with both standards. Verify `.js` config loading in ESM consumer projects and `.mjs` fallback in CommonJS projects and projects without a declared module type. Exercise native PHP syntax checking with and without multi-file support. Build one compatible WordPress fixture with `@wordpress/build` and another with `@wordpress/scripts` using the generated Webpack config. Verify that the overrides apply and both the single-config and multi-config builds retain WordPress asset metadata.
 3. Add nested packages, npm workspaces, the remaining project presets, and optional integrations.
    - Test inheritance and per-language overrides in a WordPress site with a plugin and theme. Verify that parent-local checks exclude selected children, aggregate checks visit each selected child once, and staged paths go to their owning package.
