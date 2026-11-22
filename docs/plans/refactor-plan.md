@@ -4,13 +4,14 @@
 
 Publish `@cassidydc/configra` for developers who want to set up linting, formatting, and Git hooks in new or existing projects. Configra generates editable files and declares the required development dependencies. The generated checks run independently of Configra.
 
-| Feature            | First release                                                                                                                                                                                                                                           |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Project presets    | Node.js, PHP, Python, Go, Rust, Laravel, Next.js, standalone web frontends, Django, Tauri, Wails, and WordPress sites, plugins, and themes. Offer TypeScript and SCSS as selectable languages and React and Vue as UI options.                          |
-| Tooling            | EditorConfig, Prettier, Markdownlint, and `.gitignore` as the baseline. Add ESLint for JavaScript and TypeScript, Stylelint for CSS, and `php -l`, PHP_CodeSniffer, and PHPStan for PHP. Offer VS Code and opt-in build tooling.                        |
-| Repository layouts | Standalone projects, explicitly selected nested packages, and existing npm workspaces. Discovery suggests packages for the user to select.                                                                                                              |
-| Git hooks          | Lefthook runs checks on staged paths. The `commit-msg` hook defaults to plain sentence-case subjects and offers Conventional Commits or validation off. Release automation stays outside launch scope.                                                  |
-| Installation       | npm for JavaScript tooling, Composer for PHP tooling, and uv or pip for Python tooling. The interactive flow previews file changes, dependency installation, and hook activation for approval. Scripts opt into installation and activation separately. |
+| Feature            | First release                                                                                                                                                                                                                       |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Project presets    | Node.js, PHP, Python, Go, Rust, Laravel, Next.js, standalone web frontends, Django, Tauri, Wails, and WordPress sites, plugins, and themes. Offer TypeScript and SCSS as selectable languages and React and Vue as UI options.      |
+| Tooling            | EditorConfig, Prettier, Markdownlint, and `.gitignore` as the baseline. Add ESLint for JavaScript and TypeScript, Stylelint for CSS, and `php -l`, PHP_CodeSniffer, and PHPStan for PHP. Offer VS Code and opt-in build tooling.    |
+| Repository layouts | Standalone projects, explicitly selected nested packages, and existing npm workspaces. Discovery suggests packages for the user to select.                                                                                          |
+| Git hooks          | Lefthook runs checks on staged paths. The `commit-msg` hook defaults to plain sentence-case subjects and offers Conventional Commits or validation off. Release automation stays outside launch scope.                              |
+| Setup wizard       | `configra init` guides users through project and tool choices, previews the result, and saves the project configuration in `.configra.json`. Users can save the config, generate tooling files, or generate and install in one run. |
+| Installation       | npm for JavaScript tooling, Composer for PHP tooling, and uv or pip for Python tooling. The CLI can apply the saved config on another checkout. Dependency installation and Git hook activation are separate opt-ins.               |
 
 ### Framework and application presets
 
@@ -61,11 +62,26 @@ Publish `@cassidydc/configra` for developers who want to set up linting, formatt
 
 ## CLI and safe updates
 
-- Keep `configra init`, `configra update`, and `configra discover`, plus `--help` and `--version`. Support `--cwd`, `--config`, `--languages`, `--ui`, and selection flags for project type, layout, packages, standards, and tools. Use `--commit-messages plain|conventional|off`, `--install`, and `--install-hooks`. `--dry-run --json` emits a versioned plan containing changes, conflicts, diagnostics, and proposed commands without writing files or running installers. The CLI and documented JSON are the public interfaces.
+- Keep `configra init`, `configra update`, and `configra discover`, plus `--help` and `--version`. Support `--cwd`, `--config`, `--interactive`, `--languages`, `--ui`, and selection flags for project type, layout, packages, standards, and tools. Use `--commit-messages plain|conventional|off`, `--install`, and `--install-hooks`. The CLI and documented JSON are the public interfaces.
+- Keep `--dry-run --json` prompt-free. Emit a versioned plan containing changes, conflicts, diagnostics, and proposed commands without writing files, running installers, or activating hooks. In noninteractive runs, stop before writes if validation fails or conflicts remain unresolved.
 - Normalize prompts, flags, and saved selections into the same typed project request. Resolve selections and package ownership, render a plan without writes, then preflight and apply it.
 - Generate one hook configuration at the Git root. Allow generating hook configuration before Git initialization, but require an existing Git root for activation. Run target npm installs with lifecycle scripts disabled so Lefthook’s postinstall cannot activate hooks before approval. Activate hooks explicitly without replacing other hook managers or custom hook paths. [Lefthook installation behavior](https://lefthook.dev/usage/commands/install/)
-- Store choices in `.configra.json` and ownership in `.configra-state.json`, both at schema version `2`. Reject legacy metadata with fresh-setup instructions. Preserve unrelated manifest entries and leave matching pre-existing content unowned. Update or remove unchanged owned content automatically. Require an explicit interactive decision for each conflict, and stop before writes on unresolved conflicts in noninteractive runs.
-- Recheck file snapshots and Git boundaries before applying, preserve file permissions, and write ownership state last. Report file, installation, and hook failures separately. Keep successfully generated files after an install failure so users can retry without recreating them.
+- Preserve unrelated manifest entries and leave matching pre-existing content unowned. Update or remove unchanged owned content automatically. Require an explicit interactive decision for each conflict before applying the affected changes.
+- Recheck file snapshots and Git boundaries before applying, preserve file permissions, and write ownership state last. Report file, installation, and hook failures separately. After an install failure, keep the saved config and successfully generated files and print the exact retry command. Run explicitly requested installs even when the retry plan has zero file changes.
+
+### Setup wizard
+
+- Launch the wizard from `configra init` when standard input and output are terminals, the target root has no saved config, and the user supplies no explicit config file or selection flags. Use `--cwd` to target a different directory with the same wizard behavior. Use `--interactive` to open the wizard with the available config and flags prefilled, including on `configra update`. Noninteractive runs use the same config, flag, and preset defaults.
+- Ask about repository layout and package scope first. Use discovery to suggest candidate packages and let the user choose which to configure. Ask for the project preset, languages and UI, standards and tools, then settings required by the selected integrations. Use detected source and UI usage to suggest choices. Let standalone projects accept preset defaults in one step and let users customize selected packages or keep inherited settings. Support revisiting answers, retrying invalid answers, and clearing a default selection.
+- Preview the proposed `.configra.json`, generated file changes, conflicts, and installer commands with their working directories. Offer **Save config only**, **Generate files**, or **Generate and install**. Resolve conflicts for the selected outcome and preview any resulting changes before final approval. Canceling before approval leaves the project untouched.
+- Use the same validation and planning flow for all three outcomes. Save-only writes just `.configra.json`. Both generation paths save the config and use its selections to generate tooling files. Show applicable hook activation in the preview and request separate approval when generating files.
+
+### Saved configuration
+
+- Use `.configra.json` at the project root as the editable source of truth. Store the preset, layout, selected packages, languages, UI, standards, tools, and integration settings at schema version `2`. Keep ownership in `.configra-state.json` at its own schema version `2`. Treat installation and hook activation as approvals for the current run.
+- Read the file supplied with `--config` or, by default, `.configra.json` under the target root. Apply explicit flags over file values and use preset defaults for unspecified choices. Use the resulting selections to prefill the wizard and let users review and edit them. Preview any changes to the root config before applying them.
+- Apply a saved config on a fresh checkout with `configra init --config .configra.json --install`. Use `configra update --install` to reapply the root config or retry an install after generation succeeds. Pass `--install-hooks` when a scripted run should also activate Git hooks.
+- Detect unsupported versions of `.configra.json` and `.configra-state.json` before writes. Report the affected file and give explicit fresh-setup instructions that cover backing up prior selections and reviewing existing generated files. Require the user to address legacy ownership metadata before treating the project as a fresh setup.
 
 ## Package settings and ownership
 
@@ -79,14 +95,14 @@ src/
   cli/
     index.ts                 # Executable, arguments, and output
     commands/                # init, update, discover
-    prompts/                 # Selections, preview approval, conflicts
+    prompts/                 # Setup wizard, preview approval, conflicts
   generator/
     resolve.ts               # Project defaults, language and UI choices, and file patterns
     package-graph.ts         # Selected packages, workspaces, and Git boundaries
     plan.ts                  # Proposed files, dependencies, and conflicts
     apply.ts                 # Preflight, writes, installation, activation
     layouts/                 # Standalone, nested, npm workspaces
-    state/                   # Selection and ownership schemas
+    state/                   # Saved configuration and ownership schemas
   components/
     registry.ts              # Explicit list of supported integrations
     projects/
@@ -242,10 +258,14 @@ Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM packag
 
 ## Implementation and release checks
 
-1. Build the CLI, planner, and safe-update flow around a standalone Node.js project. Verify dry runs, idempotent reruns, legacy metadata rejection, conflict handling, and protection of user edits and nested Git repositories. Verify that a newly generated `package.json` declares `"type": "module"` and that the corresponding ESM config uses `.js`.
+1. Build the CLI, setup wizard, planner, and safe-update flow around a standalone Node.js project. Verify that a newly generated `package.json` declares `"type": "module"` and that the corresponding ESM config uses `.js`.
+   - Run the packed CLI in a terminal from the first question through preview and installation. Verify that `--cwd` works with automatic prompting, saved choices prefill `--interactive`, canceling before approval leaves the project untouched, and save-only writes just `.configra.json`.
+   - Verify that replaying the saved JSON on an equivalent checkout produces the same plan and that `--dry-run --json` stays prompt-free. Verify idempotent reruns, legacy metadata rejection, conflict handling, and protection of user edits and nested Git repositories.
+   - Simulate an installer failure and verify that `.configra.json` and generated files remain available and the displayed retry command works with zero file changes. Verify that dependencies can be installed independently of hook activation and that activation requires approval.
 2. Generate one standalone WordPress plugin under both WordPress and community standards. Verify clean npm and Composer installs and run the generated checks with both standards. Verify `.js` config loading in ESM consumer projects and `.mjs` fallback in CommonJS projects and projects without a declared module type. Exercise native PHP syntax checking with and without multi-file support. Build one compatible WordPress fixture with `@wordpress/build` and another with `@wordpress/scripts` using the generated Webpack config. Verify that the overrides apply and both the single-config and multi-config builds retain WordPress asset metadata.
 3. Add nested packages, npm workspaces, the remaining project presets, and optional integrations.
    - Test inheritance and per-language overrides in a WordPress site with a plugin and theme. Verify that parent-local checks exclude selected children, aggregate checks visit each selected child once, and staged paths go to their owning package.
+   - Exercise wizard discovery and per-package customization in a mixed npm workspace. Verify that unselected candidates stay outside the plan and that saved per-package overrides replay through the CLI.
    - Build a standalone frontend with Vite. In a mixed WordPress fixture, run Vite and `wp-scripts build` in both orders and verify that each preserves the other build's outputs and metadata.
    - Exercise the framework presets in fixtures. Run Pint and optional Larastan for Laravel, lint a Next.js TypeScript project with its flat config, and run Django system checks with optional framework-aware mypy.
    - Verify Tauri and Wails in desktop fixtures. Route frontend and native checks to their respective package directories, skip generated Wails bindings, and combine the checks under one Git hook configuration when both directories share a repository.
