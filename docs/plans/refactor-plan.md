@@ -59,6 +59,14 @@ Publish `@cassidydc/configra` for developers who want to set up linting, formatt
 - **Dockerfiles.** Offer Hadolint for existing Dockerfiles and generate `.hadolint.yaml` for project-specific rules.
 - **PowerShell.** Offer PSScriptAnalyzer for PowerShell scripts and generate `PSScriptAnalyzerSettings.psd1` for project-specific rules.
 - **Git line endings.** Offer a root `.gitattributes` file as an opt-in. Show the proposed line-ending rules in the preview and preserve unrelated attributes already present in the file.
+- **Agent instructions.** Offer a root `AGENTS.md` as an opt-in for projects that want to document their development workflow and commit policy.
+
+### Agent instructions
+
+- Generate a short `AGENTS.md` with the project layout, package-specific working directories where applicable, and commands for setup, linting, formatting, builds, and tests. Include only commands available in the target project. Identify generated files and where to change their inputs when applicable.
+- Document when to commit, which files to stage, and how to write the subject. Offer a commit-after-verification instruction as an explicit project choice, as Configra uses for its own repository. Recommend staging only the task's changes. For plain subjects, recommend a sentence-case imperative without a prefix, such as `Add agent guidance to the refactor plan`. For Conventional Commits, give an example such as `docs: add agent guidance`. With validation off, omit any generated commit-message format rule.
+- Derive commands, package paths, and commit-message guidance from the same resolved settings used to generate scripts and hooks. Keep project-specific coding guidance short, including the target package's JavaScript module conventions where applicable.
+- Include `AGENTS.md` in the normal preview. Preserve an existing unowned file and show any differing proposed guidance for manual adoption. Apply the existing ownership and conflict rules to files Configra generated.
 
 ## CLI and safe updates
 
@@ -155,6 +163,8 @@ src/
       vue.ts
     tools/
       actionlint/
+        index.ts
+      agents-md/
         index.ts
       clippy/
         index.ts
@@ -272,4 +282,5 @@ Use strict TypeScript and retain Node.js 24 as the minimum. Build one ESM packag
    - Verify dependency removal and retry and generated checks for each preset. Test preset-only requests and explicit language and UI overrides through CLI flags and selection JSON. Run clean npm installs and JSX, TSX, and Vue lint fixtures against the current ESLint release. Test Ruff and opt-in mypy through both Python installation paths, including `uv` lockfile updates and `pip` installation into the selected environment.
    - Exercise shell, Dockerfile, and PowerShell checks, SQL dialect selection, and Go and Rust formatting and opt-in analysis in fixtures. Check Tombi formatting and validation and verify that CSpell respects the project vocabulary. Validate the generated GitHub Actions workflow with `actionlint` and verify that it runs the same checks as the corresponding local setup.
    - Check that optional setups appear only when selected and preserve existing `tsconfig.json` and unrelated Git attributes. Use real test repositories to verify that installation leaves hooks inactive, activation works, staged checks run, and both commit-message presets accept and reject representative messages.
+   - Verify that `AGENTS.md` appears only when selected, lists the correct package commands, and reflects plain, conventional, and disabled commit-message validation. Exercise both commit workflow choices and verify that updates preserve existing guidance and surface edits to owned files as conflicts.
 4. Run `npm pack`, install the tarball into a clean consumer, and test the CLI and packaged templates. Verify the packed CLI on Linux, macOS, and Windows. Update `README.md` and `CHANGELOG.md`, and commit each completed implementation task using the repository’s existing commit style. Check the registry before choosing the release version, and publish the verified artifact under the existing scope. [Publishing a public scoped npm package](https://docs.npmjs.com/creating-and-publishing-an-organization-scoped-package/)
