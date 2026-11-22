@@ -46,7 +46,7 @@ Each tool with an import mechanism gets two files. The project owns the tool's s
 | ESLint                | `eslint.config.js` or `.mjs`             | `configra/eslint.mjs`          |
 | Stylelint             | `stylelint.config.js` or `.mjs`          | `configra/stylelint.mjs`       |
 | PHP_CodeSniffer       | `phpcs.xml.dist`                         | `configra/phpcs.xml`           |
-| PHPStan               | `phpstan.neon`                           | `configra/phpstan.neon`        |
+| PHPStan               | `phpstan.neon.dist`                      | `configra/phpstan.neon`        |
 | Lefthook              | `lefthook.yml`                           | `configra/lefthook.yml`        |
 | commitlint (optional) | `commitlint.config.js` or `.mjs`         | `configra/commitlint.mjs`      |
 
@@ -60,11 +60,12 @@ Each tool with an import mechanism gets two files. The project owns the tool's s
 | `configra/scripts/`             | Configra-owned helper scripts for batched `php -l` and the `commit-msg` check.              |
 
 - Import Configra files the way each tool supports. ESLint, Prettier, markdownlint-cli2, Stylelint, and commitlint entry files import and spread their Configra module. Stylelint spreads instead of using `extends` so its `ignoreFiles` setting applies. PHP_CodeSniffer uses `<rule ref="./configra/phpcs.xml"/>`, PHPStan uses `includes`, and Lefthook uses `extends`.
+- Commit the PHP_CodeSniffer and PHPStan entry files with the `.dist` suffix, following both tools' conventions. Each tool prefers `phpcs.xml` or `phpstan.neon` when present, so a developer can create one locally that includes the `.dist` file and adds personal overrides.
 - Write JavaScript files in `configra/` as `.mjs` so they load as ESM in any package. Entry filenames follow the package's module type.
 - Start each Configra-owned file with a header such as `Managed by Configra. Put your changes in eslint.config.js.`
 - Without executing them, check that each entry file still references its Configra file and warn when the reference is missing. When a tool change needs a different entry-file shape, show the suggested change for manual adoption. Recreate a missing entry file through the normal preview.
 - In the nested layout, each selected child gets its own entry files and `configra/` folder.
-- Add owned `.gitignore` lines for `node_modules/`, `vendor/`, `lefthook-local.yml`, and the ESLint, PHP_CodeSniffer, and PHPStan cache locations. Never ignore WordPress core or uploads by default.
+- Add owned `.gitignore` lines for `node_modules/`, `vendor/`, the personal override files `lefthook-local.yml`, `phpcs.xml`, and `phpstan.neon`, and the ESLint, PHP_CodeSniffer, and PHPStan cache locations. Never ignore WordPress core or uploads by default.
 - Exclude `node_modules/`, `vendor/`, `build/`, `dist/`, tool caches, and minified `*.min.js` and `*.min.css` files from every generated check scope by default. Let saved selections add or remove exclusions.
 - Helper scripts in `configra/scripts/` use only Node.js built-ins so they run without Configra.
 - Let Prettier own formatting for the file types it covers. Turn off overlapping stylistic rules in markdownlint, Stylelint, and ESLint, and use the WordPress ESLint setup without its Prettier rule so formatting runs only through `format` and `format:check`. PHP_CodeSniffer owns PHP formatting, and `lint:fix` runs `phpcbf`. Derive EditorConfig and Prettier settings from the same resolved formatting settings.
@@ -88,7 +89,7 @@ Each tool with an import mechanism gets two files. The project owns the tool's s
 - For the WordPress standard, detect each selected plugin or theme's text domain from its `Text Domain` header and suggest a function prefix from its directory name. Ask for both in the wizard, store them in saved selections, and write them to `configra/phpcs.xml`. In the single layout, list every selected directory's values together.
 - Put the managed PHPStan settings in `configra/phpstan.neon`: the level, the WordPress extension, the target PHP version, exclusions, and the selected plugin and theme directories under `paths`. Include the WordPress extension file directly from `vendor/` instead of through `phpstan/extension-installer`, which would need another Composer plugin permission. PHPStan resolves relative paths from the file that declares them, so write paths relative to `configra/`, such as `../wp-content/plugins/my-plugin`.
 - In a WordPress site, list the unselected plugin, must-use plugin, and theme directories under `scanDirectories` so PHPStan can resolve classes and functions that the selected code uses without analysing them. Let saved selections remove scanned directories to keep large sites fast. In the nested layout, each child's PHPStan files analyse that child and scan the site's other plugins and themes.
-- The project's `phpstan.neon` includes `configra/phpstan.neon`, so its own single values such as the level override Configra's and its lists add to Configra's. Run PHPStan with an explicit memory limit such as `--memory-limit=1G` in generated scripts and hooks.
+- The project's `phpstan.neon.dist` includes `configra/phpstan.neon`, so its own single values such as the level override Configra's and its lists add to Configra's. Run PHPStan with an explicit memory limit such as `--memory-limit=1G` in generated scripts and hooks.
 - Lint TypeScript with `typescript-eslint` rules that don't need type information, so linting works without a `tsconfig.json`. Type-aware rules and `tsc --noEmit` come with the next release's TypeScript option.
 
 ### Language and UI selection
