@@ -15,6 +15,8 @@ Configra generates editable linting, formatting, and Git hook configuration for 
 
 Requirements for generated checks: Node.js 24.15 and npm 11 or later, plus PHP and Composer 2.7 or later for WordPress PHP tools.
 
+The current build plans and previews a Node.js setup with `configra init --dry-run`, as text or with `--json`. Writing files arrives in a later milestone. The [examples](examples/) show the generated files and JSON plan for representative selections.
+
 See [refactor-plan.md](dev/docs/plans/refactor-plan.md) for the full first-release plan and [next-release-plan.md](dev/docs/plans/next-release-plan.md) for what follows.
 
 ## Known issues

@@ -227,18 +227,27 @@ configra update --install
 ```text
 src/
   cli/
-    index.ts                 # Executable, arguments, and output
+    index.ts                 # Executable entry point
+    main.ts                  # Command dispatch and output streams
+    options.ts               # Command and option table that drives parsing, help, and validation
+    args.ts                  # parseArgs wrapper and argument diagnostics
+    help.ts                  # Overview and command help
+    output.ts                # Versioned JSON document and text preview
     commands/                # init, update
     prompts/                 # Setup wizard, preview approval, conflicts
   generator/
+    normalize.ts             # Prompts, flags, and saved selections into one typed request
+    discover.ts              # Read-only project snapshot and advisory discovery
     resolve.ts               # Project defaults, language and UI selections, file scopes
     plan.ts                  # Proposed files, dependencies, and conflicts
+    edits.ts                 # Format-preserving JSON and line edits
     apply.ts                 # File preflight, writes, and the pending-run marker
     install.ts               # Dependency reconciliation
     activate-hooks.ts        # Explicit Git hook activation
     state/                   # Saved selection and ownership validation
   components/
     registry.ts              # Explicit list of supported integrations
+    dependency-ranges.ts     # Shipped ranges, generated from dev/dependency-sets/
     projects/
       node.ts
       wordpress-site.ts
@@ -262,6 +271,8 @@ docs/                        # Published user and contributor guides; plans stay
 dist/                        # Compiled ESM, runtime templates, and schemas/ for npm
 ```
 
+Keep the shipped dependency ranges in fixture manifests under `dev/dependency-sets/`, one npm and one Composer manifest per standard, so Dependabot proposes updates. `npm run generate:ranges` writes `src/components/dependency-ranges.ts` from them, and a unit test fails when the two drift. `npm run examples:update` regenerates `examples/` from representative selections, and an integration test fails when they drift. Tools whose renderers land in a later milestone stay in the registry as unavailable, so selecting one reports a clear diagnostic.
+
 Start with one module per small preset or tool. Add directories as integrations need more than one module. Keep static assets with the owning tool. Language definitions provide base file scopes and standards, and UI modules add framework-specific file scopes and settings. Resolve these and shared formatting settings once per package for reuse across tools and hooks. Let TypeScript reuse JavaScript standards and SCSS reuse CSS standards. Validate languages independently of standards so Go and Rust can use their toolchain defaults.
 
 Tool renderers take resolved settings and return typed contributions for files, dependency requirements, scripts, ignore rules, hook checks, and competing config locations. Include alternate filenames and inline settings such as `package.json#prettier`. Keep renderers independent of live filesystem and process access. The planner combines contributions against the captured snapshot, reports incompatible contributions as conflicts, and returns a deterministic plan. Represent planned commands as an executable, argument array, and working directory. Platform adapters execute them and handle platform-specific executable resolution.
@@ -281,7 +292,7 @@ Run the every-PR gates in GitHub Actions on Linux, macOS, and Windows. Publish f
 Check off each milestone when its verification passes. Milestones 2–5 build the standalone Node.js preset in steps that can each be tested and committed on their own.
 
 1. [x] **Scaffold and spikes.** Add type checking, Vitest, the `tsc` build, the GitHub Actions matrix, and a packed smoke test, and record the new commands in `AGENTS.md`. Settle every item in [Verify first](#verify-first) with a throwaway consumer per tool, and update this plan with the results before milestone 2 fixes the contracts.
-2. [ ] **Plan and preview.** Build the command and option table, help output, selection normalization, resolver, and planner, with dry-run text and JSON output and `--exit-code`. Cover the JavaScript, TypeScript, and React combinations. Verify prompt-free JSON, identical normalized plans across differently named checkouts, rejection of unsupported standard combinations, and help output from the packed CLI.
+2. [x] **Plan and preview.** Build the command and option table, help output, selection normalization, resolver, and planner, with dry-run text and JSON output and `--exit-code`. Cover the JavaScript, TypeScript, and React combinations. Verify prompt-free JSON, identical normalized plans across differently named checkouts, rejection of unsupported standard combinations, and help output from the packed CLI.
 3. [ ] **Apply and ownership.** Build file writes, ownership state, conflict decisions including `--on-conflict`, the per-project lock, and the pending-run marker. Verify clean creation, adoption of an existing project, ESM and CommonJS consumers, no-op reruns, repeated conflict decisions, and a clean rerun after injected write failures.
 4. [ ] **Install and hooks.** Build npm installation, Lefthook configuration, explicit hook activation, and the generated commit-message script. Verify replay on a different checkout, a successful retry after installation failure, inactive hooks until activation, partially staged commits, the commit-message cases, and each supported JavaScript, TypeScript, and React combination in a clean consumer install.
 5. [ ] **Setup wizard.** Build the wizard's step loop, conflict prompts, the three outcomes, terminal approval for flag runs, and `--yes`. Verify the full flow in a real terminal, that canceling leaves the project untouched, and that save-only writes just `.configra/config.json`.

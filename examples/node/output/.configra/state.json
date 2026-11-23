@@ -1,0 +1,84 @@
+{
+  "configraVersion": "0.0.0",
+  "files": {
+    ".configra/eslint.mjs": {
+      "hash": "61a45913f151ae6a65c3478d364baeb05fb6c711d7bb5d0084b11fccf0787dd5",
+      "kind": "file"
+    },
+    ".configra/markdownlint.mjs": {
+      "hash": "e03c2f944f1161cb0794a693509ab7c85d3f2e7f80990488459c780a99c4a857",
+      "kind": "file"
+    },
+    ".configra/prettier.mjs": {
+      "hash": "f8330f2daaec15f527522aeca5d6299c43c3c5daa445f28a0293e297b05266d6",
+      "kind": "file"
+    },
+    ".configra/scripts/commit-msg.mjs": {
+      "hash": "6f4a93a3f09b9ac8a72aa681c149bc4b85d7b363705797de7793b8f2e2633b2d",
+      "kind": "file"
+    },
+    ".editorconfig": {
+      "hash": "578cb336e2c1b68fd6a279b9a63a65efa5c55898a7d8b3ecd7c56e05bc5c32e2",
+      "kind": "file"
+    },
+    ".gitignore": {
+      "kind": "lines",
+      "lines": [
+        "node_modules/",
+        ".configra/tmp/",
+        ".cache/",
+        "lefthook-local.yml"
+      ]
+    },
+    ".markdownlint-cli2.mjs": {
+      "kind": "entry"
+    },
+    ".prettierignore": {
+      "kind": "lines",
+      "lines": [
+        "node_modules/",
+        "vendor/",
+        "build/",
+        "dist/",
+        ".configra/",
+        ".cache/",
+        "*.min.js",
+        "*.min.css",
+        "package-lock.json",
+        "composer.lock",
+        "lefthook.yml"
+      ]
+    },
+    "eslint.config.js": {
+      "kind": "entry"
+    },
+    "lefthook-project.yml": {
+      "kind": "entry"
+    },
+    "lefthook.yml": {
+      "hash": "8a68e245eb58e3e02b0a3ede9ae7a6bccf3402412c3f7a285f170a83f3cafc02",
+      "kind": "file"
+    },
+    "package.json": {
+      "fields": {
+        "/devDependencies/@eslint~1js": "^10.0.1",
+        "/devDependencies/eslint": "^10.15.0",
+        "/devDependencies/globals": "^17.14.0",
+        "/devDependencies/lefthook": "^2.2.2",
+        "/devDependencies/markdownlint-cli2": "^0.24.2",
+        "/devDependencies/prettier": "^3.10.1",
+        "/scripts/format": "prettier --write --no-error-on-unmatched-pattern .",
+        "/scripts/format:check": "prettier --check --no-error-on-unmatched-pattern .",
+        "/scripts/lint": "npm run lint:md && npm run lint:js",
+        "/scripts/lint:fix": "markdownlint-cli2 --fix \"**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix .",
+        "/scripts/lint:js": "eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern .",
+        "/scripts/lint:md": "markdownlint-cli2 \"**/*.md\""
+      },
+      "kind": "fields"
+    },
+    "prettier.config.js": {
+      "kind": "entry"
+    }
+  },
+  "version": 1
+}

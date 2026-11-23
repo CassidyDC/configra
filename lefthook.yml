@@ -8,8 +8,10 @@ pre-commit:
   commands:
     eslint:
       glob: "*.{js,mjs,ts,mts}"
+      # ESLint 10 looks up the config from each file's directory, so the examples would load their own configs.
       exclude:
         - "dev/docs/references/previous-code/**"
+        - "examples/**"
       run: npx eslint --no-warn-ignored {staged_files}
     markdownlint:
       glob: "*.md"

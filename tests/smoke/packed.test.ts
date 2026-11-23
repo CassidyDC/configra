@@ -1,5 +1,5 @@
 import { spawnSync, type SpawnSyncReturns } from "node:child_process";
-import { mkdirSync, mkdtempSync, readdirSync, writeFileSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -66,5 +66,48 @@ describe("packed CLI", () => {
 
     expect(result.status, result.stderr).toBe(0);
     expect(result.stdout.trim()).toBe(manifest.version);
+  });
+
+  it("prints help for bare configra, both aliases, and each command", () => {
+    for (const args of [[], ["--help"], ["-h"], ["init", "--help"], ["update", "--help"]]) {
+      const result = configra(...args);
+
+      expect(result.status, result.stderr).toBe(0);
+      expect(result.stdout).toContain("Usage: configra");
+    }
+
+    expect(configra("init", "--help").stdout).toContain("--on-conflict <action>");
+  });
+
+  it("plans a fresh project as one JSON document without prompting", () => {
+    const target = join(workDir, "fresh");
+
+    mkdirSync(target);
+
+    const result = configra("init", "--cwd", target, "--dry-run", "--json");
+    const document = JSON.parse(result.stdout) as { status: string; changes: Array<{ path: string }> };
+
+    expect(result.status, result.stderr).toBe(0);
+    expect(document.status).toBe("changes");
+    expect(document.changes.map((change) => change.path)).toContain(".configra/scripts/commit-msg.mjs");
+    expect(readdirSync(target)).toEqual([]);
+  });
+
+  it("packs the CLI entry point, schemas, and runtime assets", () => {
+    const installed = join(consumerDir, "node_modules", "@cassidydc", "configra");
+
+    for (const path of [
+      "dist/cli/index.js",
+      "dist/schemas/config.v1.json",
+      "dist/schemas/output.v1.json",
+      "dist/components/tools/assets/commit-msg.mjs",
+      "README.md",
+      "CHANGELOG.md",
+      "LICENSE",
+    ]) {
+      expect(existsSync(join(installed, path)), path).toBe(true);
+    }
+
+    expect(existsSync(join(installed, "dist/components/tools/assets/commit-msg.d.mts"))).toBe(false);
   });
 });

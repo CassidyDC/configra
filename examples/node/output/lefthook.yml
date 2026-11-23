@@ -1,0 +1,54 @@
+# Managed by Configra. Put your changes in lefthook-project.yml, which overrides this file.
+# Put personal overrides in lefthook-local.yml, which overrides both.
+# Activate the hooks with `npx lefthook install`. See https://lefthook.dev/configuration/
+
+glob_matcher: doublestar
+
+extends:
+  - lefthook-project.yml
+
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      exclude:
+        - "**/node_modules/**"
+        - "**/vendor/**"
+        - "**/build/**"
+        - "**/dist/**"
+        - "**/.configra/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+      run: npx --no -- prettier --check --ignore-unknown --no-error-on-unmatched-pattern {staged_files}
+    markdownlint:
+      glob:
+        - "**/*.md"
+      exclude:
+        - "**/node_modules/**"
+        - "**/vendor/**"
+        - "**/build/**"
+        - "**/dist/**"
+        - "**/.configra/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+      run: npx --no -- markdownlint-cli2 {staged_files}
+    eslint:
+      glob:
+        - "**/*.{js,mjs,cjs}"
+      exclude:
+        - "**/node_modules/**"
+        - "**/vendor/**"
+        - "**/build/**"
+        - "**/dist/**"
+        - "**/.configra/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+      run: npx --no -- eslint --cache --cache-location .cache/eslint/ --no-warn-ignored {staged_files}
+
+commit-msg:
+  commands:
+    commit-message:
+      run: node .configra/scripts/commit-msg.mjs --mode plain {1}

@@ -1,0 +1,31 @@
+# Dependabot Configuration
+# Proposes updates to the shipped dependency sets and the repository's own tooling.
+#
+# Reference: https://docs.github.com/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - /dev/dependency-sets/npm/community
+      - /dev/dependency-sets/npm/wordpress
+    schedule:
+      interval: monthly
+    groups:
+      dependency-sets:
+        patterns:
+          - "*"
+  - package-ecosystem: composer
+    directories:
+      - /dev/dependency-sets/composer/community
+      - /dev/dependency-sets/composer/wordpress
+    schedule:
+      interval: monthly
+    groups:
+      dependency-sets:
+        patterns:
+          - "*"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

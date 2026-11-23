@@ -28,7 +28,7 @@ const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url));
  */
 export default defineConfig([
   includeIgnoreFile(gitignorePath, "Imported .gitignore patterns"),
-  globalIgnores(["dev/docs/references/previous-code/", "**/*.min.js"]),
+  globalIgnores(["dev/docs/references/previous-code/", "examples/", "**/*.min.js"]),
   {
     files: ["**/*.{js,mjs,ts,mts}"],
     extends: [
@@ -47,7 +47,7 @@ export default defineConfig([
       "import-x/resolver-next": [createTypeScriptImportResolver({ alwaysTryTypes: true })],
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true, varsIgnorePattern: "^_" }],
       "import-x/first": "warn",
       "import-x/newline-after-import": "warn",
       "import-x/no-cycle": "error",

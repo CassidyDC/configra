@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "project": "node",
+  "languages": [
+    "typescript"
+  ],
+  "ui": [
+    "react"
+  ],
+  "commitMessages": "conventional"
+}

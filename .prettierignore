@@ -20,3 +20,9 @@
 
 # Minified files
 **/*.min.js
+
+# Generated from dev/dependency-sets/
+/src/components/dependency-ranges.ts
+
+# Generated examples keep the formatting Configra generates
+/examples

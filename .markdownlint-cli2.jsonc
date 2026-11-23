@@ -22,7 +22,8 @@
   "ignores": [
     "node_modules",
     "dist",
-    "dev/docs/references/previous-code"
+    "dev/docs/references/previous-code",
+    "examples"
   ],
   "gitignore": true
 }

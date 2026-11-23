@@ -14,3 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Record the milestone 1 spike results in the first-release plan, including a tool version per coding standard and PHP 7.4 as the minimum.
 - Use ESLint 10 for the WordPress standard and document its known npm peer warnings in the README.
 - Raise the Node.js minimum to 24.15, which Stylelint 18 requires, and keep WordPress CSS on Stylelint 17 until its config supports 18.
+- Add the command and option table, help output, selection normalization, the resolver, and the planner for the Node.js preset, with JavaScript, TypeScript, and React coverage.
+- Preview plans with `--dry-run` as text or one versioned JSON document, and exit with code 3 for pending changes with `--exit-code`.
+- Publish JSON Schemas for saved selections and machine-readable output, plus generated examples under `examples/`.
+- Ship tested dependency ranges generated from fixture manifests that Dependabot keeps current.
