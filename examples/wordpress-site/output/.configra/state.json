@@ -1,5 +1,5 @@
 {
-  "configraVersion": "0.0.0",
+  "configraVersion": "0.1.0",
   "files": {
     ".configra/eslint.mjs": {
       "hash": "85ce237c4d94738d98aca5f0236143456177bad90a3733bd23b8e2a18b6a0fd5",

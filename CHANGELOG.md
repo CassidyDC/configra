@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). The CLI and JSON contract may change between `0.x` releases, and breaking changes are listed here.
 
-## [Unreleased]
+## [0.1.0] - Unreleased
 
 ### Added
 
@@ -33,6 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Read each selected plugin and theme's PHP and WordPress versions and text domain, suggest prefixes, and save them in `.configra/config.json`. The wizard asks to confirm them.
 - Install the PHP tools with Composer after npm, updating only the managed packages when a lockfile exists, and check that PHP_CodeSniffer registered the WordPress standard.
 - Add generated helpers that batch `php -l` on PHP 8.3 and later and run Composer-installed tools the same way on every platform.
+- Add a release workflow that tests the packed tarball in a clean consumer and publishes that same file with npm trusted publishing and provenance.
 
 ### Fixed
 

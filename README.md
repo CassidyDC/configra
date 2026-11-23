@@ -2,20 +2,35 @@
 
 Configra generates editable linting, formatting, and Git hook configuration for Node.js projects and WordPress sites. The generated checks run on their own, so a project keeps working without Configra installed.
 
-> [!NOTE]
-> Configra is being rebuilt and hasn't been published yet. The first release will be `0.1.0`.
+## Quickstart
 
-## Planned first release
+Configra needs Node.js 24.15 or later and npm 11 or later. Run it in the project you want to set up:
 
-- **Presets:** Node.js projects and WordPress sites, with WordPress or community coding standards, TypeScript, and React.
-- **Tools:** EditorConfig, Prettier, markdownlint, ESLint, Stylelint, `php -l`, PHP_CodeSniffer, and PHPStan.
-- **Git hooks:** Lefthook runs read-only checks on staged files and validates commit messages.
+```sh
+npx @cassidydc/configra init
+```
+
+In a terminal, `init` opens the setup wizard. To set up a project without prompts, pass the selections as flags:
+
+```sh
+npx @cassidydc/configra init --project node --languages javascript,typescript --install --install-hooks --yes
+```
+
+Preview any run without writing anything with `--dry-run`, as text or as one JSON document with `--json`. Run `configra --help` or `configra init --help` for every option. The [examples](https://github.com/CassidyDC/configra/tree/main/examples) show the generated files and JSON plan for representative selections.
+
+## What Configra sets up
+
+- **Presets:** Node.js projects and WordPress sites, with the WordPress or community coding standards, TypeScript, and React.
+- **Tools:** EditorConfig, `.gitignore` rules, Prettier, markdownlint, ESLint, Stylelint, `php -l`, PHP_CodeSniffer, and PHPStan.
+- **Scripts:** `lint` runs every read-only check, `lint:fix` applies fixes, and `format:check` and `format` run Prettier. Each tool also gets its own script, such as `lint:js`.
+- **Git hooks:** Lefthook checks staged files before each commit, runs PHPStan before each push, and checks commit-message subjects.
 - **Safe updates:** previews, ownership tracking, and conflict handling, so rerunning Configra never overwrites your changes.
-- **Setup wizard:** `configra init` walks through the choices, previews the result, and saves them in `.configra/config.json`.
 
-Requirements for generated checks: Node.js 24.15 and npm 11 or later, plus PHP and Composer 2.7 or later for WordPress PHP tools.
+The WordPress site preset and the PHP tools also need PHP 7.4 or later and Composer 2.7 or later.
 
-The current build plans, previews, and writes Node.js and WordPress site setups with `configra init`. Preview without writing with `--dry-run`, as text or with `--json`. The [examples](examples/) show the generated files and JSON plan for representative selections.
+Each tool gets two files. Configra owns the file in `.configra/`, such as `.configra/eslint.mjs`, and rewrites it when your selections change. Your project owns the tool's usual entry file, such as `eslint.config.js`. Configra creates it once to load its file, and your settings after that line win. Lefthook is the exception: Configra owns `lefthook.yml`, and your settings go in `lefthook-project.yml`, which overrides it.
+
+## Usage
 
 ### Setup wizard
 
@@ -71,6 +86,16 @@ The generated checks work with lifecycle scripts disabled. Put personal hook set
 The `pre-commit` hook checks only the staged content of each file, and the `commit-msg` hook validates the subject line. If you remove Lefthook from the selected tools, the installed hooks keep passing without their config, and `npx lefthook uninstall` removes them.
 
 See [refactor-plan.md](dev/docs/plans/refactor-plan.md) for the full first-release plan and [next-release-plan.md](dev/docs/plans/next-release-plan.md) for what follows.
+
+### Saved selections and updates
+
+`.configra/config.json` holds your selections and is the file to edit. `.configra/state.json` records which files, lines, and fields Configra owns. Commit both with the generated files, so another checkout can update them safely.
+
+- `configra update` reapplies the saved selections, and its flags change them. It previews changes to files you've edited as conflicts instead of overwriting them.
+- `configra update --dry-run --exit-code` exits with code 3 when the generated files have drifted from the selections, so CI can catch it.
+- On a fresh checkout that committed only `.configra/config.json`, `configra update --install` regenerates the files, recreates the state, and installs the tools. Use the same Configra release and commit your lockfiles for repeatable results.
+
+To stop using Configra, delete `.configra/config.json` and `.configra/state.json`. The generated files keep working as ordinary project files. The rest of `.configra/` can stay where it is, or you can rename it along with the import lines in the entry files.
 
 ## Known issues
 

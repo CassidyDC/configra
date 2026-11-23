@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/@cassidydc/configra@0.0.0/dist/schemas/config.v1.json",
+  "$schema": "https://unpkg.com/@cassidydc/configra@0.1.0/dist/schemas/config.v1.json",
   "version": 1,
   "project": "node",
   "languages": [

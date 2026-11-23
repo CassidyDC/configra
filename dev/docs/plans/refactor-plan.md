@@ -301,6 +301,7 @@ Check off each milestone when its verification passes. Milestones 2–5 build th
 5. [x] **Setup wizard.** Build the wizard's step loop, conflict prompts, the three outcomes, terminal approval for flag runs, and `--yes`. Verify the full flow in a real terminal, that canceling leaves the project untouched, and that save-only writes just `.configra/config.json`.
 6. [x] **WordPress site.** Build Composer installation and the PHP and CSS tools. Cover a full site checkout and a `wp-content` project, each with a selected plugin and theme beside unselected ones. Verify that only selected directories are checked, safe cleanup when deselecting a directory, replay, clean npm and Composer installs, staged routing through the hooks, and PHPStan in the `pre-push` hook. Verify batched and per-file PHP linting, including batches split for long file lists, and CSS checks.
 7. [ ] **First release.** Run the launch gates, delete the archived code, and publish.
+   - 2026-11-23: The launch gates pass, the version is `0.1.0`, the tarball's file list is checked, and the documented quickstart passed from the packed tarball in a real terminal with real commits. `.github/workflows/release.yml` publishes a GitHub release's tested tarball with trusted publishing. Remaining: delete `dev/docs/references/previous-code/`, date the `0.1.0` changelog section, add the trusted publisher on npmjs.com, and publish a `v0.1.0` release.
 
 Later work continues in [next-release-plan.md](next-release-plan.md#milestones-and-verification).
 

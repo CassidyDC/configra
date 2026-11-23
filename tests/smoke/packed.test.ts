@@ -1,7 +1,7 @@
 import { spawnSync, type SpawnSyncReturns } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import manifest from "../../package.json" with { type: "json" };
@@ -27,9 +27,14 @@ function configra(...args: string[]): SpawnSyncReturns<string> {
   return exec(isWindows ? `"${bin}"` : bin, args, consumerDir);
 }
 
-beforeAll(() => {
-  workDir = mkdtempSync(join(tmpdir(), "configra-smoke-"));
-  consumerDir = join(workDir, "consumer");
+/**
+ * Builds and packs the package, or returns the tarball in `CONFIGRA_TARBALL` so a release tests the
+ * exact file it publishes.
+ */
+function packedTarball(): string {
+  if (process.env.CONFIGRA_TARBALL) {
+    return resolve(repoRoot, process.env.CONFIGRA_TARBALL);
+  }
 
   const build = exec("npm", ["run", "build"], repoRoot);
 
@@ -42,14 +47,20 @@ beforeAll(() => {
   const tarball = readdirSync(workDir).find((name) => name.endsWith(".tgz"));
 
   expect(tarball).toBeDefined();
+
+  return join(workDir, tarball ?? "");
+}
+
+beforeAll(() => {
+  workDir = mkdtempSync(join(tmpdir(), "configra-smoke-"));
+  consumerDir = join(workDir, "consumer");
+
+  const tarball = packedTarball();
+
   mkdirSync(consumerDir);
   writeFileSync(join(consumerDir, "package.json"), JSON.stringify({ name: "consumer", private: true }));
 
-  const install = exec(
-    "npm",
-    ["install", "--ignore-scripts", "--no-audit", "--no-fund", join(workDir, tarball ?? "")],
-    consumerDir,
-  );
+  const install = exec("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", tarball], consumerDir);
 
   expect(install.status, install.stderr).toBe(0);
 });
@@ -101,6 +112,8 @@ describe("packed CLI", () => {
       "dist/schemas/config.v1.json",
       "dist/schemas/output.v1.json",
       "dist/components/tools/assets/commit-msg.mjs",
+      "dist/components/tools/assets/php-lint.mjs",
+      "dist/components/tools/assets/php-tool.mjs",
       "README.md",
       "CHANGELOG.md",
       "LICENSE",
@@ -108,6 +121,8 @@ describe("packed CLI", () => {
       expect(existsSync(join(installed, path)), path).toBe(true);
     }
 
-    expect(existsSync(join(installed, "dist/components/tools/assets/commit-msg.d.mts"))).toBe(false);
+    for (const declarations of ["commit-msg", "php-lint", "php-tool"]) {
+      expect(existsSync(join(installed, `dist/components/tools/assets/${declarations}.d.mts`))).toBe(false);
+    }
   });
 });
