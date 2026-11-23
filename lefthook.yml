@@ -1,25 +1,66 @@
-# Git Hook Configuration
-# Read-only checks on staged files. Fix problems with `npm run lint:fix` and `npm run format`.
-#
-# Reference: https://lefthook.dev/configuration/
+# Managed by Configra. Put your changes in lefthook-project.yml, which overrides this file.
+# Put personal overrides in lefthook-local.yml, which overrides both.
+# Activate the hooks with `npx lefthook install`. See https://lefthook.dev/configuration/
+
+glob_matcher: doublestar
+
+extends:
+  - lefthook-project.yml
 
 pre-commit:
   parallel: true
   commands:
-    eslint:
-      glob: "*.{js,mjs,ts,mts}"
-      # ESLint 10 looks up the config from each file's directory, so the examples would load their own configs.
-      exclude:
-        - "dev/docs/references/previous-code/**"
-        - "examples/**"
-      run: npx eslint --no-warn-ignored {staged_files}
-    markdownlint:
-      glob: "*.md"
-      exclude:
-        - "dev/docs/references/previous-code/**"
-      run: npx markdownlint-cli2 {staged_files}
     prettier:
-      glob: "*.{js,mjs,ts,mts,json,jsonc,md,yml,yaml}"
       exclude:
-        - "dev/docs/references/previous-code/**"
-      run: npx prettier --check --ignore-unknown {staged_files}
+        - "**/node_modules/**"
+        - "**/vendor/**"
+        - "**/build/**"
+        - "**/dist/**"
+        - "**/.configra/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+        - "**/dev/docs/references/previous-code/**"
+        - "**/examples/**"
+        - "**/.build/**"
+        - "**/coverage/**"
+      run: npx --no -- prettier --check --ignore-unknown --no-error-on-unmatched-pattern {staged_files}
+    markdownlint:
+      glob:
+        - "**/*.md"
+      exclude:
+        - "**/node_modules/**"
+        - "**/vendor/**"
+        - "**/build/**"
+        - "**/dist/**"
+        - "**/.configra/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+        - "**/dev/docs/references/previous-code/**"
+        - "**/examples/**"
+        - "**/.build/**"
+        - "**/coverage/**"
+      run: npx --no -- markdownlint-cli2 {staged_files}
+    eslint:
+      glob:
+        - "**/*.{js,mjs,cjs,ts,mts,cts}"
+      exclude:
+        - "**/node_modules/**"
+        - "**/vendor/**"
+        - "**/build/**"
+        - "**/dist/**"
+        - "**/.configra/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+        - "**/dev/docs/references/previous-code/**"
+        - "**/examples/**"
+        - "**/.build/**"
+        - "**/coverage/**"
+      run: npx --no -- eslint --cache --cache-location .cache/eslint/ --no-warn-ignored {staged_files}
+
+commit-msg:
+  commands:
+    commit-message:
+      run: node .configra/scripts/commit-msg.mjs --mode plain {1}

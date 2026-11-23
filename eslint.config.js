@@ -1,45 +1,24 @@
 /**
- * ESLint Configuration
- * @file Repository ESLint configuration for TypeScript and JavaScript files.
+ * ESLint configuration.
+ *
+ * Configra manages .configra/eslint.mjs and loads it first. The repository adds import checks and its
+ * own rules after it; later entries override earlier ones.
  *
  * @see https://eslint.org/docs/latest/use/configure/configuration-files
  * @see https://typescript-eslint.io/getting-started
  * @see https://github.com/un-ts/eslint-plugin-import-x
  */
 
-import js from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
 import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
-import { defineConfig, globalIgnores, includeIgnoreFile } from "eslint/config";
-import { fileURLToPath } from "node:url";
 import { importX } from "eslint-plugin-import-x";
+import { defineConfig } from "eslint/config";
+import configra from "./.configra/eslint.mjs";
 
-/**
- * @typedef {import("eslint").Linter.Config} ESLintConfig
- */
-
-const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url));
-
-/**
- * Repository lint rules for source, tests, and configuration files.
- *
- * @type {ESLintConfig[]}
- */
 export default defineConfig([
-  includeIgnoreFile(gitignorePath, "Imported .gitignore patterns"),
-  globalIgnores(["dev/docs/references/previous-code/", "examples/", "**/*.min.js"]),
+  configra,
   {
     files: ["**/*.{js,mjs,ts,mts}"],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      importX.flatConfigs.recommended,
-      importX.flatConfigs.typescript,
-    ],
-    languageOptions: {
-      globals: globals.node,
-    },
+    extends: [importX.flatConfigs.recommended, importX.flatConfigs.typescript],
     linterOptions: {
       reportUnusedInlineConfigs: "warn",
     },
@@ -47,7 +26,6 @@ export default defineConfig([
       "import-x/resolver-next": [createTypeScriptImportResolver({ alwaysTryTypes: true })],
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true, varsIgnorePattern: "^_" }],
       "import-x/first": "warn",
       "import-x/newline-after-import": "warn",
       "import-x/no-cycle": "error",
@@ -58,9 +36,10 @@ export default defineConfig([
     },
   },
   {
-    // The TypeScript compiler already reports these for TypeScript files.
+    // The TypeScript compiler already reports the import-x rules turned off here.
     files: ["**/*.{ts,mts}"],
     rules: {
+      "@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true, varsIgnorePattern: "^_" }],
       "import-x/default": "off",
       "import-x/namespace": "off",
       "import-x/no-unresolved": "off",

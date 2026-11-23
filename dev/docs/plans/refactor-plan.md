@@ -282,7 +282,7 @@ Use strict TypeScript and runtime schemas for external JSON. Set Node.js 24.15 a
 
 Parse arguments with Node's `parseArgs` and one command and option table that also drives help output and validation messages. Build the setup wizard with `@clack/prompts` and a custom step loop for revisiting answers. Define external JSON with TypeBox so the published JSON Schemas are the schemas Configra validates against. Run tests with Vitest, compile with `tsc` to per-file ESM output, and run child processes through `cross-spawn` for Windows executable resolution.
 
-Run the every-PR gates in GitHub Actions on Linux, macOS, and Windows. Publish from GitHub Actions with npm trusted publishing and provenance. This repository's `AGENTS.md`, linting, formatting, and hooks are set up by hand. Switch them to a Configra-managed setup once milestone 4 works.
+Run the every-PR gates in GitHub Actions on Linux, macOS, and Windows. Publish from GitHub Actions with npm trusted publishing and provenance. This repository's `AGENTS.md` is written by hand. Since milestone 4, Configra manages its linting, formatting, and hooks from `.configra/config.json`, with the repository's own rules in the entry files.
 
 ### Previous code
 

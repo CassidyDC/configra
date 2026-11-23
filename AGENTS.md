@@ -30,6 +30,11 @@ Run `npm run typecheck`, `npm run lint`, `npm run format:check`, and `npm test` 
 - Write source in strict TypeScript as ECMAScript modules (ESM). Use `.ts` for source and tests. Use `.js` for JavaScript configuration files, `.mjs` when a file must declare ESM explicitly, and `.cjs` only for tools that require CommonJS.
 - Follow the stack in the plan: Node's `parseArgs`, `@clack/prompts`, TypeBox, Vitest, `tsc`, and `cross-spawn`. Add a runtime dependency only when the code that needs it lands.
 
+## Repository tooling
+
+- Configra manages this repository's EditorConfig, Prettier, markdownlint, ESLint, and Lefthook setup. Don't edit `.configra/`, `.editorconfig`, or `lefthook.yml` by hand.
+- Change shared settings, such as the line width and exclusions, in `.configra/config.json`, then run `npm run build` and `node dist/cli/index.js update`. Put repository-specific rules in `eslint.config.js`, `prettier.config.js`, `.markdownlint-cli2.mjs`, and `lefthook-project.yml`.
+
 ## Commits
 
 - Finish each task or feature by committing its completed changes. Stage only the files that belong to the task.

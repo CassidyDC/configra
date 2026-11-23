@@ -1,21 +1,17 @@
 /**
- * Prettier Configuration
- * @file Repository Prettier configuration and structured-data formatting overrides.
+ * Prettier configuration.
+ *
+ * Configra manages .configra/prettier.mjs and keeps it in sync with .editorconfig. The repository adds
+ * its structured-data overrides after the spread; they override Configra's.
  *
  * @see https://prettier.io/docs/configuration
  */
 
-/**
- * @typedef {import("prettier").Config} PrettierConfig
- */
+import configra from "./.configra/prettier.mjs";
 
-/**
- * Prettier configuration.
- *
- * @type {PrettierConfig}
- */
-const config = {
-  printWidth: 120,
+/** @type {import("prettier").Config} */
+export default {
+  ...configra,
   plugins: ["prettier-plugin-multiline-arrays"], // Keeps arrays formatted as written
   overrides: [
     {
@@ -29,5 +25,3 @@ const config = {
     },
   ],
 };
-
-export default config;

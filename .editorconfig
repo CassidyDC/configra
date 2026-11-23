@@ -1,5 +1,6 @@
-# EditorConfig Configuration
-# Unifies the coding style across editors and IDEs.
+# Managed by Configra. Change formatting through the formatting settings in .configra/config.json.
+# EditorConfig has no import mechanism, so Configra owns this whole file.
+# See https://editorconfig.org
 root = true
 
 [*]

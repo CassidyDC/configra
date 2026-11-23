@@ -1,0 +1,34 @@
+{
+  "$schema": "https://unpkg.com/@cassidydc/configra@0.0.0/dist/schemas/config.v1.json",
+  "version": 1,
+  "project": "node",
+  "languages": [
+    "javascript",
+    "typescript"
+  ],
+  "ui": [],
+  "standards": {
+    "javascript": "community",
+    "typescript": "community"
+  },
+  "tools": [
+    "editorconfig",
+    "gitignore",
+    "prettier",
+    "markdownlint",
+    "eslint",
+    "lefthook"
+  ],
+  "commitMessages": "plain",
+  "exclusions": {
+    "add": [
+      "dev/docs/references/previous-code/",
+      "examples/",
+      ".build/",
+      "coverage/"
+    ]
+  },
+  "formatting": {
+    "lineWidth": 120
+  }
+}

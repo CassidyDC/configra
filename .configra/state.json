@@ -1,0 +1,81 @@
+{
+  "configraVersion": "0.0.0",
+  "files": {
+    ".configra/eslint.mjs": {
+      "hash": "db8fc40cd0b0db71d1c89f1ba7cc41f1423d997ac8ea9ea110f59cdbe2343366",
+      "kind": "file"
+    },
+    ".configra/markdownlint.mjs": {
+      "hash": "b69ec52c46a92458f532415e03bc3cf4d96d1033b159032769b40b95152c35c0",
+      "kind": "file"
+    },
+    ".configra/prettier.mjs": {
+      "hash": "5ad2509f51c1e625f6ebc697aa8ffff30858dd6febe2d155b1d6cfa3fd0306c9",
+      "kind": "file"
+    },
+    ".configra/scripts/commit-msg.mjs": {
+      "hash": "6f4a93a3f09b9ac8a72aa681c149bc4b85d7b363705797de7793b8f2e2633b2d",
+      "kind": "file"
+    },
+    ".editorconfig": {
+      "hash": "6e4dac6da6b268c994e1e50c966c956fc115dc062cfcb73a5c0ce4f451b701bc",
+      "kind": "file"
+    },
+    ".gitignore": {
+      "kind": "lines",
+      "lines": [
+        "node_modules/",
+        ".configra/tmp/",
+        ".cache/"
+      ]
+    },
+    ".markdownlint-cli2.mjs": {
+      "kind": "entry"
+    },
+    ".prettierignore": {
+      "kind": "lines",
+      "lines": [
+        "node_modules/",
+        "vendor/",
+        "build/",
+        "dist/",
+        ".configra/",
+        ".cache/",
+        "*.min.js",
+        "*.min.css",
+        "dev/docs/references/previous-code/",
+        "examples/",
+        ".build/",
+        "coverage/",
+        "package-lock.json",
+        "composer.lock",
+        "lefthook.yml"
+      ]
+    },
+    "eslint.config.js": {
+      "kind": "entry"
+    },
+    "lefthook-project.yml": {
+      "kind": "entry"
+    },
+    "lefthook.yml": {
+      "hash": "5d9a0eb3d3d58757aeb01f455c20a8557ae4a42cbf992f98bb557f32ad9d123b",
+      "kind": "file"
+    },
+    "package.json": {
+      "fields": {
+        "/scripts/format": "prettier --write --no-error-on-unmatched-pattern .",
+        "/scripts/format:check": "prettier --check --no-error-on-unmatched-pattern .",
+        "/scripts/lint": "npm run lint:md && npm run lint:js",
+        "/scripts/lint:fix": "markdownlint-cli2 --fix \"**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix .",
+        "/scripts/lint:js": "eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern .",
+        "/scripts/lint:md": "markdownlint-cli2 \"**/*.md\""
+      },
+      "kind": "fields"
+    },
+    "prettier.config.js": {
+      "kind": "entry"
+    }
+  },
+  "version": 1
+}

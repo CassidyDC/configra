@@ -1,9 +1,6 @@
 # Git Ignore Patterns
 # Repository ignore patterns for dependencies, build output, and local artifacts.
 
-# Dependencies
-/node_modules
-
 # Build and package output
 /dist
 *.tgz
@@ -11,10 +8,14 @@
 # Caches and reports
 /.build
 /coverage
-.eslintcache
 
 # Personal overrides
 lefthook-local.yml
 
 # Operating system files
 .DS_Store
+
+# Managed by Configra
+node_modules/
+.configra/tmp/
+.cache/

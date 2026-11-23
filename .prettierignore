@@ -1,5 +1,5 @@
 # Prettier Ignore Patterns
-# Prettier also skips files matched by .gitignore and ignores node_modules by default.
+# Prettier also skips files matched by .gitignore. Configra manages the lines at the end.
 #
 # Reference: https://prettier.io/docs/ignore
 #
@@ -9,20 +9,23 @@
 # CSS                       = /* prettier-ignore */
 # YAML                      = # prettier-ignore
 
-# Archived implementation kept for reference
-/dev/docs/references/previous-code
-
-# Build output
-**/dist
-
-# Lock files
-**/package-lock.json
-
-# Minified files
-**/*.min.js
-
 # Generated from dev/dependency-sets/
 /src/components/dependency-ranges.ts
 
-# Generated examples keep the formatting Configra generates
-/examples
+# Managed by Configra
+node_modules/
+vendor/
+build/
+dist/
+.configra/
+.cache/
+*.min.js
+*.min.css
+dev/docs/references/previous-code/
+examples/
+package-lock.json
+composer.lock
+lefthook.yml
+
+.build/
+coverage/
