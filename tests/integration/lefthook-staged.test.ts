@@ -12,9 +12,11 @@ let dir = "";
 
 /**
  * Runs a command in the temporary repository.
+ *
+ * Only `.cmd` shims need a shell on Windows. A shell would split arguments that contain spaces, such as commit messages.
  */
-function exec(command: string, args: string[]): SpawnSyncReturns<string> {
-  return spawnSync(command, args, { cwd: dir, encoding: "utf8", shell: isWindows });
+function exec(command: string, args: string[], shell = false): SpawnSyncReturns<string> {
+  return spawnSync(command, args, { cwd: dir, encoding: "utf8", shell });
 }
 
 /**
@@ -62,7 +64,7 @@ beforeEach(() => {
   git("add", ".");
   git("commit", "-q", "-m", "Initial commit");
 
-  const install = exec(isWindows ? `"${lefthookBin}"` : lefthookBin, ["install"]);
+  const install = exec(isWindows ? `"${lefthookBin}"` : lefthookBin, ["install"], isWindows);
 
   expect(install.status, install.stderr + install.stdout).toBe(0);
 });
