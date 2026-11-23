@@ -386,7 +386,8 @@ function planLines(context: Context, path: string, desired: string[], reason: st
     }
   }
 
-  const nowOwned = [...keep, ...add];
+  // Record lines in the planned order, wherever they sit in the file, so the next run sees no change.
+  const nowOwned = desired.filter((line) => keep.includes(line) || add.includes(line));
 
   if (nowOwned.length > 0) {
     context.files[path] = { kind: "lines", lines: nowOwned };

@@ -151,6 +151,24 @@ describe("applying a plan", () => {
 
     await expectUpToDate(root);
   });
+
+  it("settles in one run when new owned lines land after existing ones", async () => {
+    const root = tempProject();
+
+    await runJson(["init"], root);
+
+    const config = JSON.parse(read(root, ".configra/config.json")) as Record<string, unknown>;
+
+    // Extra exclusions sort before lockfile lines in .prettierignore but are appended to the file.
+    writeFileSync(
+      join(root, ".configra/config.json"),
+      `${JSON.stringify({ ...config, exclusions: { add: ["generated/"] } }, null, 2)}\n`,
+    );
+    expect((await runJson(["update"], root)).code).toBe(0);
+    expect(read(root, ".prettierignore").trimEnd().endsWith("generated/")).toBe(true);
+
+    await expectUpToDate(root);
+  });
 });
 
 describe("conflict decisions", () => {
