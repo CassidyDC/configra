@@ -3,9 +3,9 @@
 ## Project context
 
 - Configra is being rebuilt from scratch as a TypeScript CLI published to npm as `@cassidydc/configra`.
-- [refactor-plan.md](refactor-plan.md) is the source of truth for the first release. Work through its implementation milestones in order and keep the plan current when a decision changes.
-- [next-release-plan.md](next-release-plan.md) holds the presets, layouts, and integrations deferred from the first release. Don't implement them before the first release unless the plan changes.
-- `previous-code/` is the archived implementation. Read it for reference and port useful fixtures, samples, and the findings in `previous-code/docs/issues.md`, but don't edit, lint, test, or import from it.
+- [refactor-plan.md](dev/docs/plans/refactor-plan.md) is the source of truth for the first release. Work through its implementation milestones in order and keep the plan current when a decision changes.
+- [next-release-plan.md](dev/docs/plans/next-release-plan.md) holds the presets, layouts, and integrations deferred from the first release. Don't implement them before the first release unless the plan changes.
+- `dev/docs/references/previous-code/` is the archived implementation. Read it for reference and port useful fixtures, samples, and the findings in `dev/docs/references/previous-code/docs/issues.md`, but don't edit, lint, test, or import from it.
 
 ## Commands
 

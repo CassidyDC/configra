@@ -258,7 +258,7 @@ Run the every-PR gates in GitHub Actions on Linux, macOS, and Windows. Publish f
 
 ### Previous code
 
-`previous-code/` holds the archived implementation. Port its useful fixtures, samples, and the findings in `previous-code/docs/issues.md` as the new code reaches each area. Keep it out of linting, tests, and the published package, and delete it before the first release.
+`dev/docs/references/previous-code/` holds the archived implementation. Port its useful fixtures, samples, and the findings in `dev/docs/references/previous-code/docs/issues.md` as the new code reaches each area. Keep it out of linting, tests, and the published package, and delete it before the first release.
 
 ## Implementation milestones
 

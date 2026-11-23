@@ -10,7 +10,7 @@
 # YAML                      = # prettier-ignore
 
 # Archived implementation kept for reference
-/previous-code
+/dev/docs/references/previous-code
 
 # Build output
 **/dist
