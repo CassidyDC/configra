@@ -1,5 +1,8 @@
 # Configra
 
+![Configra](dev/assets/logos/electric-iris/configra-icon-wordmark.svg#gh-light-mode-only)
+![Configra](dev/assets/logos/electric-iris/configra-icon-wordmark-dark.svg#gh-dark-mode-only)
+
 Configra generates editable linting, formatting, and Git hook configuration for Node.js projects and WordPress sites. The generated checks run on their own, so a project keeps working without Configra installed.
 
 ## Quickstart
