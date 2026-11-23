@@ -16,9 +16,13 @@ npm run lint:fix      # Apply ESLint and markdownlint fixes
 npm run format:check  # Check formatting with Prettier
 npm run format        # Apply Prettier formatting
 npm run hooks:install # Activate the Lefthook Git hooks
+npm run typecheck     # Type-check source, tests, and scripts with tsc
+npm test              # Run the offline unit and integration tests with Vitest
+npm run test:smoke    # Build, pack, install into a clean consumer, and run the installed CLI
+npm run build         # Compile src/ to dist/ and copy runtime assets
 ```
 
-Run `npm run lint` and `npm run format:check` before committing. Add the type-checking, test, and build commands here as the project gains them.
+Run `npm run typecheck`, `npm run lint`, `npm run format:check`, and `npm test` before committing. Run `npm run test:smoke` when a change affects the build, the packed files, or the CLI entry point.
 
 ## Code conventions
 

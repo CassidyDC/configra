@@ -10,3 +10,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Plan the first release and the next release of the rebuilt CLI.
 - Add repository configuration for EditorConfig, ESLint, Prettier, markdownlint, Lefthook, and VS Code.
+- Add type checking, Vitest, the `tsc` build, a packed smoke test, and a CI matrix on Linux, macOS, and Windows.

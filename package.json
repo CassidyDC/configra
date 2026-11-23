@@ -47,16 +47,21 @@
     "provenance": true
   },
   "scripts": {
+    "build": "node dev/scripts/build.ts",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "hooks:install": "lefthook install",
     "lint": "npm run lint:scripts && npm run lint:docs",
     "lint:docs": "markdownlint-cli2 \"**/*.md\"",
     "lint:fix": "eslint . --fix && markdownlint-cli2 \"**/*.md\" --fix",
-    "lint:scripts": "eslint ."
+    "lint:scripts": "eslint .",
+    "test": "vitest run --project offline",
+    "test:smoke": "vitest run --project smoke",
+    "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
     "eslint": "^10.15.0",
     "eslint-import-resolver-typescript": "^4.4.5",
     "eslint-plugin-import-x": "^4.18.1",
@@ -66,6 +71,7 @@
     "prettier": "^3.10.1",
     "prettier-plugin-multiline-arrays": "^4.1.11",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.73.0"
+    "typescript-eslint": "^8.73.0",
+    "vitest": "^5.1.1"
   }
 }
