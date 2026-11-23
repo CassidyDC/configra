@@ -571,6 +571,28 @@ const hookProblemMessages: Record<string, string> = {
 };
 
 /**
+ * Wizard wording for selection errors whose diagnostics point to flags.
+ */
+const selectionErrorMessages: Record<string, (answers: Answers) => string> = {
+  SELECTION_PACKAGES_UNSUPPORTED: (answers) =>
+    `The ${projects[answers.project].label} preset doesn't check selected directories. Choose the WordPress site preset or clear "${stepLabels.packages}".`,
+  SELECTION_PHP_NEEDS_PACKAGE: (answers) => {
+    const phpTools = answers.tools.filter((id) => id === "php-lint" || id === "phpcs" || id === "phpstan");
+
+    return `${phpTools.map((id) => tools[id].label).join(", ")} check only selected plugin and theme directories. Select one under "${stepLabels.packages}", or remove the PHP tools under "${stepLabels.tools}".`;
+  },
+};
+
+/**
+ * Returns why a plan can't run, in the wizard's wording.
+ */
+function planErrors(planned: PlannedWorkflow, answers: Answers): string[] {
+  return planned.document.diagnostics
+    .filter((diagnostic) => diagnostic.severity === "error")
+    .map((diagnostic) => selectionErrorMessages[diagnostic.code]?.(answers) ?? diagnostic.message);
+}
+
+/**
  * Returns why hook activation can't run for these arguments, or undefined when it can.
  */
 function hookProblem(context: WizardContext, args: ParsedArgs): string | undefined {
@@ -642,18 +664,13 @@ export async function runWizard(context: WizardContext): Promise<WizardResult> {
     let planned = plan(args);
 
     if (planned.document.status === "error") {
-      prompter.warn(
-        planned.document.diagnostics
-          .filter((diagnostic) => diagnostic.severity === "error")
-          .map((diagnostic) => diagnostic.message)
-          .join("\n"),
-      );
+      const reasons = planErrors(planned, answers).map((reason) => `- ${reason}`);
 
       const revised = await reviseAnswer(
         answers,
         discovery,
         prompter,
-        "Configra can't continue with these answers. Which answer do you want to change?",
+        ["Configra can't continue with these answers:", ...reasons, "Which answer do you want to change?"].join("\n"),
         false,
       );
 
@@ -743,12 +760,7 @@ export async function runWizard(context: WizardContext): Promise<WizardResult> {
     }
 
     if (planned.document.status === "error") {
-      prompter.warn(
-        planned.document.diagnostics
-          .filter((diagnostic) => diagnostic.severity === "error")
-          .map((diagnostic) => diagnostic.message)
-          .join("\n"),
-      );
+      prompter.warn(planErrors(planned, answers).join("\n"));
 
       continue;
     }

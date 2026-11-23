@@ -289,6 +289,29 @@ describe("WordPress setup wizard", () => {
     });
   });
 
+  it("says why it can't continue when the PHP checks have no directory to cover", async () => {
+    const root = tempProject(fullSite);
+    const run = await runTerminal(["init"], root, [
+      accept,
+      [],
+      accept,
+      "packages",
+      ["wp-content/plugins/shop"],
+      accept,
+      "save",
+    ]);
+
+    expect(run.code, run.stdout + run.stderr).toBe(0);
+    expect(run.asked[3]).toBe(
+      [
+        "Configra can't continue with these answers:",
+        '- php -l, PHP_CodeSniffer, PHPStan check only selected plugin and theme directories. Select one under "Plugin and theme directories", or remove the PHP tools under "Tools".',
+        "Which answer do you want to change?",
+      ].join("\n"),
+    );
+    expect(JSON.parse(read(root, ".configra/config.json")).packages).toEqual(["wp-content/plugins/shop"]);
+  });
+
   it("asks where the plugins and themes are when the layout is ambiguous", async () => {
     const root = tempProject({ "wp-config.php": "<?php\n", ...contentProject });
     const run = await runTerminal(["init"], root, [accept, "root", ["plugins/shop"], accept, accept, "save"]);
