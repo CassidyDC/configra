@@ -59,6 +59,13 @@ function exec(root: string, command: string, ...args: string[]): { status: numbe
 }
 
 /**
+ * Runs Git without a shell, so arguments with spaces stay intact on Windows.
+ */
+function git(root: string, ...args: string[]): { status: number | null } {
+  return spawnSync("git", args, { cwd: root, encoding: "utf8" });
+}
+
+/**
  * Runs Configra in-process with real executables and returns its JSON document.
  */
 async function configra(root: string, ...argv: string[]): Promise<OutputDocument> {
@@ -140,10 +147,10 @@ describe.skipIf(skip)("WordPress site consumer installs", () => {
       ["add", "-A"],
       ["-c", "user.name=T", "-c", "user.email=t@e.com", "commit", "-qm", "Set up"],
     ]) {
-      expect(exec(root, "git", ...args).status).toBe(0);
+      expect(git(root, ...args).status).toBe(0);
     }
 
-    expect(exec(root, "git", "clone", "-q", ".", checkout).status).toBe(0);
+    expect(git(root, "clone", "-q", ".", checkout).status).toBe(0);
     expect(exec(checkout, "npm", "ci", "--ignore-scripts", "--no-audit", "--no-fund").status).toBe(0);
     expect(exec(checkout, "composer", "install", "--no-scripts", "--no-interaction").status).toBe(0);
     expect(exec(checkout, "npm", "run", "lint").status).toBe(0);
