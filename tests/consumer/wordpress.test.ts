@@ -5,7 +5,7 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { run } from "../../src/cli/main.js";
@@ -131,13 +131,19 @@ describe.skipIf(skip)("WordPress site consumer installs", () => {
       rmSync(join(root, path));
     }
 
-    // A fresh checkout without Configra runs the same checks after installing the declared tools.
+    // A fresh clone without Configra runs the same checks after installing the declared tools, which
+    // also proves the generated .gitignore keeps every file the checks need.
     const checkout = join(tempProject(), "checkout");
 
-    cpSync(root, checkout, {
-      recursive: true,
-      filter: (source) => !/[\\/](node_modules|vendor|\.cache)([\\/]|$)/.test(source),
-    });
+    for (const args of [
+      ["init", "-q"],
+      ["add", "-A"],
+      ["-c", "user.name=T", "-c", "user.email=t@e.com", "commit", "-qm", "Set up"],
+    ]) {
+      expect(exec(root, "git", ...args).status).toBe(0);
+    }
+
+    expect(exec(root, "git", "clone", "-q", ".", checkout).status).toBe(0);
     expect(exec(checkout, "npm", "ci", "--ignore-scripts", "--no-audit", "--no-fund").status).toBe(0);
     expect(exec(checkout, "composer", "install", "--no-scripts", "--no-interaction").status).toBe(0);
     expect(exec(checkout, "npm", "run", "lint").status).toBe(0);
