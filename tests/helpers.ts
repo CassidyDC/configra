@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { afterEach } from "vitest";
 import { run } from "../src/cli/main.js";
 import type { OutputDocument } from "../src/cli/output.js";
-import type { ProcessRunner } from "../src/platform/process.js";
+import { systemRunner, type ProcessRunner } from "../src/platform/process.js";
 
 const created: string[] = [];
 
@@ -39,10 +39,14 @@ export function writeFiles(root: string, files: Record<string, string>): void {
 }
 
 /**
- * A process runner that reports fixed versions without running anything.
+ * A process runner that reports fixed versions for version probes and runs other Git commands for real.
  */
 export const fakeRunner: ProcessRunner = {
-  run: (executable) => {
+  run: (executable, args, cwd) => {
+    if (executable === "git" && !args.includes("--version")) {
+      return systemRunner.run(executable, args, cwd);
+    }
+
     const versions: Record<string, string> = {
       npm: "11.6.0",
       git: "git version 2.50.0",

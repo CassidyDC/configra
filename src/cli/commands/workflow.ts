@@ -6,6 +6,7 @@ import { readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import type { CommandName, Diagnostic, PlannedCommand, PresetId } from "../../contracts.js";
 import { hookSummary } from "../../components/tools/lefthook.js";
+import { applyWrites, readPendingRun, runFiles, type ApplyHooks, type RunFiles } from "../../generator/apply.js";
 import { checkPrerequisites, discover } from "../../generator/discover.js";
 import { normalizeSelections } from "../../generator/normalize.js";
 import { configPath, createPlan, statePath, type Plan } from "../../generator/plan.js";
@@ -32,6 +33,9 @@ export interface WorkflowEnvironment {
   version: string;
   runner: ProcessRunner;
   interactive: boolean;
+
+  /** Test hooks for the apply phase. */
+  applyHooks?: ApplyHooks;
 }
 
 export interface WorkflowResult {
@@ -39,6 +43,16 @@ export interface WorkflowResult {
 
   /** The target root, shown in the text preview. */
   target: string;
+}
+
+/**
+ * A planned run ready for the apply phase.
+ */
+export interface PlannedWorkflow extends WorkflowResult {
+  plan?: Plan;
+  state?: OwnershipState;
+  snapshot?: Snapshot;
+  runFiles?: RunFiles;
 }
 
 /**
@@ -129,7 +143,7 @@ export function planWorkflow(
   command: CommandName,
   args: ParsedArgs,
   environment: WorkflowEnvironment,
-): WorkflowResult & { plan?: Plan; state?: OwnershipState } {
+): PlannedWorkflow {
   const root = resolve(environment.cwd, args.cwd ?? ".");
   const document = emptyDocument(environment.version, command, args.dryRun);
   const result = { document, target: args.cwd ?? "." };
@@ -278,7 +292,20 @@ export function planWorkflow(
     return { ...result, document: fail(document, packageDiagnostics) };
   }
 
-  const settings = resolveSettings(normalized.selections, snapshot, discovery.languages);
+  const files = runFiles(root, environment.runner);
+  const pending = readPendingRun(files);
+  const pendingPaths = pending ? new Set(pending) : undefined;
+  const settings = resolveSettings(normalized.selections, snapshot, pendingPaths);
+
+  if (pending !== undefined) {
+    document.diagnostics.push({
+      code: "APPLY_PENDING_RUN",
+      severity: "warning",
+      message: args.dryRun
+        ? "An earlier Configra run stopped before it finished. The next run that writes files adopts the files it wrote that match this plan and reports the rest as conflicts."
+        : "An earlier Configra run stopped before it finished. This plan adopts the files it wrote that match and reports the rest as conflicts.",
+    });
+  }
 
   const plan = createPlan({
     snapshot,
@@ -287,6 +314,7 @@ export function planWorkflow(
     configraVersion: environment.version,
     schemaUrl: schemaUrl(environment.version),
     ...(args.onConflict ? { onConflict: args.onConflict as "retain" | "replace" } : {}),
+    ...(pendingPaths ? { pending: pendingPaths } : {}),
   });
 
   const { $schema: _schema, ...selections } = plan.config;
@@ -315,5 +343,57 @@ export function planWorkflow(
     document.exitCode = 3;
   }
 
-  return { ...result, plan, ...(state ? { state } : {}) };
+  return { ...result, plan, snapshot, runFiles: files, ...(state ? { state } : {}) };
+}
+
+/**
+ * Explains how to finish an interrupted run: `update` once the saved selections exist, or the same command.
+ */
+function retryAdvice(args: ParsedArgs, configWritten: boolean): string {
+  if (!configWritten) {
+    return "Run the same command again to finish.";
+  }
+
+  return `Run \`configra update${args.cwd !== undefined ? ` --cwd ${JSON.stringify(args.cwd)}` : ""}\` to finish.`;
+}
+
+/**
+ * Applies a planned, approved run and records the outcome of each phase in its document.
+ */
+export function applyWorkflow(args: ParsedArgs, planned: PlannedWorkflow, hooks?: ApplyHooks): void {
+  const { document, plan, snapshot } = planned;
+
+  if (!plan || !snapshot || !planned.runFiles) {
+    return;
+  }
+
+  const pending = readPendingRun(planned.runFiles) !== undefined;
+
+  if (plan.writes.length === 0 && !pending) {
+    document.phases = [{ phase: "apply", status: "skipped", message: "Everything is up to date." }];
+
+    return;
+  }
+
+  const result = applyWrites(snapshot, plan.writes, planned.runFiles, hooks);
+
+  if (result.ok) {
+    document.phases = [{ phase: "apply", status: "done", message: `Wrote ${result.written.length} files.` }];
+
+    return;
+  }
+
+  const configWritten = result.written.includes(configPath) || snapshot.exists(configPath);
+  const retry = result.written.length > 0 ? ` ${retryAdvice(args, configWritten)}` : "";
+
+  document.diagnostics.push(...result.diagnostics);
+  document.phases = [
+    {
+      phase: "apply",
+      status: "failed",
+      message: `Wrote ${result.written.length} of ${plan.writes.length} files.${retry}`,
+    },
+  ];
+  document.status = "error";
+  document.exitCode = 1;
 }

@@ -65,6 +65,12 @@ export interface PlanInput {
 
   /** Write only the saved selections. */
   saveOnly?: boolean;
+
+  /**
+   * Paths listed in a leftover pending-run marker. Content at these paths that matches the plan is taken
+   * into ownership, because the interrupted run wrote it.
+   */
+  pending?: ReadonlySet<string>;
 }
 
 export interface ScriptSummary {
@@ -109,6 +115,13 @@ function decide(context: Context, id: string): ConflictAction | undefined {
     context.input.onConflict ??
     (context.selections.decisions[id] ? "retain" : undefined)
   );
+}
+
+/**
+ * Returns whether an interrupted run listed the path in its pending-run marker.
+ */
+function isPending(context: Context, path: string): boolean {
+  return context.input.pending?.has(path) ?? false;
 }
 
 /**
@@ -170,9 +183,11 @@ function planFile(context: Context, file: FileContribution, adoptedEntries: Set<
       return;
     }
 
-    if (previous?.kind === "entry" || (file.reference !== undefined && current.includes(file.reference))) {
-      if (previous?.kind === "entry") {
-        context.files[file.path] = previous;
+    const adoptable = isPending(context, file.path) && textHash(current) === textHash(file.content);
+
+    if (previous?.kind === "entry" || adoptable || (file.reference !== undefined && current.includes(file.reference))) {
+      if (previous?.kind === "entry" || isPending(context, file.path)) {
+        context.files[file.path] = { kind: "entry" };
       }
 
       if (file.reference !== undefined && !current.includes(file.reference)) {
@@ -260,7 +275,7 @@ function planFile(context: Context, file: FileContribution, adoptedEntries: Set<
   const currentHash = textHash(current);
 
   if (currentHash === desiredHash) {
-    if (ownedHash !== undefined) {
+    if (ownedHash !== undefined || isPending(context, file.path)) {
       own();
     }
 
@@ -319,7 +334,7 @@ function planLines(context: Context, path: string, desired: string[], reason: st
 
   for (const line of desired) {
     if (currentLines.includes(line)) {
-      if (owned.includes(line)) {
+      if (owned.includes(line) || isPending(context, path)) {
         keep.push(line);
       }
 
@@ -501,7 +516,7 @@ function planManifest(context: Context, manifestPath: string, fields: ManifestFi
     }
 
     if (jsonEqual(current, field.value)) {
-      if (isOwned) {
+      if (isOwned || isPending(context, manifestPath)) {
         nextOwned[pointer] = field.value;
       }
 

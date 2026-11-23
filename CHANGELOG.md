@@ -18,3 +18,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Preview plans with `--dry-run` as text or one versioned JSON document, and exit with code 3 for pending changes with `--exit-code`.
 - Publish JSON Schemas for saved selections and machine-readable output, plus generated examples under `examples/`.
 - Ship tested dependency ranges generated from fixture manifests that Dependabot keeps current.
+- Apply plans: write files atomically under a per-project lock, record ownership state last, and settle conflicts with `--on-conflict retain` or `replace`. Unresolved conflicts exit with code 2 without writing.
+- Finish an interrupted run by rerunning: Configra adopts the files the earlier run wrote that match the new plan and reports the rest as conflicts.
+- Base a fresh manifest's module type only on files whose module system follows `package.json#type`.

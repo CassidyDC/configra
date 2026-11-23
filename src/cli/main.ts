@@ -1,7 +1,8 @@
 import type { Diagnostic } from "../contracts.js";
+import type { ApplyHooks } from "../generator/apply.js";
 import { systemRunner, type ProcessRunner } from "../platform/process.js";
 import { parseCliArgs } from "./args.js";
-import { planWorkflow } from "./commands/workflow.js";
+import { applyWorkflow, planWorkflow } from "./commands/workflow.js";
 import { commandHelp, overviewHelp } from "./help.js";
 import { createStyle, emptyDocument, renderText, type OutputDocument } from "./output.js";
 import { readVersion } from "./version.js";
@@ -17,6 +18,9 @@ export interface CliIo {
   stdoutIsTTY?: boolean;
   env?: Record<string, string | undefined>;
   runner?: ProcessRunner;
+
+  /** Test hooks for the apply phase. */
+  applyHooks?: ApplyHooks;
 }
 
 const defaultIo: CliIo = {
@@ -111,18 +115,55 @@ export async function run(argv: readonly string[], io: CliIo = defaultIo): Promi
     interactive: interactive && !args.json && !args.dryRun,
   });
 
-  if (args.dryRun || result.document.status === "error" || !result.plan) {
-    return emit(result.document, args.json, io, result.target);
+  const { document } = result;
+
+  if (args.dryRun || document.status === "error" || !result.plan) {
+    return emit(document, args.json, io, result.target);
   }
 
-  result.document.diagnostics.push({
-    code: "APPLY_UNAVAILABLE",
-    severity: "error",
-    message: "Writing files isn't available in this build yet. Use --dry-run to preview the plan.",
-  });
+  const blocked = (diagnostic: Diagnostic, exitCode: number) => {
+    document.diagnostics.push(diagnostic);
+    document.status = exitCode === 2 ? "conflicts" : "error";
+    document.exitCode = exitCode;
 
-  result.document.status = "error";
-  result.document.exitCode = 1;
+    return emit(document, args.json, io, result.target);
+  };
 
-  return emit(result.document, args.json, io, result.target);
+  if (args.install || args.installHooks) {
+    return blocked(
+      {
+        code: "INSTALL_UNAVAILABLE",
+        severity: "error",
+        message:
+          "Installing dependencies and activating hooks aren't available in this build yet. Run without --install and --install-hooks.",
+      },
+      1,
+    );
+  }
+
+  if (result.plan.conflicts.some((conflict) => !conflict.decision)) {
+    return blocked(
+      {
+        code: "APPLY_CONFLICTS_UNRESOLVED",
+        severity: "error",
+        message: "Configra wrote nothing because conflicts need decisions. Pass --on-conflict retain or replace.",
+      },
+      2,
+    );
+  }
+
+  if (interactive && !args.json && !args.yes) {
+    return blocked(
+      {
+        code: "APPLY_APPROVAL_REQUIRED",
+        severity: "error",
+        message: "Review the preview, then pass --yes to approve it. Approval prompts arrive in a later build.",
+      },
+      1,
+    );
+  }
+
+  applyWorkflow(args, result, io.applyHooks);
+
+  return emit(document, args.json, io, result.target);
 }

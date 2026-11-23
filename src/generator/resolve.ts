@@ -8,7 +8,7 @@ import type { FormatSettings, LanguageId, ModuleType, ResolvedSettings, Selectio
 import { composerRanges, npmRanges } from "../components/dependency-ranges.js";
 import { languages, projects } from "../components/registry.js";
 import type { Snapshot } from "../platform/filesystem.js";
-import { readJson } from "./discover.js";
+import { hasTypeDependentScripts, readJson } from "./discover.js";
 
 /** Directories and files every generated check skips unless the selections remove them. */
 export const defaultExclusions = [
@@ -76,7 +76,7 @@ function enclosingModuleType(root: string): ModuleType | undefined {
  * project with no JavaScript and no enclosing module setting defaults to ESM. A manifest added to
  * existing code carries forward the enclosing package's explicit type, or stays unset.
  */
-export function planModuleType(snapshot: Snapshot, detectedLanguages: readonly LanguageId[]): ModuleType | undefined {
+export function planModuleType(snapshot: Snapshot, pending?: ReadonlySet<string>): ModuleType | undefined {
   const manifest = readJson(snapshot, "package.json");
 
   if (manifest) {
@@ -89,9 +89,7 @@ export function planModuleType(snapshot: Snapshot, detectedLanguages: readonly L
     return enclosing;
   }
 
-  const hasScripts = detectedLanguages.includes("javascript") || detectedLanguages.includes("typescript");
-
-  return hasScripts ? undefined : "module";
+  return hasTypeDependentScripts(snapshot, pending) ? undefined : "module";
 }
 
 /**
@@ -116,9 +114,9 @@ function formattingStandard(selections: Selections): StandardId {
 export function resolveSettings(
   selections: Selections,
   snapshot: Snapshot,
-  detectedLanguages: readonly LanguageId[],
+  pending?: ReadonlySet<string>,
 ): ResolvedSettings {
-  const moduleType = planModuleType(snapshot, detectedLanguages);
+  const moduleType = planModuleType(snapshot, pending);
   const standard = formattingStandard(selections);
   const extensions: Partial<Record<LanguageId, string[]>> = {};
 

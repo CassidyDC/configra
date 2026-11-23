@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import semver from "semver";
 import type { DiscoveryReport, LanguageId, Prerequisite, Selections, UiId } from "../contracts.js";
-import { listDirectory, type Snapshot } from "../platform/filesystem.js";
+import { listDirectory, toProjectPath, type Snapshot } from "../platform/filesystem.js";
 import { isGitBoundary } from "../platform/git.js";
 import { probeVersion, type ProcessRunner } from "../platform/process.js";
 
@@ -45,11 +45,24 @@ export const minimums = {
   git: "2.0.0",
 } as const;
 
+const typeDependentExtensions = new Set(["js", "jsx", "ts", "tsx"]);
+
+/**
+ * What a bounded project scan found.
+ */
+interface Scan {
+  extensions: Set<string>;
+
+  /** Project-relative paths of scripts whose module system follows `package.json#type`. */
+  typeDependent: string[];
+}
+
 /**
  * Walks the project within fixed bounds and collects the file extensions it finds.
  */
-function scanExtensions(root: string): Set<string> {
+function scanProject(root: string): Scan {
   const found = new Set<string>();
+  const typeDependent: string[] = [];
   const queue: Array<{ path: string; depth: number }> = [{ path: root, depth: 0 }];
   let seen = 0;
 
@@ -80,10 +93,14 @@ function scanExtensions(root: string): Set<string> {
       const extension = entry.name.includes(".") ? entry.name.slice(entry.name.lastIndexOf(".") + 1) : "";
 
       found.add(extension);
+
+      if (typeDependentExtensions.has(extension)) {
+        typeDependent.push(toProjectPath(root, absolute));
+      }
     }
   }
 
-  return found;
+  return { extensions: found, typeDependent };
 }
 
 /**
@@ -175,11 +192,36 @@ export function readJson(snapshot: Snapshot, path: string): Record<string, unkno
   }
 }
 
+const scans = new WeakMap<Snapshot, Scan>();
+
+/**
+ * Scans the project once per snapshot.
+ */
+function projectScan(snapshot: Snapshot): Scan {
+  let scan = scans.get(snapshot);
+
+  if (!scan) {
+    scan = scanProject(snapshot.root);
+    scans.set(snapshot, scan);
+  }
+
+  return scan;
+}
+
+/**
+ * Returns whether the project has script files whose module system follows `package.json#type`. Files
+ * such as `.mjs` and `.cjs` declare their own module system, so a new manifest can't change how they run.
+ * Paths an interrupted Configra run wrote are ignored, so a retry plans the same module type.
+ */
+export function hasTypeDependentScripts(snapshot: Snapshot, ignored: ReadonlySet<string> = new Set()): boolean {
+  return projectScan(snapshot).typeDependent.some((path) => !ignored.has(path));
+}
+
 /**
  * Builds the advisory discovery report. It never executes project configuration or scripts.
  */
 export function discover(snapshot: Snapshot): Omit<DiscoveryReport, "prerequisites"> {
-  const extensions = scanExtensions(snapshot.root);
+  const { extensions } = projectScan(snapshot);
   const languages = [
     ...new Set([...extensions].map((extension) => languageByExtension[extension]).filter(Boolean)),
   ] as LanguageId[];
