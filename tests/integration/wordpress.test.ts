@@ -304,12 +304,21 @@ describe("WordPress setup wizard", () => {
     expect(run.code, run.stdout + run.stderr).toBe(0);
     expect(run.asked[3]).toBe(
       [
-        "Configra can't continue with these answers:",
+        "Configra can't continue:",
         '- php -l, PHP_CodeSniffer, PHPStan check only selected plugin and theme directories. Select one under "Plugin and theme directories", or remove the PHP tools under "Tools".',
-        "Which answer do you want to change?",
+        "Change an answer to fix this, or exit, fix the problem, then run `configra init` again.",
       ].join("\n"),
     );
     expect(JSON.parse(read(root, ".configra/config.json")).packages).toEqual(["wp-content/plugins/shop"]);
+  });
+
+  it("exits to let the user fix the problem and run Configra again", async () => {
+    const root = tempProject(fullSite);
+    const run = await runTerminal(["init"], root, [accept, [], accept, "exit"]);
+
+    expect(run.code).toBe(1);
+    expect(run.notes.at(-1)).toBe("Configra wrote nothing.");
+    expect(readdirSync(root)).not.toContain(".configra");
   });
 
   it("asks where the plugins and themes are when the layout is ambiguous", async () => {

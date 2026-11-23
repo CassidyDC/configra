@@ -329,6 +329,12 @@ async function wizardRun(session: TerminalSession): Promise<number> {
     return 130;
   }
 
+  if (result.kind === "stopped") {
+    prompter.outro("Configra wrote nothing.");
+
+    return 1;
+  }
+
   if (result.kind === "failed") {
     return emit(result.planned.document, false, io, result.planned.target);
   }

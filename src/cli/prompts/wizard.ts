@@ -9,6 +9,7 @@ import type {
   CommandName,
   CommitMessageMode,
   ConflictAction,
+  Diagnostic,
   DiscoveryReport,
   LanguageId,
   PresetId,
@@ -47,6 +48,7 @@ export type WizardOutcome = "save" | "generate" | "install";
 
 export type WizardResult =
   | { kind: "canceled" }
+  | { kind: "stopped" }
   | { kind: "failed"; planned: PlannedWorkflow }
   | { kind: "approved"; planned: PlannedWorkflow; args: ParsedArgs; outcome: WizardOutcome };
 
@@ -281,7 +283,7 @@ async function askStep(
 
       if (candidates.length === 0) {
         prompter.warn(
-          "Configra found no plugin or theme directories. Only the root files are checked. Pass --package to select a directory it didn't find.",
+          "Configra found no plugin or theme directories, so the checks cover only the root files. To check a directory Configra didn't find, exit and run `configra init --package <path>`.",
         );
 
         return { ...answers, packages: [] };
@@ -495,17 +497,10 @@ async function askStep(
 }
 
 /**
- * Asks which answer to change and asks that step again, along with the steps that depend on it.
- * With `canGoBack`, the menu also offers to return to the review with the answers unchanged.
+ * Lists the steps whose answers can change, in the order the wizard asks them.
  */
-async function reviseAnswer(
-  answers: Answers,
-  discovery: Discovery,
-  prompter: Prompter,
-  message: string,
-  canGoBack: boolean,
-): Promise<Answers | Canceled> {
-  const steps: StepId[] = [
+function answerSteps(answers: Answers): StepId[] {
+  return [
     "project",
     ...(projects[answers.project].usesPackages ? (["packages"] as const) : []),
     "languages",
@@ -515,24 +510,17 @@ async function reviseAnswer(
     ...(needsNames(answers) ? (["names"] as const) : []),
     "commitMessages",
   ];
+}
 
-  const step = await prompter.select<StepId | "back" | "cancel">({
-    message,
-    choices: [
-      ...steps.map((id) => ({ value: id, label: stepLabels[id] })),
-      ...(canGoBack ? [{ value: "back" as const, label: "Back to the review", hint: "keep these answers" }] : []),
-      { value: "cancel" as const, label: "Cancel", hint: "leave the project untouched" },
-    ],
-  });
-
-  if (step === canceled || step === "cancel") {
-    return canceled;
-  }
-
-  if (step === "back") {
-    return answers;
-  }
-
+/**
+ * Asks a step again, along with the steps that depend on it.
+ */
+async function askAgain(
+  step: StepId,
+  answers: Answers,
+  discovery: Discovery,
+  prompter: Prompter,
+): Promise<Answers | Canceled> {
   // A new preset resets the selections it provides, and new languages change the standards and tools.
   const dependents: Partial<Record<StepId, StepId[]>> = {
     project: ["packages", "customize", "names"],
@@ -562,6 +550,26 @@ async function reviseAnswer(
 }
 
 /**
+ * Asks which answer to change from the review, or returns the answers unchanged to go back to it.
+ */
+async function reviseAnswer(answers: Answers, discovery: Discovery, prompter: Prompter): Promise<Answers | Canceled> {
+  const step = await prompter.select<StepId | "back" | "cancel">({
+    message: "Which answer do you want to change?",
+    choices: [
+      ...answerSteps(answers).map((id) => ({ value: id, label: stepLabels[id] })),
+      { value: "back", label: "Back to the review", hint: "keep these answers" },
+      { value: "cancel", label: "Cancel", hint: "leave the project untouched" },
+    ],
+  });
+
+  if (step === canceled || step === "cancel") {
+    return canceled;
+  }
+
+  return step === "back" ? answers : askAgain(step, answers, discovery, prompter);
+}
+
+/**
  * Wizard wording for hook problems whose diagnostics point to flags.
  */
 const hookProblemMessages: Record<string, string> = {
@@ -571,16 +579,30 @@ const hookProblemMessages: Record<string, string> = {
 };
 
 /**
- * Wizard wording for selection errors whose diagnostics point to flags.
+ * Wizard wording for errors whose diagnostics point to flags.
  */
-const selectionErrorMessages: Record<string, (answers: Answers) => string> = {
-  SELECTION_PACKAGES_UNSUPPORTED: (answers) =>
+const errorMessages: Record<string, (diagnostic: Diagnostic, answers: Answers) => string> = {
+  SELECTION_PACKAGES_UNSUPPORTED: (_diagnostic, answers) =>
     `The ${projects[answers.project].label} preset doesn't check selected directories. Choose the WordPress site preset or clear "${stepLabels.packages}".`,
-  SELECTION_PHP_NEEDS_PACKAGE: (answers) => {
+  SELECTION_PHP_NEEDS_PACKAGE: (_diagnostic, answers) => {
     const phpTools = answers.tools.filter((id) => id === "php-lint" || id === "phpcs" || id === "phpstan");
 
     return `${phpTools.map((id) => tools[id].label).join(", ")} check only selected plugin and theme directories. Select one under "${stepLabels.packages}", or remove the PHP tools under "${stepLabels.tools}".`;
   },
+  PLAN_RETAINED_CONFIG_INCOMPATIBLE: ({ message }) =>
+    message.replace(
+      / Remove (\S+) from the tool list, or replace the existing configuration\.$/,
+      ` Remove $1 under "${stepLabels.tools}", or exit and run Configra again to replace the existing configuration.`,
+    ),
+  INSTALL_PACKAGE_MANAGER_UNSUPPORTED: ({ message }) =>
+    message.replace(" Run without --install and install", " Choose Generate files, then install"),
+  INSTALL_OUTSIDE_SCOPE: ({ message }) =>
+    message.replace(
+      " Run Configra with --cwd pointing at the workspace root, or run without --install.",
+      " Choose Generate files, or run Configra in the workspace root.",
+    ),
+  INSTALL_COMPOSER_PLUGIN_DENIED: ({ message }) =>
+    message.replace(", or run without --install.", ", or choose Generate files."),
 };
 
 /**
@@ -589,7 +611,66 @@ const selectionErrorMessages: Record<string, (answers: Answers) => string> = {
 function planErrors(planned: PlannedWorkflow, answers: Answers): string[] {
   return planned.document.diagnostics
     .filter((diagnostic) => diagnostic.severity === "error")
-    .map((diagnostic) => selectionErrorMessages[diagnostic.code]?.(answers) ?? diagnostic.message);
+    .map((diagnostic) => errorMessages[diagnostic.code]?.(diagnostic, answers) ?? diagnostic.message);
+}
+
+/**
+ * Returns whether changing an answer can fix an error.
+ */
+function fixableByAnswer(code: string): boolean {
+  return code.startsWith("SELECTION_") || code === "PLAN_RETAINED_CONFIG_INCOMPATIBLE";
+}
+
+/**
+ * Returns whether choosing an action without an install can fix an error.
+ */
+function fixableByAction(code: string): boolean {
+  return code.startsWith("INSTALL_") || code.startsWith("PREREQUISITE_");
+}
+
+/**
+ * Says why a plan can't run and asks how to fix it: change an answer, choose another action, or
+ * exit to fix the problem outside Configra. Exits when nothing in the wizard can fix it.
+ */
+async function askAfterErrors(
+  planned: PlannedWorkflow,
+  answers: Answers,
+  discovery: Discovery,
+  prompter: Prompter,
+  rerun: string,
+): Promise<Answers | "review" | "exit" | Canceled> {
+  const codes = planned.document.diagnostics
+    .filter((diagnostic) => diagnostic.severity === "error")
+    .map((diagnostic) => diagnostic.code);
+
+  const reasons = ["Configra can't continue:", ...planErrors(planned, answers).map((reason) => `- ${reason}`)];
+  const exit = `exit, fix the problem, then run \`${rerun}\` again`;
+
+  if (!codes.every((code) => fixableByAnswer(code) || fixableByAction(code))) {
+    prompter.warn([...reasons, `${exit[0]?.toUpperCase()}${exit.slice(1)}.`].join("\n"));
+
+    return "exit";
+  }
+
+  const byAnswer = codes.some(fixableByAnswer);
+  const byAction = codes.some(fixableByAction);
+  const fixes = [byAnswer ? "change an answer" : "", byAction ? "choose a different action" : ""].filter(Boolean);
+  const fix = fixes.join(" or ");
+
+  const choice = await prompter.select<StepId | "review" | "exit">({
+    message: [...reasons, `${fix[0]?.toUpperCase()}${fix.slice(1)} to fix this, or ${exit}.`].join("\n"),
+    choices: [
+      ...(byAnswer ? answerSteps(answers).map((id) => ({ value: id, label: `Change: ${stepLabels[id]}` })) : []),
+      ...(byAction ? [{ value: "review" as const, label: "Choose a different action" }] : []),
+      { value: "exit", label: "Exit", hint: `fix the problem, then run \`${rerun}\` again` },
+    ],
+  });
+
+  if (choice === canceled || choice === "review" || choice === "exit") {
+    return choice;
+  }
+
+  return askAgain(choice, answers, discovery, prompter);
 }
 
 /**
@@ -622,6 +703,7 @@ export async function runWizard(context: WizardContext): Promise<WizardResult> {
   };
 
   const decisions: Record<string, ConflictAction> = {};
+  const rerun = command === "init" ? "configra init" : "configra update --interactive";
   const plan = (args: ParsedArgs) =>
     planWorkflow(command, args, { ...environment, decisions, wordpressPackages: answers.wordpress });
 
@@ -664,21 +746,19 @@ export async function runWizard(context: WizardContext): Promise<WizardResult> {
     let planned = plan(args);
 
     if (planned.document.status === "error") {
-      const reasons = planErrors(planned, answers).map((reason) => `- ${reason}`);
+      const fixed = await askAfterErrors(planned, answers, discovery, prompter, rerun);
 
-      const revised = await reviseAnswer(
-        answers,
-        discovery,
-        prompter,
-        ["Configra can't continue with these answers:", ...reasons, "Which answer do you want to change?"].join("\n"),
-        false,
-      );
-
-      if (revised === canceled) {
+      if (fixed === canceled) {
         return { kind: "canceled" };
       }
 
-      answers = revised;
+      if (fixed === "exit") {
+        return { kind: "stopped" };
+      }
+
+      if (fixed !== "review") {
+        answers = fixed;
+      }
 
       continue;
     }
@@ -703,7 +783,7 @@ export async function runWizard(context: WizardContext): Promise<WizardResult> {
     }
 
     if (outcome === "change") {
-      const revised = await reviseAnswer(answers, discovery, prompter, "Which answer do you want to change?", true);
+      const revised = await reviseAnswer(answers, discovery, prompter);
 
       if (revised === canceled) {
         return { kind: "canceled" };
@@ -760,7 +840,19 @@ export async function runWizard(context: WizardContext): Promise<WizardResult> {
     }
 
     if (planned.document.status === "error") {
-      prompter.warn(planErrors(planned, answers).join("\n"));
+      const fixed = await askAfterErrors(planned, answers, discovery, prompter, rerun);
+
+      if (fixed === canceled) {
+        return { kind: "canceled" };
+      }
+
+      if (fixed === "exit") {
+        return { kind: "stopped" };
+      }
+
+      if (fixed !== "review") {
+        answers = fixed;
+      }
 
       continue;
     }

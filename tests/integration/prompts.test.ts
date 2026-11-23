@@ -225,6 +225,22 @@ describe("setup wizard", () => {
     });
   });
 
+  it("offers a different action when the install can't run", async () => {
+    const root = tempProject({ "package.json": '{\n  "name": "app"\n}\n', "yarn.lock": "" });
+    const run = await runTerminal(["init"], root, [accept, accept, "install", "review", "generate"]);
+
+    expect(run.code, run.stdout + run.stderr).toBe(0);
+    expect(run.asked.at(-2)).toBe(
+      [
+        "Configra can't continue:",
+        "- This project uses yarn, and Configra installs only with npm. Choose Generate files, then install the declared dependencies with yarn.",
+        "Choose a different action to fix this, or exit, fix the problem, then run `configra init` again.",
+      ].join("\n"),
+    );
+    expect(run.asked.at(-1)).toBe("What should Configra do?");
+    expect(existsSync(join(root, ".configra/state.json"))).toBe(true);
+  });
+
   it("installs and activates hooks only with approval", async () => {
     const root = tempProject();
 
