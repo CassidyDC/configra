@@ -11,10 +11,24 @@ export interface ProcessResult {
 }
 
 /**
+ * Where a streamed command's output goes: the terminal, or stderr so JSON on stdout stays one document.
+ */
+export type StreamTarget = "inherit" | "stderr";
+
+/**
  * Runs commands. Injected so tests can run without real executables.
  */
 export interface ProcessRunner {
+  /** Runs a short command and captures its output. */
   run: (executable: string, args: string[], cwd: string) => ProcessResult;
+
+  /** Runs a long command, such as an install, and passes its output through. */
+  stream: (
+    executable: string,
+    args: string[],
+    cwd: string,
+    target: StreamTarget,
+  ) => Omit<ProcessResult, "stdout" | "stderr">;
 }
 
 /**
@@ -30,6 +44,15 @@ export const systemRunner: ProcessRunner = {
       stderr: result.stderr ?? "",
       ...(result.error ? { error: result.error } : {}),
     };
+  },
+  stream: (executable, args, cwd, target) => {
+    const result = spawn.sync(executable, args, {
+      cwd,
+      stdio: target === "inherit" ? "inherit" : ["ignore", process.stderr, process.stderr],
+      windowsHide: true,
+    });
+
+    return { status: result.status, ...(result.error ? { error: result.error } : {}) };
   },
 };
 

@@ -58,6 +58,7 @@
     "lint:fix": "eslint . --fix && markdownlint-cli2 \"**/*.md\" --fix",
     "lint:scripts": "eslint .",
     "test": "vitest run --project offline",
+    "test:consumer": "vitest run --project consumer",
     "test:smoke": "vitest run --project smoke",
     "typecheck": "tsc -p tsconfig.json"
   },

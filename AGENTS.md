@@ -19,10 +19,11 @@ npm run hooks:install # Activate the Lefthook Git hooks
 npm run typecheck     # Type-check source, tests, and scripts with tsc
 npm test              # Run the offline unit and integration tests with Vitest
 npm run test:smoke    # Build, pack, install into a clean consumer, and run the installed CLI
+npm run test:consumer # Install each generated JavaScript setup from the registry and run its checks
 npm run build         # Compile src/ to dist/ and copy runtime assets
 ```
 
-Run `npm run typecheck`, `npm run lint`, `npm run format:check`, and `npm test` before committing. Run `npm run test:smoke` when a change affects the build, the packed files, or the CLI entry point.
+Run `npm run typecheck`, `npm run lint`, `npm run format:check`, and `npm test` before committing. Run `npm run test:smoke` when a change affects the build, the packed files, or the CLI entry point. Run `npm run test:consumer` when a preset, tool renderer, or dependency set changes.
 
 ## Code conventions
 

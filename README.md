@@ -15,7 +15,31 @@ Configra generates editable linting, formatting, and Git hook configuration for 
 
 Requirements for generated checks: Node.js 24.15 and npm 11 or later, plus PHP and Composer 2.7 or later for WordPress PHP tools.
 
-The current build plans, previews, and writes a Node.js setup with `configra init`. Preview without writing with `--dry-run`, as text or with `--json`. In a terminal, pass `--yes` to approve the preview until the approval prompt arrives. Dependency installation and hook activation arrive in a later milestone. The [examples](examples/) show the generated files and JSON plan for representative selections.
+The current build plans, previews, and writes a Node.js setup with `configra init`. Preview without writing with `--dry-run`, as text or with `--json`. In a terminal, pass `--yes` to approve the preview until the approval prompt arrives. The [examples](examples/) show the generated files and JSON plan for representative selections.
+
+### Installing dependencies and activating hooks
+
+Configra declares the tools as development dependencies in `package.json`. It installs them only with `--install` and activates Git hooks only with `--install-hooks`:
+
+```sh
+configra init --install --install-hooks
+```
+
+- Installation runs `npm install --ignore-scripts --no-audit --no-fund`, so no lifecycle script runs and Lefthook's postinstall can't activate hooks. If it fails, the generated files stay in place and `configra update --install` retries it.
+- Configra installs with npm only. In a project that uses another package manager, it still generates the files, and you install the declared dependencies with that package manager.
+- When the project is a member of an npm workspace, npm would install in the workspace root, so `--install` stops before writing. Run Configra from the workspace root instead.
+- Hook activation runs `npx --no -- lefthook install`. It needs a Git repository whose root is the project, Lefthook installed or installed by the same run, and no existing hooks or `core.hooksPath` from another hook manager.
+
+Hooks stay inactive until someone activates them. After cloning a project that Configra set up, collaborators run:
+
+```sh
+npm ci --ignore-scripts
+npx lefthook install
+```
+
+The generated checks work with lifecycle scripts disabled. Put personal hook settings in `lefthook-local.yml`, which overrides both `lefthook.yml` and `lefthook-project.yml`. Running `lefthook run` by hand also installs the hooks as a side effect, so the generated scripts don't use it.
+
+The `pre-commit` hook checks only the staged content of each file, and the `commit-msg` hook validates the subject line. If you remove Lefthook from the selected tools, the installed hooks keep passing without their config, and `npx lefthook uninstall` removes them.
 
 See [refactor-plan.md](dev/docs/plans/refactor-plan.md) for the full first-release plan and [next-release-plan.md](dev/docs/plans/next-release-plan.md) for what follows.
 

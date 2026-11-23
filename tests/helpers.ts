@@ -59,7 +59,25 @@ export const fakeRunner: ProcessRunner = {
       ? { status: 0, stdout: version, stderr: "" }
       : { status: null, stdout: "", stderr: "", error: new Error("ENOENT") };
   },
+  stream: (executable) => ({ status: null, error: new Error(`${executable} doesn't run in offline tests`) }),
 };
+
+/**
+ * Records the streamed commands a run makes and answers them with the given exit codes in order.
+ */
+export function recordingRunner(statuses: number[] = []): ProcessRunner & { calls: string[] } {
+  const calls: string[] = [];
+
+  return {
+    calls,
+    run: fakeRunner.run,
+    stream: (executable, args) => {
+      calls.push([executable, ...args].join(" "));
+
+      return { status: statuses.shift() ?? 0 };
+    },
+  };
+}
 
 export interface CliRun {
   code: number;
@@ -70,7 +88,12 @@ export interface CliRun {
 /**
  * Runs the CLI in-process from the given working directory.
  */
-export async function runCli(argv: string[], cwd: string, tty = false): Promise<CliRun> {
+export async function runCli(
+  argv: string[],
+  cwd: string,
+  tty = false,
+  runner: ProcessRunner = fakeRunner,
+): Promise<CliRun> {
   let stdout = "";
   let stderr = "";
 
@@ -81,7 +104,7 @@ export async function runCli(argv: string[], cwd: string, tty = false): Promise<
     stdinIsTTY: tty,
     stdoutIsTTY: tty,
     env: { NO_COLOR: "1" },
-    runner: fakeRunner,
+    runner,
   });
 
   return { code, stdout, stderr };
@@ -93,8 +116,9 @@ export async function runCli(argv: string[], cwd: string, tty = false): Promise<
 export async function runJson(
   argv: string[],
   cwd: string,
+  runner: ProcessRunner = fakeRunner,
 ): Promise<{ code: number; document: OutputDocument; stderr: string }> {
-  const result = await runCli([...argv, "--json"], cwd);
+  const result = await runCli([...argv, "--json"], cwd, false, runner);
 
   return { code: result.code, document: JSON.parse(result.stdout) as OutputDocument, stderr: result.stderr };
 }

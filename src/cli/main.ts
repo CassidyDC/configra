@@ -129,18 +129,6 @@ export async function run(argv: readonly string[], io: CliIo = defaultIo): Promi
     return emit(document, args.json, io, result.target);
   };
 
-  if (args.install || args.installHooks) {
-    return blocked(
-      {
-        code: "INSTALL_UNAVAILABLE",
-        severity: "error",
-        message:
-          "Installing dependencies and activating hooks aren't available in this build yet. Run without --install and --install-hooks.",
-      },
-      1,
-    );
-  }
-
   if (result.plan.conflicts.some((conflict) => !conflict.decision)) {
     return blocked(
       {
@@ -163,7 +151,7 @@ export async function run(argv: readonly string[], io: CliIo = defaultIo): Promi
     );
   }
 
-  applyWorkflow(args, result, io.applyHooks);
+  applyWorkflow(args, result, io.runner ?? systemRunner, io.applyHooks);
 
   return emit(document, args.json, io, result.target);
 }

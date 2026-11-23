@@ -1,6 +1,6 @@
 /**
  * Vitest Configuration
- * @file Test projects for offline unit and integration tests and the packed smoke test.
+ * @file Test projects for offline unit and integration tests, clean consumer installs, and the packed smoke test.
  *
  * @see https://vitest.dev/config/
  */
@@ -15,6 +15,14 @@ export default defineConfig({
           name: "offline",
           include: ["tests/unit/**/*.test.ts", "tests/integration/**/*.test.ts"],
           testTimeout: 30_000,
+        },
+      },
+      {
+        test: {
+          name: "consumer",
+          include: ["tests/consumer/**/*.test.ts"],
+          testTimeout: 600_000,
+          maxConcurrency: 4,
         },
       },
       {

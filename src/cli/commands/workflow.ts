@@ -8,6 +8,14 @@ import type { CommandName, Diagnostic, PlannedCommand, PresetId } from "../../co
 import { hookSummary } from "../../components/tools/lefthook.js";
 import { applyWrites, readPendingRun, runFiles, type ApplyHooks, type RunFiles } from "../../generator/apply.js";
 import { checkPrerequisites, discover } from "../../generator/discover.js";
+import {
+  activateHooks,
+  activateHooksCommand,
+  hookCleanupAdvice,
+  installDependencies,
+  preflight,
+  unsupportedPackageManagers,
+} from "../../generator/install.js";
 import { normalizeSelections } from "../../generator/normalize.js";
 import { configPath, createPlan, statePath, type Plan } from "../../generator/plan.js";
 import { resolveSettings } from "../../generator/resolve.js";
@@ -18,8 +26,9 @@ import {
   type OwnershipState,
   type SavedConfig,
 } from "../../generator/state/schemas.js";
-import { Snapshot } from "../../platform/filesystem.js";
+import { Snapshot, toProjectPath } from "../../platform/filesystem.js";
 import { isGitBoundary } from "../../platform/git.js";
+import { enclosingWorkspaceRoot, npmInstall } from "../../platform/package-managers/npm.js";
 import type { ProcessRunner } from "../../platform/process.js";
 import type { ParsedArgs } from "../args.js";
 import { emptyDocument, type OutputDocument } from "../output.js";
@@ -104,18 +113,21 @@ function validatePackages(snapshot: Snapshot, packages: readonly string[]): Diag
 }
 
 /**
- * Lists the commands later phases would run, marked approved only when their flag was passed.
+ * Lists the commands later phases would run, marked approved only when their flag was passed. The install
+ * runs where npm would run it, which is the enclosing workspace root when the project is a workspace member.
  */
-function plannedCommands(plan: Plan, args: ParsedArgs): PlannedCommand[] {
+function plannedCommands(plan: Plan, args: ParsedArgs, root: string): PlannedCommand[] {
   const commands: PlannedCommand[] = [];
   const manifestChanges = plan.changes.some((change) => change.path === "package.json");
 
   if (manifestChanges || args.install) {
+    const workspaceRoot = enclosingWorkspaceRoot(root);
+
     commands.push({
       phase: "install",
-      executable: "npm",
-      args: ["install", "--ignore-scripts", "--no-audit", "--no-fund"],
-      cwd: ".",
+      ...npmInstall,
+      args: [...npmInstall.args],
+      cwd: workspaceRoot === undefined ? "." : toProjectPath(root, workspaceRoot),
       approved: args.install,
     });
   }
@@ -126,8 +138,8 @@ function plannedCommands(plan: Plan, args: ParsedArgs): PlannedCommand[] {
   ) {
     commands.push({
       phase: "activate-hooks",
-      executable: "npx",
-      args: ["--no", "--", "lefthook", "install"],
+      ...activateHooksCommand,
+      args: [...activateHooksCommand.args],
       cwd: ".",
       approved: args.installHooks,
     });
@@ -325,11 +337,40 @@ export function planWorkflow(
   document.dependencies = plan.dependencies;
   document.scripts = plan.scripts;
   document.hooks = hookSummary(settings, plan.checks);
-  document.commands = plannedCommands(plan, args);
+  document.commands = plannedCommands(plan, args, root);
   document.diagnostics.push(...plan.diagnostics);
 
-  if (args.dryRun) {
-    document.discovery = { ...discovery, prerequisites: checkPrerequisites(plan.selections, environment.runner, root) };
+  const others = unsupportedPackageManagers(discovery.packageManagers);
+
+  if (others.length > 0 && !args.install) {
+    document.diagnostics.push({
+      code: "INSTALL_PACKAGE_MANAGER_UNSUPPORTED",
+      severity: "warning",
+      message: `This project uses ${others.join(" and ")}. Configra declares the dependencies in package.json; install them with ${others[0]}.`,
+    });
+  }
+
+  const cleanup = hookCleanupAdvice(root, plan, environment.runner);
+
+  if (cleanup) {
+    document.diagnostics.push(cleanup);
+  }
+
+  const requested = args.install || args.installHooks;
+  const prerequisites =
+    args.dryRun || requested ? checkPrerequisites(plan.selections, environment.runner, root) : undefined;
+
+  if (requested && prerequisites) {
+    const problems = preflight(root, plan, args, discovery.packageManagers, prerequisites, environment.runner);
+
+    // A dry run reports what would stop the requested phases without failing.
+    document.diagnostics.push(
+      ...problems.map((problem) => (args.dryRun ? { ...problem, severity: "warning" as const } : problem)),
+    );
+  }
+
+  if (args.dryRun && prerequisites) {
+    document.discovery = { ...discovery, prerequisites };
   }
 
   const hasErrors = document.diagnostics.some((diagnostic) => diagnostic.severity === "error");
@@ -354,46 +395,113 @@ function retryAdvice(args: ParsedArgs, configWritten: boolean): string {
     return "Run the same command again to finish.";
   }
 
-  return `Run \`configra update${args.cwd !== undefined ? ` --cwd ${JSON.stringify(args.cwd)}` : ""}\` to finish.`;
+  return `Run \`${["configra update", cwdFlag(args)].filter(Boolean).join(" ")}\` to finish.`;
 }
 
 /**
  * Applies a planned, approved run and records the outcome of each phase in its document.
  */
-export function applyWorkflow(args: ParsedArgs, planned: PlannedWorkflow, hooks?: ApplyHooks): void {
+export function applyWorkflow(
+  args: ParsedArgs,
+  planned: PlannedWorkflow,
+  runner: ProcessRunner,
+  hooks?: ApplyHooks,
+): void {
   const { document, plan, snapshot } = planned;
 
   if (!plan || !snapshot || !planned.runFiles) {
     return;
   }
 
+  const phases: NonNullable<OutputDocument["phases"]> = [];
+  const target = args.json ? "stderr" : "inherit";
   const pending = readPendingRun(planned.runFiles) !== undefined;
+  const failRun = () => {
+    document.status = "error";
+    document.exitCode = 1;
+  };
+
+  document.phases = phases;
 
   if (plan.writes.length === 0 && !pending) {
-    document.phases = [{ phase: "apply", status: "skipped", message: "Everything is up to date." }];
+    phases.push({ phase: "apply", status: "skipped", message: "Everything is up to date." });
+  } else {
+    const result = applyWrites(snapshot, plan.writes, planned.runFiles, hooks);
 
-    return;
+    if (result.ok) {
+      phases.push({ phase: "apply", status: "done", message: `Wrote ${result.written.length} files.` });
+    } else {
+      const configWritten = result.written.includes(configPath) || snapshot.exists(configPath);
+      const retry = result.written.length > 0 ? ` ${retryAdvice(args, configWritten)}` : "";
+
+      document.diagnostics.push(...result.diagnostics);
+      phases.push({
+        phase: "apply",
+        status: "failed",
+        message: `Wrote ${result.written.length} of ${plan.writes.length} files.${retry}`,
+      });
+      skipPhases(phases, args, "Skipped because writing files failed.");
+      failRun();
+
+      return;
+    }
   }
 
-  const result = applyWrites(snapshot, plan.writes, planned.runFiles, hooks);
+  if (args.install) {
+    const outcome = installDependencies(runner, snapshot.root, target);
 
-  if (result.ok) {
-    document.phases = [{ phase: "apply", status: "done", message: `Wrote ${result.written.length} files.` }];
+    if (!outcome.ok) {
+      const retry = ["configra update --install", args.installHooks ? "--install-hooks" : "", cwdFlag(args)]
+        .filter(Boolean)
+        .join(" ");
 
-    return;
+      document.diagnostics.push({
+        code: "INSTALL_FAILED",
+        severity: "error",
+        message: `Installing dependencies failed. The generated files are in place. Fix the problem, then run \`${retry}\`.`,
+      });
+      phases.push({ phase: "install", status: "failed", message: outcome.message });
+      skipPhases(phases, { ...args, install: false }, "Skipped because installation failed.");
+      failRun();
+
+      return;
+    }
+
+    phases.push({ phase: "install", status: "done", message: outcome.message });
   }
 
-  const configWritten = result.written.includes(configPath) || snapshot.exists(configPath);
-  const retry = result.written.length > 0 ? ` ${retryAdvice(args, configWritten)}` : "";
+  if (args.installHooks) {
+    const outcome = activateHooks(runner, snapshot.root, target);
 
-  document.diagnostics.push(...result.diagnostics);
-  document.phases = [
-    {
-      phase: "apply",
-      status: "failed",
-      message: `Wrote ${result.written.length} of ${plan.writes.length} files.${retry}`,
-    },
-  ];
-  document.status = "error";
-  document.exitCode = 1;
+    phases.push({ phase: "activate-hooks", status: outcome.ok ? "done" : "failed", message: outcome.message });
+
+    if (!outcome.ok) {
+      document.diagnostics.push({
+        code: "HOOKS_ACTIVATION_FAILED",
+        severity: "error",
+        message: `Activating Git hooks failed. Run \`npx lefthook install\` once the problem is fixed.`,
+      });
+      failRun();
+    }
+  }
+}
+
+/**
+ * Returns the --cwd flag that targets the same project, or an empty string.
+ */
+function cwdFlag(args: ParsedArgs): string {
+  return args.cwd !== undefined ? `--cwd ${JSON.stringify(args.cwd)}` : "";
+}
+
+/**
+ * Records the requested phases that won't run.
+ */
+function skipPhases(phases: NonNullable<OutputDocument["phases"]>, args: ParsedArgs, message: string): void {
+  if (args.install) {
+    phases.push({ phase: "install", status: "skipped", message });
+  }
+
+  if (args.installHooks) {
+    phases.push({ phase: "activate-hooks", status: "skipped", message });
+  }
 }

@@ -21,3 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Apply plans: write files atomically under a per-project lock, record ownership state last, and settle conflicts with `--on-conflict retain` or `replace`. Unresolved conflicts exit with code 2 without writing.
 - Finish an interrupted run by rerunning: Configra adopts the files the earlier run wrote that match the new plan and reports the rest as conflicts.
 - Base a fresh manifest's module type only on files whose module system follows `package.json#type`.
+- Install the declared dependencies with `--install`, using npm with lifecycle scripts disabled, and retry a failed install with `configra update --install`.
+- Activate the Git hooks with `--install-hooks` after checking for a Git root, an available Lefthook binary, and hooks from other hook managers.
+- Stop before writing when `--install` would run outside the project, such as in an enclosing npm workspace root, or with a package manager other than npm.
+- Suggest `npx lefthook uninstall` when a plan removes `lefthook.yml` while its hooks are installed.
+- Add clean consumer install tests for each JavaScript, TypeScript, and React combination with `npm run test:consumer`.
