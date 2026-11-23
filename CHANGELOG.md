@@ -13,3 +13,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Add type checking, Vitest, the `tsc` build, a packed smoke test, and a CI matrix on Linux, macOS, and Windows.
 - Record the milestone 1 spike results in the first-release plan, including a tool version per coding standard and PHP 7.4 as the minimum.
 - Use ESLint 10 for the WordPress standard and document its known npm peer warnings in the README.
+- Raise the Node.js minimum to 24.15, which Stylelint 18 requires, and keep WordPress CSS on Stylelint 17 until its config supports 18.

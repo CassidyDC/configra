@@ -13,7 +13,7 @@ Configra generates editable linting, formatting, and Git hook configuration for 
 - **Safe updates:** previews, ownership tracking, and conflict handling, so rerunning Configra never overwrites your changes.
 - **Setup wizard:** `configra init` walks through the choices, previews the result, and saves them in `.configra/config.json`.
 
-Requirements for generated checks: Node.js 24 and npm 11 or later, plus PHP and Composer 2.7 or later for WordPress PHP tools.
+Requirements for generated checks: Node.js 24.15 and npm 11 or later, plus PHP and Composer 2.7 or later for WordPress PHP tools.
 
 See [refactor-plan.md](dev/docs/plans/refactor-plan.md) for the full first-release plan and [next-release-plan.md](dev/docs/plans/next-release-plan.md) for what follows.
 
@@ -35,6 +35,10 @@ The `recommended` config loads all three for every WordPress setup, with or with
 - `npm ls` reports `eslint@10 invalid` for those three plugins.
 
 The warnings don't affect linting. The WordPress plugin wraps the React and import plugins in a compatibility layer, the accessibility plugin uses no removed ESLint APIs, and the React rule with a known ESLint 10 crash ([#3970](https://github.com/jsx-eslint/eslint-plugin-react/issues/3970)) is turned off. ESLint 10 and ESLint 9 report the same problems on the same files. Configra doesn't add npm `overrides` to hide the warnings. They will go away once the three plugins publish ESLint 10 support and `@wordpress/eslint-plugin` picks up those releases.
+
+### Stylelint 17 for WordPress CSS
+
+The WordPress CSS standard uses Stylelint 17, while the community CSS standard uses Stylelint 18. The latest [`@wordpress/stylelint-config`](https://www.npmjs.com/package/@wordpress/stylelint-config), 27.2.0, requires Stylelint 17, and npm refuses to install it with Stylelint 18. Configra moves WordPress CSS to Stylelint 18 once a release supports it, which [Gutenberg PR #87149](https://github.com/WordPress/gutenberg/pull/87149) is working toward.
 
 ## Development
 
