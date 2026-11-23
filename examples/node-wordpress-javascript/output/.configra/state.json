@@ -5,7 +5,7 @@
       "hash": "97c192c59b6291262821b562641645e5c3941b92e93c93dd835d40ba1c154380",
       "kind": "file"
     },
-    ".configra/markdownlint.js": {
+    ".configra/markdownlint-cli2.js": {
       "hash": "e03c2f944f1161cb0794a693509ab7c85d3f2e7f80990488459c780a99c4a857",
       "kind": "file"
     },

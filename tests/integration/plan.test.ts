@@ -75,7 +75,7 @@ describe("dry-run planning", () => {
     expect(document.changes.map((change) => change.path)).toEqual([
       ".configra/config.json",
       ".configra/eslint.js",
-      ".configra/markdownlint.js",
+      ".configra/markdownlint-cli2.js",
       ".configra/prettier.js",
       ".configra/scripts/commit-msg.js",
       ".configra/state.json",

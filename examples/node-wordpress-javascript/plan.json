@@ -21,7 +21,7 @@
       "details": []
     },
     {
-      "path": ".configra/markdownlint.js",
+      "path": ".configra/markdownlint-cli2.js",
       "action": "create",
       "ownership": "file",
       "reason": "markdownlint rules and exclusions",
@@ -83,7 +83,7 @@
       "path": ".markdownlint-cli2.mjs",
       "action": "create",
       "ownership": "entry",
-      "reason": "Project markdownlint-cli2 entry file that loads .configra/markdownlint.js",
+      "reason": "Project markdownlint-cli2 entry file that loads .configra/markdownlint-cli2.js",
       "details": []
     },
     {

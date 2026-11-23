@@ -55,7 +55,7 @@ const competingFiles = [
 ];
 
 /**
- * Renders `.configra/markdownlint.js`, or `.mjs` outside ESM packages.
+ * Renders `.configra/markdownlint-cli2.js`, or `.mjs` outside ESM packages.
  */
 function renderConfigraFile(settings: ResolvedSettings): string {
   const rules = ["    default: true,\n"];
@@ -131,7 +131,7 @@ export const markdownlintTool: ToolDefinition = {
   },
   render: (settings) => {
     const contribution = emptyContribution();
-    const managed = configraFile(settings, "markdownlint");
+    const managed = configraFile(settings, "markdownlint-cli2");
 
     contribution.files.push(
       {

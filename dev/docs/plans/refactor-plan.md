@@ -54,15 +54,15 @@ The first release leaves these out. Most of them are planned in [next-release-pl
 
 Each tool with an import mechanism gets two files. The project owns the tool's standard entry file: Configra creates it once with an import of the matching Configra file and commented examples, then never changes it. The Configra file in the `.configra/` folder holds everything Configra manages, such as the coding standard, paths, ignored directories, and selection-derived settings, and Configra rewrites it when selections or its defaults change. Each entry file loads its Configra file first, so project overrides below the import win. Lefthook reverses the two roles, as described below.
 
-| Tool            | Entry file (created once, project-owned) | Configra file (Configra-owned)        |
-| --------------- | ---------------------------------------- | ------------------------------------- |
-| Prettier        | `prettier.config.js` or `.mjs`           | `.configra/prettier.js` or `.mjs`     |
-| Markdownlint    | `.markdownlint-cli2.mjs`                 | `.configra/markdownlint.js` or `.mjs` |
-| ESLint          | `eslint.config.js` or `.mjs`             | `.configra/eslint.js` or `.mjs`       |
-| Stylelint       | `stylelint.config.js` or `.mjs`          | `.configra/stylelint.js` or `.mjs`    |
-| PHP_CodeSniffer | `phpcs.xml.dist`                         | `.configra/phpcs.xml`                 |
-| PHPStan         | `phpstan.neon.dist`                      | `.configra/phpstan.neon`              |
-| Lefthook        | `lefthook-project.yml`                   | `lefthook.yml`                        |
+| Tool            | Entry file (created once, project-owned) | Configra file (Configra-owned)             |
+| --------------- | ---------------------------------------- | ------------------------------------------ |
+| Prettier        | `prettier.config.js` or `.mjs`           | `.configra/prettier.js` or `.mjs`          |
+| Markdownlint    | `.markdownlint-cli2.mjs`                 | `.configra/markdownlint-cli2.js` or `.mjs` |
+| ESLint          | `eslint.config.js` or `.mjs`             | `.configra/eslint.js` or `.mjs`            |
+| Stylelint       | `stylelint.config.js` or `.mjs`          | `.configra/stylelint.js` or `.mjs`         |
+| PHP_CodeSniffer | `phpcs.xml.dist`                         | `.configra/phpcs.xml`                      |
+| PHPStan         | `phpstan.neon.dist`                      | `.configra/phpstan.neon`                   |
+| Lefthook        | `lefthook-project.yml`                   | `lefthook.yml`                             |
 
 | Other generated content         | Ownership                                                                                                     |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------- |
