@@ -27,6 +27,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Suggest `npx lefthook uninstall` when a plan removes `lefthook.yml` while its hooks are installed.
 - Add clean consumer install tests for each JavaScript, TypeScript, and React combination with `npm run test:consumer`.
 - Manage this repository's EditorConfig, Prettier, markdownlint, ESLint, and Lefthook setup with Configra.
+- Add the setup wizard to `configra init` and `configra update --interactive`, with suggestions from the project's files, a Change an answer step, and the Generate files, Generate and install, and Save config only outcomes.
+- Show the preview in a terminal, ask how to settle each conflict, and ask for approval before writing. Canceling or declining exits with code 130 and writes nothing.
 
 ### Fixed
 

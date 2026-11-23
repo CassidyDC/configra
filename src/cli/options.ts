@@ -175,14 +175,15 @@ export const options: OptionSpec[] = [
     name: "interactive",
     type: "boolean",
     commands: workflow,
-    description: "Open the setup wizard with saved selections and flags prefilled.",
+    description: "Open the setup wizard with saved selections and flags prefilled. Needs a terminal.",
     conflicts: ["dry-run", "json"],
   },
   {
     name: "yes",
     type: "boolean",
     commands: workflow,
-    description: "Approve the preview without prompting. Conflicts still need decisions.",
+    description:
+      "Approve the preview without prompting. Unsettled conflicts still stop the run unless --on-conflict is passed.",
   },
   {
     name: "on-conflict",
@@ -226,7 +227,7 @@ export const exitCodes: Array<{ code: number; description: string }> = [
   { code: 1, description: "Argument, validation, or execution failure." },
   { code: 2, description: "Unresolved conflicts blocked the run." },
   { code: 3, description: "--dry-run --exit-code found pending changes or conflicts." },
-  { code: 130, description: "The run was interrupted." },
+  { code: 130, description: "The run was interrupted or canceled before writing, including a declined approval." },
 ];
 
 /**

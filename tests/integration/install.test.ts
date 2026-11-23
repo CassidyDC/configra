@@ -132,6 +132,7 @@ describe("dependency installation", () => {
       "package.json": '{\n  "name": "workspace",\n  "private": true,\n  "workspaces": ["packages/*"]\n}\n',
       "packages/app/package.json": '{\n  "name": "app"\n}\n',
     });
+
     const app = join(workspace, "packages/app");
     const preview = await runJson(["init", "--dry-run"], app);
 
@@ -230,6 +231,7 @@ describe("replaying saved selections", () => {
       "package.json": '{\n  "name": "app",\n  "private": true\n}\n',
       "src/index.js": 'export const greeting = "Hello";\n',
     };
+
     const original = tempProject(committed, "original");
 
     expect((await runJson(["init", "--ui", "react", "--commit-messages", "conventional"], original)).code).toBe(0);

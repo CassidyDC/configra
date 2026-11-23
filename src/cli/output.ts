@@ -91,9 +91,15 @@ function formatValue(value: unknown): string {
 }
 
 /**
+ * Where a preview's hints point: to flags, to the terminal prompts that follow a flag run, or to the
+ * setup wizard's choices.
+ */
+export type HintMode = "flags" | "prompts" | "wizard";
+
+/**
  * Renders the text preview of a document.
  */
-export function renderText(document: OutputDocument, style: Style, target: string): string {
+export function renderText(document: OutputDocument, style: Style, target: string, hints: HintMode = "flags"): string {
   const lines: string[] = [];
   const heading = (text: string) => lines.push("", style.bold(text));
   const title = `Configra ${document.command ?? ""}${document.dryRun ? " (dry run)" : ""}`.trim();
@@ -165,9 +171,12 @@ export function renderText(document: OutputDocument, style: Style, target: strin
     }
 
     if (document.conflicts.some((conflict) => !conflict.decision)) {
-      lines.push(
-        `  ${style.dim("Settle conflicts with --on-conflict retain|replace, or answer the prompts in a terminal.")}`,
-      );
+      const hint =
+        hints !== "flags"
+          ? "Configra asks how to settle each conflict next."
+          : "Settle conflicts with --on-conflict retain|replace, or answer the prompts in a terminal.";
+
+      lines.push(`  ${style.dim(hint)}`);
     }
   }
 
@@ -191,23 +200,21 @@ export function renderText(document: OutputDocument, style: Style, target: strin
     heading("Commands");
 
     for (const command of document.commands) {
-      const note = command.approved
-        ? ""
-        : style.dim(command.phase === "install" ? "  (pass --install to run)" : "  (pass --install-hooks to run)");
+      const install = command.phase === "install";
+
+      const pending =
+        hints === "wizard"
+          ? install
+            ? "runs with Generate and install"
+            : "asked before applying"
+          : `pass ${install ? "--install" : "--install-hooks"} to run`;
+      const note = command.approved ? "" : style.dim(`  (${pending})`);
 
       lines.push(`  ${[command.executable, ...command.args].join(" ")}  ${style.dim(`in ${command.cwd}`)}${note}`);
     }
   }
 
-  if (document.phases && document.phases.length > 0) {
-    heading("Result");
-
-    for (const phase of document.phases) {
-      const color = phase.status === "done" ? style.green : phase.status === "failed" ? style.red : style.dim;
-
-      lines.push(`  ${phase.phase.padEnd(15)}${color(phase.status)}${phase.message ? `  ${phase.message}` : ""}`);
-    }
-  }
+  lines.push(...resultLines(document, style));
 
   if (document.discovery) {
     const { discovery } = document;
@@ -234,16 +241,54 @@ export function renderText(document: OutputDocument, style: Style, target: strin
     }
   }
 
-  if (document.diagnostics.length > 0) {
-    heading("Diagnostics");
+  lines.push(...diagnosticLines(document.diagnostics, style));
 
-    for (const diagnostic of document.diagnostics) {
+  return `${lines.join("\n")}\n`;
+}
+
+/**
+ * Renders the outcome of each phase, with a blank line and heading before it.
+ */
+function resultLines(document: OutputDocument, style: Style): string[] {
+  if (!document.phases || document.phases.length === 0) {
+    return [];
+  }
+
+  return [
+    "",
+    style.bold("Result"),
+    ...document.phases.map((phase) => {
+      const color = phase.status === "done" ? style.green : phase.status === "failed" ? style.red : style.dim;
+
+      return `  ${phase.phase.padEnd(15)}${color(phase.status)}${phase.message ? `  ${phase.message}` : ""}`;
+    }),
+  ];
+}
+
+/**
+ * Renders diagnostics, with a blank line and heading before them.
+ */
+export function diagnosticLines(diagnostics: readonly Diagnostic[], style: Style): string[] {
+  if (diagnostics.length === 0) {
+    return [];
+  }
+
+  return [
+    "",
+    style.bold("Diagnostics"),
+    ...diagnostics.map((diagnostic) => {
       const color =
         diagnostic.severity === "error" ? style.red : diagnostic.severity === "warning" ? style.yellow : style.dim;
 
-      lines.push(`  ${color(diagnostic.severity)} ${diagnostic.code}: ${diagnostic.message}`);
-    }
-  }
+      return `  ${color(diagnostic.severity)} ${diagnostic.code}: ${diagnostic.message}`;
+    }),
+  ];
+}
 
-  return `${lines.join("\n")}\n`;
+/**
+ * Renders what an approved run did: each phase's outcome and the diagnostics, without the preview the
+ * user already approved.
+ */
+export function renderOutcome(document: OutputDocument, style: Style): string {
+  return `${[...resultLines(document, style), ...diagnosticLines(document.diagnostics, style)].join("\n").trimStart()}\n`;
 }

@@ -18,7 +18,7 @@ import { run } from "../../src/cli/main.js";
 import type { OutputDocument } from "../../src/cli/output.js";
 import { orderWrites, runFiles, type ApplyHooks } from "../../src/generator/apply.js";
 import { outputSchema } from "../../src/generator/state/schemas.js";
-import { fakeRunner, runCli, runJson, tempProject } from "../helpers.js";
+import { fakeRunner, runJson, tempProject } from "../helpers.js";
 
 const isWindows = process.platform === "win32";
 const repoModules = fileURLToPath(new URL("../../node_modules/", import.meta.url));
@@ -119,18 +119,6 @@ describe("applying a plan", () => {
     expect((await runJson(["init"], root)).code).toBe(0);
     expect(statSync(join(root, "package.json")).mode & 0o777).toBe(0o600);
     expect(statSync(join(root, ".configra/scripts/commit-msg.mjs")).mode & 0o111).not.toBe(0);
-  });
-
-  it("asks for --yes in a terminal and writes nothing without it", async () => {
-    const root = tempProject();
-    const blocked = await runCli(["init"], root, true);
-
-    expect(blocked.code).toBe(1);
-    expect(blocked.stdout + blocked.stderr).toContain("APPLY_APPROVAL_REQUIRED");
-    expect(listTree(root)).toEqual([]);
-
-    expect((await runCli(["init", "--yes"], root, true)).code).toBe(0);
-    expect(existsSync(join(root, ".configra/state.json"))).toBe(true);
   });
 
   it("removes owned files and fields the selections no longer need", async () => {

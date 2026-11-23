@@ -169,6 +169,7 @@ function hookPreflight(
   }
 
   const hooksDirectory = runner.run("git", ["rev-parse", "--git-path", "hooks"], root).stdout.trim();
+
   const existing = generatedHooks(plan).filter((hook) => {
     const path = join(resolve(root, hooksDirectory || ".git/hooks"), hook);
 

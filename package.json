@@ -80,6 +80,7 @@
     "vitest": "^5.1.1"
   },
   "dependencies": {
+    "@clack/prompts": "^1.9.0",
     "cross-spawn": "^7.0.6",
     "semver": "^7.8.6",
     "typebox": "^1.4.7"

@@ -4,7 +4,7 @@
 
 import { readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { CommandName, Diagnostic, PlannedCommand, PresetId } from "../../contracts.js";
+import type { CommandName, ConflictAction, Diagnostic, PlannedCommand, PresetId } from "../../contracts.js";
 import { hookSummary } from "../../components/tools/lefthook.js";
 import { applyWrites, readPendingRun, runFiles, type ApplyHooks, type RunFiles } from "../../generator/apply.js";
 import { checkPrerequisites, discover } from "../../generator/discover.js";
@@ -42,6 +42,9 @@ export interface WorkflowEnvironment {
   version: string;
   runner: ProcessRunner;
   interactive: boolean;
+
+  /** Conflict decisions answered in prompts, by conflict ID. They take precedence over --on-conflict. */
+  decisions?: Record<string, ConflictAction>;
 
   /** Test hooks for the apply phase. */
   applyHooks?: ApplyHooks;
@@ -325,7 +328,8 @@ export function planWorkflow(
     state,
     configraVersion: environment.version,
     schemaUrl: schemaUrl(environment.version),
-    ...(args.onConflict ? { onConflict: args.onConflict as "retain" | "replace" } : {}),
+    ...(args.onConflict ? { onConflict: args.onConflict as ConflictAction } : {}),
+    ...(environment.decisions ? { decisions: environment.decisions } : {}),
     ...(pendingPaths ? { pending: pendingPaths } : {}),
   });
 
@@ -399,18 +403,36 @@ function retryAdvice(args: ParsedArgs, configWritten: boolean): string {
 }
 
 /**
+ * How an approved run applies its plan.
+ */
+export interface ApplyOptions {
+  /** Write only .configra/config.json, for the wizard's Save config only outcome. */
+  saveOnly?: boolean;
+
+  /** Test hooks for the apply phase. */
+  hooks?: ApplyHooks;
+}
+
+/**
  * Applies a planned, approved run and records the outcome of each phase in its document.
  */
 export function applyWorkflow(
   args: ParsedArgs,
   planned: PlannedWorkflow,
   runner: ProcessRunner,
-  hooks?: ApplyHooks,
+  options: ApplyOptions = {},
 ): void {
-  const { document, plan, snapshot } = planned;
+  const { document, snapshot } = planned;
+  const plan = planned.plan && options.saveOnly ? saveOnlyPlan(planned.plan) : planned.plan;
 
   if (!plan || !snapshot || !planned.runFiles) {
     return;
+  }
+
+  const { hooks } = options;
+
+  if (options.saveOnly) {
+    args = { ...args, install: false, installHooks: false };
   }
 
   const phases: NonNullable<OutputDocument["phases"]> = [];
@@ -429,7 +451,11 @@ export function applyWorkflow(
     const result = applyWrites(snapshot, plan.writes, planned.runFiles, hooks);
 
     if (result.ok) {
-      phases.push({ phase: "apply", status: "done", message: `Wrote ${result.written.length} files.` });
+      phases.push({
+        phase: "apply",
+        status: "done",
+        message: `Wrote ${result.written.length} ${result.written.length === 1 ? "file" : "files"}.`,
+      });
     } else {
       const configWritten = result.written.includes(configPath) || snapshot.exists(configPath);
       const retry = result.written.length > 0 ? ` ${retryAdvice(args, configWritten)}` : "";
@@ -484,6 +510,13 @@ export function applyWorkflow(
       failRun();
     }
   }
+}
+
+/**
+ * Narrows a plan to its saved selections, leaving every other file and the ownership state untouched.
+ */
+function saveOnlyPlan(plan: Plan): Plan {
+  return { ...plan, writes: plan.writes.filter((write) => write.path === configPath) };
 }
 
 /**

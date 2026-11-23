@@ -15,7 +15,20 @@ Configra generates editable linting, formatting, and Git hook configuration for 
 
 Requirements for generated checks: Node.js 24.15 and npm 11 or later, plus PHP and Composer 2.7 or later for WordPress PHP tools.
 
-The current build plans, previews, and writes a Node.js setup with `configra init`. Preview without writing with `--dry-run`, as text or with `--json`. In a terminal, pass `--yes` to approve the preview until the approval prompt arrives. The [examples](examples/) show the generated files and JSON plan for representative selections.
+The current build plans, previews, and writes a Node.js setup with `configra init`. Preview without writing with `--dry-run`, as text or with `--json`. The [examples](examples/) show the generated files and JSON plan for representative selections.
+
+### Setup wizard
+
+In a terminal, `configra init` with no saved config and no selection flags opens the setup wizard. It suggests a preset, languages, and UI from the project's files, and lets you accept the preset's defaults in one step or customize each choice. After the preview, choose an outcome:
+
+- **Generate files** saves `.configra/config.json` and writes the tooling files.
+- **Generate and install** also installs the declared dependencies.
+- **Save config only** writes just `.configra/config.json`. Run `configra update` later to generate the files.
+- **Change an answer** goes back to any earlier question.
+
+The wizard asks how to settle each conflict and asks separately before activating Git hooks. Canceling, such as with Escape or Ctrl+C, leaves the project untouched and exits with code 130. Open the wizard for an existing setup with `configra update --interactive`.
+
+Runs with selection flags or a saved config skip the wizard. In a terminal, they still show the preview, ask how to settle each conflict, and ask before writing. Pass `--yes` to approve without prompting and `--on-conflict retain` or `replace` to settle every conflict. Outside a terminal and with `--json`, a valid run writes without prompting, and unsettled conflicts exit with code 2.
 
 ### Installing dependencies and activating hooks
 
