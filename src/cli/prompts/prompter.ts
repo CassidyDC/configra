@@ -43,6 +43,13 @@ export interface Prompter {
     required?: boolean;
   }) => Promise<Value[] | Canceled>;
   confirm: (options: { message: string; initial?: boolean }) => Promise<boolean | Canceled>;
+
+  /** Asks for text, asking again while `validate` returns an error message. */
+  text: (options: {
+    message: string;
+    initial: string;
+    validate?: (value: string) => string | undefined;
+  }) => Promise<string | Canceled>;
 }
 
 /**
@@ -105,6 +112,14 @@ export const terminalPrompter: Prompter = {
         options: options(choices),
         initialValues: initial,
         required: required ?? false,
+      }),
+    ),
+  text: async ({ message, initial, validate }) =>
+    settle<string>(
+      await clack.text({
+        message,
+        initialValue: initial,
+        ...(validate ? { validate: (value) => validate(value ?? "") } : {}),
       }),
     ),
   confirm: async ({ message, initial }) =>

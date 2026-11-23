@@ -15,6 +15,7 @@ import type {
   StandardId,
   ToolId,
   UiId,
+  WordPressPackageSettings,
 } from "../../contracts.js";
 import {
   commitMessageModes,
@@ -29,8 +30,9 @@ import {
   uiIds,
   uis,
 } from "../../components/registry.js";
-import { discover } from "../../generator/discover.js";
+import { discover, wordpressCandidates } from "../../generator/discover.js";
 import { defaultTools } from "../../generator/normalize.js";
+import { readPackageHeaders, suggestPrefix, suggestTextDomain } from "../../generator/wordpress.js";
 import { Snapshot } from "../../platform/filesystem.js";
 import type { ParsedArgs } from "../args.js";
 import { planWorkflow, type PlannedWorkflow, type WorkflowEnvironment } from "../commands/workflow.js";
@@ -59,7 +61,16 @@ export interface WizardContext {
   style: Style;
 }
 
-type Discovery = Omit<DiscoveryReport, "prerequisites">;
+/**
+ * What the wizard knows about the project: the discovery report, plus lookups it makes on demand.
+ */
+type Discovery = Omit<DiscoveryReport, "prerequisites"> & {
+  /** Lists plugin and theme candidates under a content directory, such as `wp-content/`. */
+  candidatesUnder: (base: string) => string[];
+
+  /** Suggests a selected directory's text domain and prefix from its headers and name. */
+  suggestNames: (path: string) => Required<WordPressPackageSettings>;
+};
 
 interface Answers {
   project: PresetId;
@@ -69,9 +80,11 @@ interface Answers {
   standards: Partial<Record<LanguageId, StandardId>>;
   tools: ToolId[];
   commitMessages: CommitMessageMode;
+  wordpress: Record<string, WordPressPackageSettings>;
 }
 
-type StepId = "project" | "packages" | "customize" | "languages" | "ui" | "standards" | "tools" | "commitMessages";
+type StepId =
+  "project" | "packages" | "customize" | "languages" | "ui" | "standards" | "tools" | "names" | "commitMessages";
 
 const stepLabels: Record<StepId, string> = {
   project: "Project preset",
@@ -81,8 +94,22 @@ const stepLabels: Record<StepId, string> = {
   ui: "UI frameworks",
   standards: "Coding standards",
   tools: "Tools",
+  names: "Text domains and prefixes",
   commitMessages: "Commit-message checks",
 };
+
+/**
+ * Returns whether the WordPress PHP checks need a text domain and prefix for each selected directory.
+ */
+function needsNames(answers: Answers): boolean {
+  return (
+    projects[answers.project].usesPackages &&
+    answers.packages.length > 0 &&
+    answers.languages.includes("php") &&
+    answers.standards.php === "wordpress" &&
+    answers.tools.includes("phpcs")
+  );
+}
 
 const commitMessageLabels: Record<CommitMessageMode, Choice<CommitMessageMode>> = {
   plain: { value: "plain", label: "Plain sentences", hint: "Add the login form" },
@@ -125,6 +152,7 @@ function presetDefaults(project: PresetId, discovery: Discovery): Answers {
     standards: Object.fromEntries(selectedLanguages.map((language) => [language, preset.standard])),
     tools: defaultTools(selectedLanguages).filter((id) => tools[id].available),
     commitMessages: "plain",
+    wordpress: {},
   };
 }
 
@@ -146,6 +174,7 @@ function plannedAnswers(planned: PlannedWorkflow): Answers | undefined {
     standards: selections.standards ?? {},
     tools: selections.tools ?? [],
     commitMessages: selections.commitMessages ?? "plain",
+    wordpress: selections.wordpress?.packages ?? {},
   };
 }
 
@@ -228,7 +257,27 @@ async function askStep(
     }
 
     case "packages": {
-      const candidates = [...new Set([...discovery.wordpress.candidates, ...answers.packages])].sort();
+      let found = discovery.wordpress.candidates;
+
+      // Ask where the plugins and themes are when the layout is unclear.
+      if (discovery.wordpress.kind === "ambiguous" || discovery.wordpress.kind === "none") {
+        const base = await prompter.select<"wp-content/" | "root">({
+          message: "Where are the site's plugins and themes?",
+          choices: [
+            { value: "wp-content/", label: "In wp-content/", hint: "a full WordPress site" },
+            { value: "root", label: "At the root", hint: "a wp-content directory" },
+          ],
+          initial: discovery.wordpress.kind === "none" ? "root" : "wp-content/",
+        });
+
+        if (base === canceled) {
+          return canceled;
+        }
+
+        found = discovery.candidatesUnder(base === "root" ? "" : base);
+      }
+
+      const candidates = [...new Set([...found, ...answers.packages])].sort();
 
       if (candidates.length === 0) {
         prompter.warn(
@@ -274,7 +323,7 @@ async function askStep(
 
       let current = answers;
 
-      for (const next of ["languages", "ui", "standards", "tools", "commitMessages"] as const) {
+      for (const next of ["languages", "ui", "standards", "tools", "names", "commitMessages"] as const) {
         const result = await askStep(next, current, discovery, prompter);
 
         if (result === canceled) {
@@ -373,6 +422,66 @@ async function askStep(
       return selected === canceled ? canceled : { ...answers, tools: ordered(toolIds, selected) };
     }
 
+    case "names": {
+      if (!needsNames(answers)) {
+        return answers;
+      }
+
+      const names = Object.fromEntries(
+        answers.packages.map((path) => [path, { ...discovery.suggestNames(path), ...answers.wordpress[path] }]),
+      ) as Record<string, Required<WordPressPackageSettings>>;
+
+      prompter.note(
+        answers.packages
+          .map((path) => `${path}\n  text domain: ${names[path]?.textDomain}\n  prefix: ${names[path]?.prefix}`)
+          .join("\n"),
+        "WordPress text domains and prefixes",
+      );
+
+      const accepted = await prompter.confirm({
+        message: "Use these text domains and prefixes for the WordPress checks?",
+        initial: true,
+      });
+
+      if (accepted === canceled) {
+        return canceled;
+      }
+
+      if (!accepted) {
+        for (const path of answers.packages) {
+          const current = names[path] as Required<WordPressPackageSettings>;
+
+          const textDomain = await prompter.text({
+            message: `Text domain for ${path}`,
+            initial: current.textDomain,
+            validate: (value) =>
+              /^[a-z0-9_-]+$/.test(value) ? undefined : "Use lowercase letters, digits, hyphens, and underscores.",
+          });
+
+          if (textDomain === canceled) {
+            return canceled;
+          }
+
+          const prefix = await prompter.text({
+            message: `Prefix for global functions, classes, and hooks in ${path}`,
+            initial: current.prefix,
+            validate: (value) =>
+              /^[A-Za-z_][A-Za-z0-9_\\]{2,}$/.test(value)
+                ? undefined
+                : "Use at least three letters, digits, underscores, or namespace separators, starting with a letter.",
+          });
+
+          if (prefix === canceled) {
+            return canceled;
+          }
+
+          names[path] = { textDomain, prefix };
+        }
+      }
+
+      return { ...answers, wordpress: names };
+    }
+
     case "commitMessages": {
       const mode = await prompter.select<CommitMessageMode>({
         message: "How should the commit-msg hook check commit subjects?",
@@ -401,6 +510,7 @@ async function reviseAnswer(
     "ui",
     ...(answers.languages.length > 0 ? (["standards"] as const) : []),
     "tools",
+    ...(needsNames(answers) ? (["names"] as const) : []),
     "commitMessages",
   ];
 
@@ -418,8 +528,11 @@ async function reviseAnswer(
 
   // A new preset resets the selections it provides, and new languages change the standards and tools.
   const dependents: Partial<Record<StepId, StepId[]>> = {
-    project: ["packages", "customize"],
-    languages: ["standards", "tools"],
+    project: ["packages", "customize", "names"],
+    packages: ["names"],
+    languages: ["standards", "tools", "names"],
+    standards: ["names"],
+    tools: ["names"],
   };
 
   let current = answers;
@@ -468,9 +581,20 @@ function hookProblem(context: WizardContext, args: ParsedArgs): string | undefin
 export async function runWizard(context: WizardContext): Promise<WizardResult> {
   const { prompter, command, environment, style } = context;
   const root = resolve(environment.cwd, context.args.cwd ?? ".");
-  const discovery = discover(new Snapshot(root));
+  const snapshot = new Snapshot(root);
+
+  const discovery: Discovery = {
+    ...discover(snapshot),
+    candidatesUnder: (base) => wordpressCandidates(snapshot, base),
+    suggestNames: (path) => ({
+      textDomain: readPackageHeaders(snapshot, path).textDomain ?? suggestTextDomain(path),
+      prefix: suggestPrefix(path),
+    }),
+  };
+
   const decisions: Record<string, ConflictAction> = {};
-  const plan = (args: ParsedArgs) => planWorkflow(command, args, { ...environment, decisions });
+  const plan = (args: ParsedArgs) =>
+    planWorkflow(command, args, { ...environment, decisions, wordpressPackages: answers.wordpress });
 
   // Plan the saved selections and flags first, so the wizard starts from them and reports invalid input.
   const first = planWorkflow(command, { ...context.args, dryRun: true }, environment);
@@ -492,7 +616,7 @@ export async function runWizard(context: WizardContext): Promise<WizardResult> {
 
   prompter.intro(command === "init" ? "Set up Configra" : "Change the Configra setup");
 
-  for (const step of ["project", "packages", "customize"] as const) {
+  for (const step of ["project", "packages", "customize", "names"] as const) {
     if (step === "packages" && !projects[answers.project].usesPackages) {
       continue;
     }

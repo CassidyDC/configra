@@ -5,9 +5,9 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { Diagnostic, Prerequisite } from "../contracts.js";
+import type { Diagnostic, PlannedCommand, Prerequisite } from "../contracts.js";
 import { findGitRoot } from "../platform/git.js";
-import { enclosingWorkspaceRoot, installedBinary, npmInstall } from "../platform/package-managers/npm.js";
+import { enclosingWorkspaceRoot, installedBinary } from "../platform/package-managers/npm.js";
 import type { ProcessRunner, StreamTarget } from "../platform/process.js";
 import type { Plan } from "./plan.js";
 
@@ -26,6 +26,8 @@ export interface PhaseOutcome {
   ok: boolean;
   message: string;
 }
+
+const installerPlugin = "dealerdirect/phpcodesniffer-composer-installer";
 
 export const activateHooksCommand = { executable: "npx", args: ["--no", "--", "lefthook", "install"] };
 
@@ -112,6 +114,22 @@ export function preflight(
     const node = prerequisiteError(find("node"), "Installing dependencies");
 
     diagnostics.push(...[node, npm].filter((diagnostic) => diagnostic !== undefined));
+
+    if (plan.managedPackages.composer.length > 0 || plan.dependencies.composer.remove.length > 0) {
+      const php = prerequisiteError(find("php"), "Installing the PHP tools");
+      const composer = prerequisiteError(find("composer"), "Installing the PHP tools");
+
+      diagnostics.push(...[php, composer].filter((diagnostic) => diagnostic !== undefined));
+
+      if (plan.diagnostics.some((diagnostic) => diagnostic.code === "PLAN_COMPOSER_PLUGIN_DENIED")) {
+        diagnostics.push({
+          code: "INSTALL_COMPOSER_PLUGIN_DENIED",
+          severity: "error",
+          path: "composer.json",
+          message: `composer.json denies ${installerPlugin}, so the WordPress coding standard wouldn't register. Allow the plugin under config.allow-plugins, or run without --install.`,
+        });
+      }
+    }
   }
 
   if (request.installHooks) {
@@ -276,10 +294,34 @@ function runPhase(
 }
 
 /**
- * Installs the declared npm dependencies with lifecycle scripts disabled.
+ * Runs one planned install command from its working directory. After a Composer install for the
+ * WordPress PHP standard, it checks that PHP_CodeSniffer registered the standard, because a denied or
+ * missing installer plugin leaves it unregistered without an error.
  */
-export function installDependencies(runner: ProcessRunner, root: string, target: StreamTarget): PhaseOutcome {
-  return runPhase(runner, npmInstall, root, target);
+export function installWith(
+  runner: ProcessRunner,
+  root: string,
+  command: PlannedCommand,
+  target: StreamTarget,
+  plan: Plan,
+): PhaseOutcome {
+  const outcome = runPhase(runner, command, resolve(root, command.cwd), target);
+  const needsStandard = plan.selections.tools.includes("phpcs") && plan.selections.standards.php === "wordpress";
+
+  if (!outcome.ok || command.manager !== "composer" || !needsStandard) {
+    return outcome;
+  }
+
+  const installed = runner.run("php", [join("vendor", "bin", "phpcs"), "-i"], root);
+
+  if (installed.status !== 0 || !installed.stdout.includes("WordPress")) {
+    return {
+      ok: false,
+      message: `Composer finished, but PHP_CodeSniffer doesn't list the WordPress standard. Check that composer.json allows ${installerPlugin} under config.allow-plugins.`,
+    };
+  }
+
+  return outcome;
 }
 
 /**

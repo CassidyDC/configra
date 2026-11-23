@@ -87,9 +87,20 @@ export interface Plan {
   diagnostics: Diagnostic[];
   checks: ResolvedCheck[];
   scripts: ScriptSummary[];
-  dependencies: { npm: { add: Record<string, string>; remove: string[] } };
+  dependencies: DependencyChanges;
+
+  /** Every dependency the selected tools declare, per package manager, including reused declarations. */
+  managedPackages: { npm: string[]; composer: string[] };
   writes: FileWrite[];
   state: OwnershipState;
+}
+
+/**
+ * Dependency declarations a plan adds or removes, per package manager.
+ */
+export interface DependencyChanges {
+  npm: { add: Record<string, string>; remove: string[] };
+  composer: { add: Record<string, string>; remove: string[] };
 }
 
 /**
@@ -394,6 +405,21 @@ function planLines(context: Context, path: string, desired: string[], reason: st
   }
 }
 
+/** Matches the pointer of a dependency declaration in `package.json` or `composer.json`. */
+const dependencyPointer = /^\/((dev)?[dD]ependencies|require(-dev)?)\/(.+)$/;
+
+/**
+ * Lists the dependencies the selected tools declare in one manifest.
+ */
+function managedNames(contributions: Contribution[], manifest: ManifestFieldContribution["manifest"]): string[] {
+  const names = contributions
+    .flatMap((contribution) => contribution.fields)
+    .filter((field) => field.manifest === manifest && field.kind === "dependency")
+    .map((field) => field.path[1] as string);
+
+  return [...new Set(names)].sort();
+}
+
 /**
  * Returns whether an existing dependency range is a verified subset of the shipped range.
  */
@@ -475,21 +501,40 @@ function planManifest(context: Context, manifestPath: string, fields: ManifestFi
       continue;
     }
 
+    if (field.kind === "permission") {
+      const parent = getAt(manifest, field.path.slice(0, -1));
+
+      // An existing denial stays, and a blanket allowance already covers the entry.
+      if (current === false || typeof parent === "boolean") {
+        if (current === false || parent === false) {
+          context.diagnostics.push({
+            code: "PLAN_COMPOSER_PLUGIN_DENIED",
+            severity: "warning",
+            path: manifestPath,
+            message: `${manifestPath} denies the ${field.path.at(-1) ?? ""} Composer plugin, so Composer won't register the WordPress coding standard with PHP_CodeSniffer. Configra leaves the denial in place; allow the plugin under config.allow-plugins to use the standard.`,
+          });
+        }
+
+        continue;
+      }
+    }
+
     if (field.kind === "dependency") {
       const name = field.path[1] as string;
-      const production = getAt(manifest, ["dependencies", name]);
+      const productionKey = manifestPath === "composer.json" ? "require" : "dependencies";
+      const production = getAt(manifest, [productionKey, name]);
 
       if (production !== undefined) {
         if (!compatibleRange(production, field.value as string)) {
           const decision = addConflict(context, {
-            id: `${manifestPath}#${toPointer(["dependencies", name])}`,
+            id: `${manifestPath}#${toPointer([productionKey, name])}`,
             path: manifestPath,
             kind: "unowned-content",
-            message: `dependencies.${name} is ${JSON.stringify(production)}, which isn't within the tested range ${String(field.value)}.`,
+            message: `${productionKey}.${name} is ${JSON.stringify(production)}, which isn't within the tested range ${String(field.value)}.`,
           });
 
           if (decision === "replace") {
-            set(["dependencies", name], field.value, false);
+            set([productionKey, name], field.value, false);
           }
         }
 
@@ -583,7 +628,7 @@ function planManifest(context: Context, manifestPath: string, fields: ManifestFi
 
   if (details.length > 0) {
     const scripts = details.filter((detail) => detail.target.startsWith("/scripts/")).length;
-    const dependencies = details.filter((detail) => /^\/(dev)?[dD]ependencies\//.test(detail.target)).length;
+    const dependencies = details.filter((detail) => dependencyPointer.test(detail.target)).length;
     const parts = [
       dependencies > 0 ? `${dependencies} dependency declarations` : "",
       scripts > 0 ? `${scripts} scripts` : "",
@@ -795,7 +840,11 @@ export function createPlan(input: PlanInput): Plan {
 
   const checks = selections.tools.flatMap((id) => tools[id].checks(settings));
   const contributions: Contribution[] = selections.tools.map((id) => tools[id].render(settings, checks));
-  const files = contributions.flatMap((contribution) => contribution.files);
+
+  // Tools can share a helper, such as the PHP tool runner, so each path is planned once.
+  const files = [
+    ...new Map(contributions.flatMap((contribution) => contribution.files).map((file) => [file.path, file])).values(),
+  ];
   const desiredPaths = new Set<string>();
   const { fields: scripts, summary } = scriptFields(checks);
 
@@ -922,6 +971,15 @@ export function createPlan(input: PlanInput): Plan {
       }
     }
 
+    const composerFields = contributions
+      .flatMap((contribution) => contribution.fields)
+      .filter((field) => field.manifest === "composer.json");
+
+    if (composerFields.length > 0 || context.previous["composer.json"]) {
+      desiredPaths.add("composer.json");
+      planManifest(context, "composer.json", composerFields);
+    }
+
     planRemovals(context, desiredPaths);
   }
 
@@ -972,26 +1030,34 @@ export function createPlan(input: PlanInput): Plan {
     context.writes.push({ path: statePath, content: stateContent });
   }
 
-  const npmAdd: Record<string, string> = {};
-  const npmRemove: string[] = [];
+  const dependencies: DependencyChanges = { npm: { add: {}, remove: [] }, composer: { add: {}, remove: [] } };
 
-  for (const change of context.changes.filter((item) => item.path === "package.json")) {
+  for (const change of context.changes) {
+    const manager = change.path === "package.json" ? "npm" : change.path === "composer.json" ? "composer" : undefined;
+
+    if (!manager) {
+      continue;
+    }
+
     for (const detail of change.details) {
-      const match = /^\/(?:dev)?[dD]ependencies\/(.+)$/.exec(detail.target);
+      const match = dependencyPointer.exec(detail.target);
 
       if (!match) {
         continue;
       }
 
-      const name = (match[1] as string).replaceAll("~1", "/").replaceAll("~0", "~");
+      const name = (match[4] as string).replaceAll("~1", "/").replaceAll("~0", "~");
 
       if (detail.kind === "set-field") {
-        npmAdd[name] = detail.value as string;
+        dependencies[manager].add[name] = detail.value as string;
       } else {
-        npmRemove.push(name);
+        dependencies[manager].remove.push(name);
       }
     }
   }
+
+  dependencies.npm.remove.sort();
+  dependencies.composer.remove.sort();
 
   const byPath = (a: { path: string }, b: { path: string }) => a.path.localeCompare(b.path);
 
@@ -1003,7 +1069,11 @@ export function createPlan(input: PlanInput): Plan {
     diagnostics: context.diagnostics,
     checks,
     scripts: summary,
-    dependencies: { npm: { add: npmAdd, remove: npmRemove.sort() } },
+    dependencies,
+    managedPackages: {
+      npm: managedNames(contributions, "package.json"),
+      composer: managedNames(contributions, "composer.json"),
+    },
     writes: mergeWrites(context.writes),
     state,
   };

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import type { ResolvedCheck, ResolvedSettings } from "../../contracts.js";
-import { emptyContribution, exclusionGlobs, npmDependency, quoteArg } from "./shared.js";
+import { emptyContribution, exclusionGlobs, npmDependency, quoteArg, scopeGlobs } from "./shared.js";
 import type { ToolDefinition } from "./types.js";
 
 const projectFile = "lefthook-project.yml";
@@ -21,28 +21,16 @@ const competingFiles = [
 ];
 
 /**
- * Builds the staged-file glob for a check, matching at any depth with Lefthook's doublestar matcher.
- */
-function stagedGlobs(settings: ResolvedSettings, extensions: string[]): string[] {
-  if (extensions.length === 0) {
-    return [];
-  }
-
-  const suffix = extensions.length === 1 ? `*.${extensions[0]}` : `*.{${extensions.join(",")}}`;
-
-  return settings.scopePrefixes.map((prefix) => `${prefix === "" ? "" : prefix}${suffix}`);
-}
-
-/**
- * Renders one hook command. `npx --no` runs the project's installed binary without downloading anything.
+ * Renders one hook command. `npx --no` runs the project's installed binary without downloading anything,
+ * and checks npm doesn't provide run as written.
  */
 function renderHookCommand(settings: ResolvedSettings, check: ResolvedCheck): string[] {
   const args = check.usesStagedFiles ? [...(check.stagedArgs ?? []), "{staged_files}"] : check.command.args;
-  const run = ["npx", "--no", "--", check.command.executable, ...args].map((arg) =>
+  const run = [...(check.direct ? [] : ["npx", "--no", "--"]), check.command.executable, ...args].map((arg) =>
     arg === "{staged_files}" ? arg : quoteArg(arg),
   );
   const lines = [`    ${check.id}:`];
-  const globs = stagedGlobs(settings, check.extensions);
+  const globs = check.globs ?? scopeGlobs(settings, check.extensions);
 
   if (check.usesStagedFiles && globs.length > 0) {
     lines.push("      glob:", ...globs.map((glob) => `        - ${JSON.stringify(glob)}`));

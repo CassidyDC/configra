@@ -15,7 +15,7 @@ Configra generates editable linting, formatting, and Git hook configuration for 
 
 Requirements for generated checks: Node.js 24.15 and npm 11 or later, plus PHP and Composer 2.7 or later for WordPress PHP tools.
 
-The current build plans, previews, and writes a Node.js setup with `configra init`. Preview without writing with `--dry-run`, as text or with `--json`. The [examples](examples/) show the generated files and JSON plan for representative selections.
+The current build plans, previews, and writes Node.js and WordPress site setups with `configra init`. Preview without writing with `--dry-run`, as text or with `--json`. The [examples](examples/) show the generated files and JSON plan for representative selections.
 
 ### Setup wizard
 
@@ -30,6 +30,21 @@ The wizard asks how to settle each conflict and asks separately before activatin
 
 Runs with selection flags or a saved config skip the wizard. In a terminal, they still show the preview, ask how to settle each conflict, and ask before writing. Pass `--yes` to approve without prompting and `--on-conflict retain` or `replace` to settle every conflict. Outside a terminal and with `--json`, a valid run writes without prompting, and unsettled conflicts exit with code 2.
 
+### WordPress sites
+
+`configra init --project wordpress-site` sets up root tooling for a site that checks only the plugin and theme directories you select. WordPress core, unselected plugins and themes, and other third-party code stay out of every check.
+
+```sh
+configra init --project wordpress-site --package wp-content/plugins/example --package wp-content/themes/example
+```
+
+- Configra treats the target as a full site when it contains `wp-includes/` or `wp-config.php`, and as a `wp-content` directory when it has `plugins/` or `themes/` at the root. The wizard suggests the directories it finds and asks where they are when the layout is unclear. Select a single-file must-use plugin by its file path.
+- The PHP tools check only selected directories, so they need at least one. Without a selection, the other checks cover only the site's own root files.
+- `php -l` runs through `.configra/scripts/php-lint.mjs`, which checks many files per run on PHP 8.3 and later and one file at a time on earlier versions, which otherwise check only the first file. `php -l` checks syntax for the PHP version that runs it, not for the site's minimum version. PHPStan's target version and the WordPress Coding Standards minimum narrow that gap.
+- PHP_CodeSniffer and PHPStan run through `.configra/scripts/php-tool.mjs`, which runs Composer's `vendor/bin` scripts with `php` so they work the same way on Windows. PHPStan runs in the `pre-push` hook and in `lint`, and analyses the working tree, so uncommitted changes can affect the result.
+- Configra reads `Requires PHP`, `Requires at least`, and `Text Domain` from each selected plugin and theme, suggests a prefix from its directory name, and saves the results in `.configra/config.json`, where you can change them. PHPStan targets the lowest declared PHP version and scans the unselected plugins and themes so it can resolve their functions and classes without reporting on them.
+- Composer runs with `--no-scripts`. With an existing `composer.lock`, Configra updates only the packages it manages with `--minimal-changes`, so unrelated locked versions stay put. The WordPress standard needs Composer to allow `dealerdirect/phpcodesniffer-composer-installer`. Configra adds that entry to `config.allow-plugins`, keeps an existing denial, and checks that PHP_CodeSniffer lists the standard after installing.
+
 ### Installing dependencies and activating hooks
 
 Configra declares the tools as development dependencies in `package.json`. It installs them only with `--install` and activates Git hooks only with `--install-hooks`:
@@ -38,8 +53,8 @@ Configra declares the tools as development dependencies in `package.json`. It in
 configra init --install --install-hooks
 ```
 
-- Installation runs `npm install --ignore-scripts --no-audit --no-fund`, so no lifecycle script runs and Lefthook's postinstall can't activate hooks. If it fails, the generated files stay in place and `configra update --install` retries it.
-- Configra installs with npm only. In a project that uses another package manager, it still generates the files, and you install the declared dependencies with that package manager.
+- Installation runs `npm install --ignore-scripts --no-audit --no-fund`, so no lifecycle script runs and Lefthook's postinstall can't activate hooks. When the PHP tools are selected, Composer runs next. If either fails, the generated files stay in place and `configra update --install` retries it.
+- Configra installs JavaScript dependencies with npm only. In a project that uses another package manager, it still generates the files, and you install the declared dependencies with that package manager.
 - When the project is a member of an npm workspace, npm would install in the workspace root, so `--install` stops before writing. Run Configra from the workspace root instead.
 - Hook activation runs `npx --no -- lefthook install`. It needs a Git repository whose root is the project, Lefthook installed or installed by the same run, and no existing hooks or `core.hooksPath` from another hook manager.
 
@@ -47,6 +62,7 @@ Hooks stay inactive until someone activates them. After cloning a project that C
 
 ```sh
 npm ci --ignore-scripts
+composer install --no-scripts  # When the PHP tools are selected
 npx lefthook install
 ```
 

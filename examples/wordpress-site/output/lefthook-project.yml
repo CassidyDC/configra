@@ -1,0 +1,7 @@
+# Project Git hook settings. Configra created this file once and never changes it.
+# Settings here override lefthook.yml, which Configra manages. See https://lefthook.dev/configuration/
+#
+# pre-commit:
+#   commands:
+#     eslint:
+#       skip: true

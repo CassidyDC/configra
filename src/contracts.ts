@@ -122,7 +122,12 @@ export interface ManifestFieldContribution {
   path: string[];
   value: JsonValue;
   reason: string;
-  kind: "dependency" | "script" | "setting";
+
+  /**
+   * A `setting` fills an unset field without owning it. A `permission`, such as a Composer plugin
+   * allowlist entry, is owned like a dependency but never overrides an existing denial.
+   */
+  kind: "dependency" | "script" | "setting" | "permission";
 }
 
 /**
@@ -162,11 +167,17 @@ export interface ResolvedCheck {
   /** Extensions the staged check covers, such as `["js", "mjs"]`. */
   extensions: string[];
 
+  /** Staged-file globs that replace the ones built from `extensions`. */
+  globs?: string[];
+
   /** Arguments placed before the staged file list in the hook command. */
   stagedArgs?: string[];
 
   /** Whether the hook passes staged files. PHPStan runs on the configured paths instead. */
   usesStagedFiles: boolean;
+
+  /** Runs the command as written instead of through `npx`, for executables npm doesn't provide. */
+  direct?: boolean;
   aggregate: "lint" | "format";
 }
 
@@ -219,6 +230,9 @@ export interface Conflict {
  */
 export interface PlannedCommand {
   phase: "install" | "activate-hooks";
+
+  /** The package manager an install command runs. */
+  manager?: "npm" | "composer";
   executable: string;
   args: string[];
   cwd: string;
@@ -268,6 +282,18 @@ export interface ResolvedSettings {
 
   /** Excluded directories (with a trailing slash) and file globs, in `.gitignore` syntax. */
   exclusions: string[];
+
+  /** Selected single files, such as a must-use plugin, that checks cover directly. */
+  scopeFiles: string[];
+
+  /** The selected plugin and theme paths PHP tools check, or the whole project outside WordPress. */
+  phpPaths: string[];
+
+  /** The lowest PHP version the checked code supports, such as `7.4`. */
+  phpTargetVersion: string;
+
+  /** Unselected plugin and theme directories PHPStan scans for symbols without analysing them. */
+  scanDirectories: string[];
 
   /** Glob prefixes for check scopes: `**\/` for the whole project, a directory path, or `` for root files only. */
   scopePrefixes: string[];

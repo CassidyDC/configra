@@ -269,6 +269,18 @@ export function normalizeSelections(
     });
   }
 
+  const phpTools = toolList.filter((id) => id === "php-lint" || id === "phpcs" || id === "phpstan");
+
+  // A WordPress site's root PHP files are core or configuration files, so PHP checks cover only
+  // selected plugins and themes.
+  if (preset.usesPackages && packages.length === 0 && phpTools.length > 0) {
+    diagnostics.push({
+      code: "SELECTION_PHP_NEEDS_PACKAGE",
+      severity: "error",
+      message: `${phpTools.map((id) => tools[id].label).join(", ")} check only selected plugin and theme directories. Select one with --package, or remove the PHP tools from --tools.`,
+    });
+  }
+
   if (commitValue !== "off" && !toolList.includes("lefthook")) {
     diagnostics.push({
       code: "SELECTION_COMMIT_MESSAGES_NEED_LEFTHOOK",

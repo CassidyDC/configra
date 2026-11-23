@@ -1,0 +1,30 @@
+{
+	"private": true,
+	"type": "module",
+	"engines": {
+		"node": ">=24.15"
+	},
+	"scripts": {
+		"lint:md": "markdownlint-cli2 \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\"",
+		"lint:js": "eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\"",
+		"lint:css": "stylelint --allow-empty-input \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\"",
+		"lint:php-syntax": "node .configra/scripts/php-lint.mjs",
+		"lint:phpcs": "node .configra/scripts/php-tool.mjs phpcs",
+		"lint:phpstan": "node .configra/scripts/php-tool.mjs phpstan analyse --memory-limit=1G --no-progress",
+		"lint": "npm run lint:md && npm run lint:js && npm run lint:css && npm run lint:php-syntax && npm run lint:phpcs && npm run lint:phpstan",
+		"lint:fix": "markdownlint-cli2 --fix \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\" && stylelint --allow-empty-input --fix \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\" && node .configra/scripts/php-tool.mjs phpcbf",
+		"format:check": "prettier --check --ignore-unknown --no-error-on-unmatched-pattern \"*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}\" \"wp-content/plugins/example/**/*\" \"wp-content/themes/example/**/*\"",
+		"format": "prettier --write --ignore-unknown --no-error-on-unmatched-pattern \"*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}\" \"wp-content/plugins/example/**/*\" \"wp-content/themes/example/**/*\""
+	},
+	"devDependencies": {
+		"@wordpress/eslint-plugin": "^28.2.0",
+		"@wordpress/prettier-config": "^5.2.0",
+		"@wordpress/stylelint-config": "^27.2.0",
+		"eslint": "^10.15.0",
+		"lefthook": "^2.2.2",
+		"markdownlint-cli2": "^0.24.2",
+		"prettier": "^3.10.1",
+		"stylelint": "^17.16.0",
+		"stylelint-scss": "^7.5.0"
+	}
+}

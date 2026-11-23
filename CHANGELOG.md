@@ -29,6 +29,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Manage this repository's EditorConfig, Prettier, markdownlint, ESLint, and Lefthook setup with Configra.
 - Add the setup wizard to `configra init` and `configra update --interactive`, with suggestions from the project's files, a Change an answer step, and the Generate files, Generate and install, and Save config only outcomes.
 - Show the preview in a terminal, ask how to settle each conflict, and ask for approval before writing. Canceling or declining exits with code 130 and writes nothing.
+- Add the WordPress site preset with Stylelint, `php -l`, PHP_CodeSniffer, and PHPStan. Checks cover only the selected plugin and theme directories, and PHPStan scans the unselected ones for symbols.
+- Read each selected plugin and theme's PHP and WordPress versions and text domain, suggest prefixes, and save them in `.configra/config.json`. The wizard asks to confirm them.
+- Install the PHP tools with Composer after npm, updating only the managed packages when a lockfile exists, and check that PHP_CodeSniffer registered the WordPress standard.
+- Add generated helpers that batch `php -l` on PHP 8.3 and later and run Composer-installed tools the same way on every platform.
 
 ### Fixed
 

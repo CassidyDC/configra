@@ -49,6 +49,15 @@ export const fakeRunner: ProcessRunner = {
       return systemRunner.run(executable, args, cwd);
     }
 
+    // The check after a Composer install that PHP_CodeSniffer registered the WordPress standard.
+    if (executable === "php" && args.includes("-i")) {
+      return {
+        status: 0,
+        stdout: "The installed coding standards are PSR12, WordPress and WordPress-Core",
+        stderr: "",
+      };
+    }
+
     const versions: Record<string, string> = {
       npm: "11.6.0",
       git: "git version 2.50.0",
@@ -128,6 +137,15 @@ export function scriptedPrompter(answers: Answer[] = []): Prompter & { asked: st
       Promise.resolve(next(message, initial ?? choices.find((choice) => !choice.disabled)?.value)) as never,
     multiselect: ({ message, initial }) => Promise.resolve(next(message, initial)),
     confirm: ({ message, initial }) => Promise.resolve(next(message, initial ?? true)),
+    text: ({ message, initial, validate }) => {
+      const answer = next(message, initial);
+
+      if (typeof answer === "string" && validate?.(answer) !== undefined) {
+        throw new Error(`The scripted answer "${answer}" for "${message}" is invalid: ${String(validate(answer))}`);
+      }
+
+      return Promise.resolve(answer);
+    },
   };
 }
 

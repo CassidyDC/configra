@@ -286,6 +286,10 @@
         "lefthook": "^2.2.2"
       },
       "remove": []
+    },
+    "composer": {
+      "add": {},
+      "remove": []
     }
   },
   "scripts": [
@@ -345,6 +349,7 @@
   "commands": [
     {
       "phase": "install",
+      "manager": "npm",
       "executable": "npm",
       "args": [
         "install",

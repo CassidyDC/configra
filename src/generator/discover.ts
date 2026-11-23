@@ -118,7 +118,15 @@ function detectWordPress(snapshot: Snapshot): DiscoveryReport["wordpress"] {
     return { kind, candidates: [] };
   }
 
-  const base = kind === "wp-content" ? "" : "wp-content/";
+  return { kind, candidates: wordpressCandidates(snapshot, kind === "wp-content" ? "" : "wp-content/") };
+}
+
+/**
+ * Lists the plugin, must-use plugin, and theme directories under a content directory, such as
+ * `wp-content/` in a full site or the root of a `wp-content` project. Single-file must-use plugins are
+ * listed by file.
+ */
+export function wordpressCandidates(snapshot: Snapshot, base: string): string[] {
   const candidates: string[] = [];
 
   for (const parent of ["plugins", "mu-plugins", "themes"]) {
@@ -139,7 +147,7 @@ function detectWordPress(snapshot: Snapshot): DiscoveryReport["wordpress"] {
     }
   }
 
-  return { kind, candidates };
+  return candidates;
 }
 
 /**

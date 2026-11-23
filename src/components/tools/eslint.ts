@@ -2,6 +2,7 @@ import type { ResolvedCheck, ResolvedSettings, StandardId } from "../../contract
 import {
   emptyContribution,
   exclusionGlobs,
+  isScoped,
   jsArray,
   managedHeader,
   npmDependency,
@@ -205,20 +206,28 @@ export const eslintTool: ToolDefinition = {
   description: "Lints JavaScript and TypeScript, including React when selected.",
   languages: ["javascript", "typescript"],
   available: true,
-  checks: (settings): ResolvedCheck[] => [
-    {
-      id: "eslint",
-      tool: "eslint",
-      script: "lint:js",
-      command: { executable: "eslint", args: [...cacheArgs, "--no-error-on-unmatched-pattern", "."] },
-      fixCommand: { executable: "eslint", args: [...cacheArgs, "--no-error-on-unmatched-pattern", "--fix", "."] },
-      hook: "pre-commit",
-      extensions: scriptExtensions(settings),
-      stagedArgs: [...cacheArgs, "--no-warn-ignored"],
-      usesStagedFiles: true,
-      aggregate: "lint",
-    },
-  ],
+  checks: (settings): ResolvedCheck[] => {
+    // In a WordPress site, only the selected directories are passed, so ESLint never walks core or other plugins.
+    const targets = isScoped(settings) ? scopeGlobs(settings, scriptExtensions(settings)) : ["."];
+
+    return [
+      {
+        id: "eslint",
+        tool: "eslint",
+        script: "lint:js",
+        command: { executable: "eslint", args: [...cacheArgs, "--no-error-on-unmatched-pattern", ...targets] },
+        fixCommand: {
+          executable: "eslint",
+          args: [...cacheArgs, "--no-error-on-unmatched-pattern", "--fix", ...targets],
+        },
+        hook: "pre-commit",
+        extensions: scriptExtensions(settings),
+        stagedArgs: [...cacheArgs, "--no-warn-ignored"],
+        usesStagedFiles: true,
+        aggregate: "lint",
+      },
+    ];
+  },
   render: (settings) => {
     const contribution = emptyContribution();
     const entryFile = `eslint.config${settings.configExtension}`;

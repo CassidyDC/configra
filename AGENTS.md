@@ -19,7 +19,7 @@ npm run hooks:install # Activate the Lefthook Git hooks
 npm run typecheck     # Type-check source, tests, and scripts with tsc
 npm test              # Run the offline unit and integration tests with Vitest
 npm run test:smoke    # Build, pack, install into a clean consumer, and run the installed CLI
-npm run test:consumer # Install each generated JavaScript setup from the registry and run its checks
+npm run test:consumer # Install generated setups with npm and Composer and run their checks
 npm run build         # Compile src/ to dist/ and copy runtime assets
 ```
 

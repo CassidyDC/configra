@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+	PHP_CodeSniffer configuration.
+
+	Configra manages .configra/phpcs.xml. Add your own rules and properties after its reference;
+	they override Configra's. For personal settings, create a phpcs.xml that references this file.
+
+	See https://github.com/PHPCSStandards/PHP_CodeSniffer/wiki/Annotated-Ruleset
+-->
+<ruleset name="Project">
+	<rule ref="./.configra/phpcs.xml"/>
+
+	<!-- <rule ref="Generic.Files.LineLength">
+		<exclude-pattern>*/templates/*</exclude-pattern>
+	</rule> -->
+</ruleset>

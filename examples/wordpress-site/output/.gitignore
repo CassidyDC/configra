@@ -1,0 +1,7 @@
+node_modules/
+.configra/tmp/
+.cache/
+vendor/
+lefthook-local.yml
+phpcs.xml
+phpstan.neon

@@ -10,7 +10,7 @@ import type {
   PlannedChange,
   PlannedCommand,
 } from "../contracts.js";
-import type { ScriptSummary } from "../generator/plan.js";
+import type { DependencyChanges, ScriptSummary } from "../generator/plan.js";
 import type { SavedConfig } from "../generator/state/schemas.js";
 
 export const outputVersion = 1;
@@ -28,12 +28,15 @@ export interface OutputDocument {
   selections?: Omit<SavedConfig, "$schema">;
   changes: PlannedChange[];
   conflicts: Conflict[];
-  dependencies: { npm: { add: Record<string, string>; remove: string[] } };
+  dependencies: DependencyChanges;
   scripts: ScriptSummary[];
   hooks: Array<{ hook: string; name: string; run: string }>;
   commands: PlannedCommand[];
   phases?: Array<{
     phase: "apply" | "install" | "activate-hooks";
+
+    /** The package manager an install phase ran. */
+    manager?: "npm" | "composer";
     status: "done" | "skipped" | "failed";
     message?: string;
   }>;
@@ -54,7 +57,7 @@ export function emptyDocument(configra: string, command: CommandName | null, dry
     dryRun,
     changes: [],
     conflicts: [],
-    dependencies: { npm: { add: {}, remove: [] } },
+    dependencies: { npm: { add: {}, remove: [] }, composer: { add: {}, remove: [] } },
     scripts: [],
     hooks: [],
     commands: [],
@@ -183,8 +186,12 @@ export function renderText(document: OutputDocument, style: Style, target: strin
   if (document.scripts.length > 0) {
     heading("Scripts (run from the project root)");
 
+    const width = Math.max(...document.scripts.map((script) => script.name.length)) + 2;
+
     for (const script of document.scripts) {
-      lines.push(`  ${script.name.padEnd(14)}${script.command}${script.writes ? style.dim("  (writes files)") : ""}`);
+      lines.push(
+        `  ${script.name.padEnd(width)}${script.command}${script.writes ? style.dim("  (writes files)") : ""}`,
+      );
     }
   }
 

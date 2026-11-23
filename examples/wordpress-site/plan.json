@@ -1,0 +1,604 @@
+{
+  "version": 1,
+  "configra": "0.0.0",
+  "command": "init",
+  "status": "changes",
+  "exitCode": 0,
+  "dryRun": true,
+  "changes": [
+    {
+      "path": ".configra/config.json",
+      "action": "create",
+      "ownership": "selections",
+      "reason": "Saved selections",
+      "details": []
+    },
+    {
+      "path": ".configra/eslint.mjs",
+      "action": "create",
+      "ownership": "file",
+      "reason": "ESLint rules for the wordpress standard",
+      "details": []
+    },
+    {
+      "path": ".configra/markdownlint.mjs",
+      "action": "create",
+      "ownership": "file",
+      "reason": "markdownlint rules and exclusions",
+      "details": []
+    },
+    {
+      "path": ".configra/phpcs.xml",
+      "action": "create",
+      "ownership": "file",
+      "reason": "PHP_CodeSniffer rules for the wordpress standard",
+      "details": []
+    },
+    {
+      "path": ".configra/phpstan.neon",
+      "action": "create",
+      "ownership": "file",
+      "reason": "PHPStan level 5 analysis of the selected paths",
+      "details": []
+    },
+    {
+      "path": ".configra/prettier.mjs",
+      "action": "create",
+      "ownership": "file",
+      "reason": "Prettier options derived from the formatting settings",
+      "details": []
+    },
+    {
+      "path": ".configra/scripts/commit-msg.mjs",
+      "action": "create",
+      "ownership": "file",
+      "reason": "Commit-message check for plain subjects",
+      "details": []
+    },
+    {
+      "path": ".configra/scripts/php-lint.mjs",
+      "action": "create",
+      "ownership": "file",
+      "reason": "Batched PHP syntax check for the selected paths",
+      "details": []
+    },
+    {
+      "path": ".configra/scripts/php-tool.mjs",
+      "action": "create",
+      "ownership": "file",
+      "reason": "Runs Composer-installed PHP tools the same way on every platform",
+      "details": []
+    },
+    {
+      "path": ".configra/state.json",
+      "action": "create",
+      "ownership": "state",
+      "reason": "Ownership state for Configra's files, lines, and fields",
+      "details": []
+    },
+    {
+      "path": ".configra/stylelint.mjs",
+      "action": "create",
+      "ownership": "file",
+      "reason": "Stylelint rules for the wordpress standard",
+      "details": []
+    },
+    {
+      "path": ".editorconfig",
+      "action": "create",
+      "ownership": "file",
+      "reason": "EditorConfig settings derived from the formatting settings",
+      "details": []
+    },
+    {
+      "path": ".gitignore",
+      "action": "create",
+      "ownership": "lines",
+      "reason": "Ignore dependencies, tool caches, and personal override files",
+      "details": [
+        {
+          "kind": "add-line",
+          "target": "node_modules/"
+        },
+        {
+          "kind": "add-line",
+          "target": ".configra/tmp/"
+        },
+        {
+          "kind": "add-line",
+          "target": ".cache/"
+        },
+        {
+          "kind": "add-line",
+          "target": "vendor/"
+        },
+        {
+          "kind": "add-line",
+          "target": "lefthook-local.yml"
+        },
+        {
+          "kind": "add-line",
+          "target": "phpcs.xml"
+        },
+        {
+          "kind": "add-line",
+          "target": "phpstan.neon"
+        }
+      ]
+    },
+    {
+      "path": ".markdownlint-cli2.mjs",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project markdownlint-cli2 entry file that loads .configra/markdownlint.mjs",
+      "details": []
+    },
+    {
+      "path": ".prettierignore",
+      "action": "create",
+      "ownership": "lines",
+      "reason": "Keep excluded directories, minified files, and lockfiles out of formatting",
+      "details": [
+        {
+          "kind": "add-line",
+          "target": "node_modules/"
+        },
+        {
+          "kind": "add-line",
+          "target": "vendor/"
+        },
+        {
+          "kind": "add-line",
+          "target": "build/"
+        },
+        {
+          "kind": "add-line",
+          "target": "dist/"
+        },
+        {
+          "kind": "add-line",
+          "target": ".configra/"
+        },
+        {
+          "kind": "add-line",
+          "target": ".cache/"
+        },
+        {
+          "kind": "add-line",
+          "target": "*.min.js"
+        },
+        {
+          "kind": "add-line",
+          "target": "*.min.css"
+        },
+        {
+          "kind": "add-line",
+          "target": "package-lock.json"
+        },
+        {
+          "kind": "add-line",
+          "target": "composer.lock"
+        },
+        {
+          "kind": "add-line",
+          "target": "lefthook.yml"
+        }
+      ]
+    },
+    {
+      "path": "composer.json",
+      "action": "create",
+      "ownership": "fields",
+      "reason": "Update 5 dependency declarations",
+      "details": [
+        {
+          "kind": "set-field",
+          "target": "/require-dev/squizlabs~1php_codesniffer",
+          "value": "^3.13.5"
+        },
+        {
+          "kind": "set-field",
+          "target": "/require-dev/wp-coding-standards~1wpcs",
+          "value": "^3.4.1"
+        },
+        {
+          "kind": "set-field",
+          "target": "/require-dev/dealerdirect~1phpcodesniffer-composer-installer",
+          "value": "^1.2.1"
+        },
+        {
+          "kind": "set-field",
+          "target": "/config/allow-plugins/dealerdirect~1phpcodesniffer-composer-installer",
+          "value": true
+        },
+        {
+          "kind": "set-field",
+          "target": "/require-dev/phpstan~1phpstan",
+          "value": "^2.3.7"
+        },
+        {
+          "kind": "set-field",
+          "target": "/require-dev/szepeviktor~1phpstan-wordpress",
+          "value": "^2.0.4"
+        }
+      ]
+    },
+    {
+      "path": "eslint.config.js",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project ESLint entry file that loads .configra/eslint.mjs",
+      "details": []
+    },
+    {
+      "path": "lefthook-project.yml",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project hook settings that override lefthook.yml",
+      "details": []
+    },
+    {
+      "path": "lefthook.yml",
+      "action": "create",
+      "ownership": "file",
+      "reason": "Git hooks for the selected checks",
+      "details": []
+    },
+    {
+      "path": "package.json",
+      "action": "create",
+      "ownership": "fields",
+      "reason": "Update 9 dependency declarations and 10 scripts",
+      "details": [
+        {
+          "kind": "set-field",
+          "target": "/private",
+          "value": true
+        },
+        {
+          "kind": "set-field",
+          "target": "/type",
+          "value": "module"
+        },
+        {
+          "kind": "set-field",
+          "target": "/engines/node",
+          "value": ">=24.15"
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint:md",
+          "value": "markdownlint-cli2 \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\""
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint:js",
+          "value": "eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\""
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint:css",
+          "value": "stylelint --allow-empty-input \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\""
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint:php-syntax",
+          "value": "node .configra/scripts/php-lint.mjs"
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint:phpcs",
+          "value": "node .configra/scripts/php-tool.mjs phpcs"
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint:phpstan",
+          "value": "node .configra/scripts/php-tool.mjs phpstan analyse --memory-limit=1G --no-progress"
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint",
+          "value": "npm run lint:md && npm run lint:js && npm run lint:css && npm run lint:php-syntax && npm run lint:phpcs && npm run lint:phpstan"
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint:fix",
+          "value": "markdownlint-cli2 --fix \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\" && stylelint --allow-empty-input --fix \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\" && node .configra/scripts/php-tool.mjs phpcbf"
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/format:check",
+          "value": "prettier --check --ignore-unknown --no-error-on-unmatched-pattern \"*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}\" \"wp-content/plugins/example/**/*\" \"wp-content/themes/example/**/*\""
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/format",
+          "value": "prettier --write --ignore-unknown --no-error-on-unmatched-pattern \"*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}\" \"wp-content/plugins/example/**/*\" \"wp-content/themes/example/**/*\""
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/prettier",
+          "value": "^3.10.1"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/@wordpress~1prettier-config",
+          "value": "^5.2.0"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/markdownlint-cli2",
+          "value": "^0.24.2"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/eslint",
+          "value": "^10.15.0"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/@wordpress~1eslint-plugin",
+          "value": "^28.2.0"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/stylelint",
+          "value": "^17.16.0"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/@wordpress~1stylelint-config",
+          "value": "^27.2.0"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/stylelint-scss",
+          "value": "^7.5.0"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/lefthook",
+          "value": "^2.2.2"
+        }
+      ]
+    },
+    {
+      "path": "phpcs.xml.dist",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project PHP_CodeSniffer entry file that references .configra/phpcs.xml",
+      "details": []
+    },
+    {
+      "path": "phpstan.neon.dist",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project PHPStan entry file that includes .configra/phpstan.neon",
+      "details": []
+    },
+    {
+      "path": "prettier.config.js",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project Prettier entry file that loads .configra/prettier.mjs",
+      "details": []
+    },
+    {
+      "path": "stylelint.config.js",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project Stylelint entry file that loads .configra/stylelint.mjs",
+      "details": []
+    }
+  ],
+  "conflicts": [],
+  "dependencies": {
+    "npm": {
+      "add": {
+        "prettier": "^3.10.1",
+        "@wordpress/prettier-config": "^5.2.0",
+        "markdownlint-cli2": "^0.24.2",
+        "eslint": "^10.15.0",
+        "@wordpress/eslint-plugin": "^28.2.0",
+        "stylelint": "^17.16.0",
+        "@wordpress/stylelint-config": "^27.2.0",
+        "stylelint-scss": "^7.5.0",
+        "lefthook": "^2.2.2"
+      },
+      "remove": []
+    },
+    "composer": {
+      "add": {
+        "squizlabs/php_codesniffer": "^3.13.5",
+        "wp-coding-standards/wpcs": "^3.4.1",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.2.1",
+        "phpstan/phpstan": "^2.3.7",
+        "szepeviktor/phpstan-wordpress": "^2.0.4"
+      },
+      "remove": []
+    }
+  },
+  "scripts": [
+    {
+      "name": "lint:md",
+      "command": "markdownlint-cli2 \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\"",
+      "writes": false
+    },
+    {
+      "name": "lint:js",
+      "command": "eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\"",
+      "writes": false
+    },
+    {
+      "name": "lint:css",
+      "command": "stylelint --allow-empty-input \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\"",
+      "writes": false
+    },
+    {
+      "name": "lint:php-syntax",
+      "command": "node .configra/scripts/php-lint.mjs",
+      "writes": false
+    },
+    {
+      "name": "lint:phpcs",
+      "command": "node .configra/scripts/php-tool.mjs phpcs",
+      "writes": false
+    },
+    {
+      "name": "lint:phpstan",
+      "command": "node .configra/scripts/php-tool.mjs phpstan analyse --memory-limit=1G --no-progress",
+      "writes": false
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint:md && npm run lint:js && npm run lint:css && npm run lint:php-syntax && npm run lint:phpcs && npm run lint:phpstan",
+      "writes": false
+    },
+    {
+      "name": "lint:fix",
+      "command": "markdownlint-cli2 --fix \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\" && stylelint --allow-empty-input --fix \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\" && node .configra/scripts/php-tool.mjs phpcbf",
+      "writes": true
+    },
+    {
+      "name": "format:check",
+      "command": "prettier --check --ignore-unknown --no-error-on-unmatched-pattern \"*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}\" \"wp-content/plugins/example/**/*\" \"wp-content/themes/example/**/*\"",
+      "writes": false
+    },
+    {
+      "name": "format",
+      "command": "prettier --write --ignore-unknown --no-error-on-unmatched-pattern \"*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}\" \"wp-content/plugins/example/**/*\" \"wp-content/themes/example/**/*\"",
+      "writes": true
+    }
+  ],
+  "hooks": [
+    {
+      "hook": "pre-commit",
+      "name": "prettier",
+      "run": "npx --no -- prettier --check --ignore-unknown --no-error-on-unmatched-pattern {staged_files}"
+    },
+    {
+      "hook": "pre-commit",
+      "name": "markdownlint",
+      "run": "npx --no -- markdownlint-cli2 {staged_files}"
+    },
+    {
+      "hook": "pre-commit",
+      "name": "eslint",
+      "run": "npx --no -- eslint --cache --cache-location .cache/eslint/ --no-warn-ignored {staged_files}"
+    },
+    {
+      "hook": "pre-commit",
+      "name": "stylelint",
+      "run": "npx --no -- stylelint --allow-empty-input {staged_files}"
+    },
+    {
+      "hook": "pre-commit",
+      "name": "php-lint",
+      "run": "node .configra/scripts/php-lint.mjs {staged_files}"
+    },
+    {
+      "hook": "pre-commit",
+      "name": "phpcs",
+      "run": "node .configra/scripts/php-tool.mjs phpcs {staged_files}"
+    },
+    {
+      "hook": "pre-push",
+      "name": "phpstan",
+      "run": "node .configra/scripts/php-tool.mjs phpstan analyse --memory-limit=1G --no-progress"
+    },
+    {
+      "hook": "commit-msg",
+      "name": "commit-message",
+      "run": "node .configra/scripts/commit-msg.mjs --mode plain {1}"
+    }
+  ],
+  "commands": [
+    {
+      "phase": "install",
+      "manager": "npm",
+      "executable": "npm",
+      "args": [
+        "install",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": ".",
+      "approved": false
+    },
+    {
+      "phase": "install",
+      "manager": "composer",
+      "executable": "composer",
+      "args": [
+        "update",
+        "--no-scripts",
+        "--no-interaction",
+        "--no-progress"
+      ],
+      "cwd": ".",
+      "approved": false
+    },
+    {
+      "phase": "activate-hooks",
+      "executable": "npx",
+      "args": [
+        "--no",
+        "--",
+        "lefthook",
+        "install"
+      ],
+      "cwd": ".",
+      "approved": false
+    }
+  ],
+  "diagnostics": [],
+  "selections": {
+    "version": 1,
+    "project": "wordpress-site",
+    "packages": [
+      "wp-content/plugins/example",
+      "wp-content/themes/example"
+    ],
+    "languages": [
+      "javascript",
+      "css",
+      "php"
+    ],
+    "ui": [],
+    "standards": {
+      "javascript": "wordpress",
+      "css": "wordpress",
+      "php": "wordpress"
+    },
+    "tools": [
+      "editorconfig",
+      "gitignore",
+      "prettier",
+      "markdownlint",
+      "eslint",
+      "stylelint",
+      "php-lint",
+      "phpcs",
+      "phpstan",
+      "lefthook"
+    ],
+    "commitMessages": "plain",
+    "php": {
+      "targetVersion": "8.1"
+    },
+    "wordpress": {
+      "minimumVersion": "6.6",
+      "packages": {
+        "wp-content/plugins/example": {
+          "textDomain": "example",
+          "prefix": "example"
+        },
+        "wp-content/themes/example": {
+          "textDomain": "example",
+          "prefix": "example"
+        }
+      }
+    }
+  }
+}

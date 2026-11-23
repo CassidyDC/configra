@@ -1,0 +1,11 @@
+# PHPStan configuration.
+#
+# Configra manages .configra/phpstan.neon. Settings here override its single values, such as the
+# level, and add to its lists, such as paths. For personal settings, create a phpstan.neon that
+# includes this file. See https://phpstan.org/config-reference
+
+includes:
+	- .configra/phpstan.neon
+
+# parameters:
+#	level: 6

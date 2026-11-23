@@ -30,8 +30,44 @@ export function scopeGlobs(settings: ResolvedSettings, extensions: readonly stri
   }
 
   const suffix = extensions.length === 1 ? `*.${extensions[0]}` : `*.{${extensions.join(",")}}`;
+  const files = settings.scopeFiles.filter((path) => extensions.some((extension) => path.endsWith(`.${extension}`)));
 
-  return settings.scopePrefixes.map((prefix) => `${prefix}${suffix}`);
+  return [...settings.scopePrefixes.map((prefix) => `${prefix}${suffix}`), ...files];
+}
+
+/**
+ * Declares a development dependency in the root `composer.json`.
+ */
+export function composerDependency(tool: ToolId, name: string, range: string): ManifestFieldContribution {
+  return {
+    tool,
+    manifest: "composer.json",
+    path: ["require-dev", name],
+    value: range,
+    reason: `Development dependency for ${tool}`,
+    kind: "dependency",
+  };
+}
+
+/**
+ * Converts `.gitignore`-style directory exclusions to the `*\/name/*` patterns PHP tools match.
+ */
+export function phpExclusionPatterns(settings: ResolvedSettings): string[] {
+  return settings.exclusions.filter((entry) => entry.endsWith("/")).map((entry) => `*/${entry}*`);
+}
+
+/**
+ * Returns the indent unit for generated files that follow the formatting settings.
+ */
+export function indentUnit(formatting: FormatSettings): string {
+  return formatting.indentStyle === "tab" ? "\t" : " ".repeat(formatting.indentSize);
+}
+
+/**
+ * Returns whether checks cover only selected directories, as in a WordPress site, instead of the whole project.
+ */
+export function isScoped(settings: ResolvedSettings): boolean {
+  return !settings.scopePrefixes.includes("**/");
 }
 
 /**

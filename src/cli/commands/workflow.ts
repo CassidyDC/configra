@@ -2,9 +2,16 @@
  * The shared init and update workflow: read inputs, normalize selections, plan, and report or apply.
  */
 
-import { readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { CommandName, ConflictAction, Diagnostic, PlannedCommand, PresetId } from "../../contracts.js";
+import type {
+  CommandName,
+  ConflictAction,
+  Diagnostic,
+  PlannedCommand,
+  PresetId,
+  WordPressPackageSettings,
+} from "../../contracts.js";
 import { hookSummary } from "../../components/tools/lefthook.js";
 import { applyWrites, readPendingRun, runFiles, type ApplyHooks, type RunFiles } from "../../generator/apply.js";
 import { checkPrerequisites, discover } from "../../generator/discover.js";
@@ -12,13 +19,14 @@ import {
   activateHooks,
   activateHooksCommand,
   hookCleanupAdvice,
-  installDependencies,
+  installWith,
   preflight,
   unsupportedPackageManagers,
 } from "../../generator/install.js";
 import { normalizeSelections } from "../../generator/normalize.js";
 import { configPath, createPlan, statePath, type Plan } from "../../generator/plan.js";
 import { resolveSettings } from "../../generator/resolve.js";
+import { withWordPressDefaults } from "../../generator/wordpress.js";
 import {
   configSchema,
   parseVersioned,
@@ -28,6 +36,7 @@ import {
 } from "../../generator/state/schemas.js";
 import { Snapshot, toProjectPath } from "../../platform/filesystem.js";
 import { isGitBoundary } from "../../platform/git.js";
+import { composerInstall } from "../../platform/package-managers/composer.js";
 import { enclosingWorkspaceRoot, npmInstall } from "../../platform/package-managers/npm.js";
 import type { ProcessRunner } from "../../platform/process.js";
 import type { ParsedArgs } from "../args.js";
@@ -45,6 +54,9 @@ export interface WorkflowEnvironment {
 
   /** Conflict decisions answered in prompts, by conflict ID. They take precedence over --on-conflict. */
   decisions?: Record<string, ConflictAction>;
+
+  /** WordPress text domains and prefixes answered in the wizard, which have no flags. */
+  wordpressPackages?: Record<string, WordPressPackageSettings>;
 
   /** Test hooks for the apply phase. */
   applyHooks?: ApplyHooks;
@@ -121,18 +133,29 @@ function validatePackages(snapshot: Snapshot, packages: readonly string[]): Diag
  */
 function plannedCommands(plan: Plan, args: ParsedArgs, root: string): PlannedCommand[] {
   const commands: PlannedCommand[] = [];
-  const manifestChanges = plan.changes.some((change) => change.path === "package.json");
+  const changed = (path: string) => plan.changes.some((change) => change.path === path);
 
-  if (manifestChanges || args.install) {
+  if (changed("package.json") || args.install) {
     const workspaceRoot = enclosingWorkspaceRoot(root);
 
     commands.push({
       phase: "install",
+      manager: "npm",
       ...npmInstall,
       args: [...npmInstall.args],
       cwd: workspaceRoot === undefined ? "." : toProjectPath(root, workspaceRoot),
       approved: args.install,
     });
+  }
+
+  const removed = plan.dependencies.composer.remove;
+
+  if (changed("composer.json") || (args.install && plan.managedPackages.composer.length > 0)) {
+    const command = composerInstall(existsSync(join(root, "composer.lock")), [
+      ...new Set([...plan.managedPackages.composer, ...removed]),
+    ]);
+
+    commands.push({ phase: "install", manager: "composer", ...command, cwd: ".", approved: args.install });
   }
 
   if (
@@ -307,10 +330,26 @@ export function planWorkflow(
     return { ...result, document: fail(document, packageDiagnostics) };
   }
 
+  // Fill the WordPress settings the saved selections leave unset from the selected directories' headers.
+  const answered = environment.wordpressPackages
+    ? {
+        ...normalized.selections,
+        wordpress: {
+          ...normalized.selections.wordpress,
+          packages: { ...normalized.selections.wordpress.packages, ...environment.wordpressPackages },
+        },
+      }
+    : normalized.selections;
+
+  const detected = withWordPressDefaults(answered, snapshot);
+  const { selections } = detected;
+
+  document.diagnostics.push(...detected.diagnostics);
+
   const files = runFiles(root, environment.runner);
   const pending = readPendingRun(files);
   const pendingPaths = pending ? new Set(pending) : undefined;
-  const settings = resolveSettings(normalized.selections, snapshot, pendingPaths);
+  const settings = resolveSettings(selections, snapshot, pendingPaths);
 
   if (pending !== undefined) {
     document.diagnostics.push({
@@ -333,9 +372,9 @@ export function planWorkflow(
     ...(pendingPaths ? { pending: pendingPaths } : {}),
   });
 
-  const { $schema: _schema, ...selections } = plan.config;
+  const { $schema: _schema, ...savedSelections } = plan.config;
 
-  document.selections = selections;
+  document.selections = savedSelections;
   document.changes = plan.changes;
   document.conflicts = plan.conflicts;
   document.dependencies = plan.dependencies;
@@ -473,8 +512,9 @@ export function applyWorkflow(
     }
   }
 
-  if (args.install) {
-    const outcome = installDependencies(runner, snapshot.root, target);
+  for (const command of args.install ? document.commands.filter((item) => item.phase === "install") : []) {
+    const outcome = installWith(runner, snapshot.root, command, target, plan);
+    const manager = command.manager ?? "npm";
 
     if (!outcome.ok) {
       const retry = ["configra update --install", args.installHooks ? "--install-hooks" : "", cwdFlag(args)]
@@ -486,14 +526,14 @@ export function applyWorkflow(
         severity: "error",
         message: `Installing dependencies failed. The generated files are in place. Fix the problem, then run \`${retry}\`.`,
       });
-      phases.push({ phase: "install", status: "failed", message: outcome.message });
+      phases.push({ phase: "install", manager, status: "failed", message: outcome.message });
       skipPhases(phases, { ...args, install: false }, "Skipped because installation failed.");
       failRun();
 
       return;
     }
 
-    phases.push({ phase: "install", status: "done", message: outcome.message });
+    phases.push({ phase: "install", manager, status: "done", message: outcome.message });
   }
 
   if (args.installHooks) {

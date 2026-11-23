@@ -13,8 +13,9 @@ import { eslintTool } from "./tools/eslint.js";
 import { gitignoreTool } from "./tools/gitignore.js";
 import { lefthookTool } from "./tools/lefthook.js";
 import { markdownlintTool } from "./tools/markdownlint.js";
-import { phpcsTool, phpLintTool, phpstanTool, stylelintTool } from "./tools/pending.js";
+import { phpcsTool, phpLintTool, phpstanTool } from "./tools/php.js";
 import { prettierTool } from "./tools/prettier.js";
+import { stylelintTool } from "./tools/stylelint.js";
 import type { ToolDefinition } from "./tools/types.js";
 import { uis } from "./ui/index.js";
 

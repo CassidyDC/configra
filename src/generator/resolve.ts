@@ -8,7 +8,8 @@ import type { FormatSettings, LanguageId, ModuleType, ResolvedSettings, Selectio
 import { composerRanges, npmRanges } from "../components/dependency-ranges.js";
 import { languages, projects } from "../components/registry.js";
 import type { Snapshot } from "../platform/filesystem.js";
-import { hasTypeDependentScripts, readJson } from "./discover.js";
+import { hasTypeDependentScripts, readJson, wordpressCandidates } from "./discover.js";
+import { defaultPhpTargetVersion } from "./wordpress.js";
 
 /** Directories and files every generated check skips unless the selections remove them. */
 export const defaultExclusions = [
@@ -134,11 +135,34 @@ export function resolveSettings(
 
   const project = projects[selections.project];
 
+  // Selected single files, such as a must-use plugin, are checked directly instead of through a prefix.
+  const scopeFiles = project.usesPackages ? selections.packages.filter((path) => path.endsWith(".php")) : [];
+  const directories = project.usesPackages ? selections.packages.filter((path) => !path.endsWith(".php")) : [];
+
   const scopePrefixes = !project.usesPackages
     ? ["**/"]
     : selections.packages.length === 0
       ? [""]
-      : selections.packages.map((path) => `${path}/**/`);
+      : directories.map((path) => `${path}/**/`);
+
+  // PHPStan scans the unselected siblings of the selected directories, whichever layout the site uses.
+  const contentBases = [
+    ...new Set(
+      selections.packages
+        .map((path) => /^(.*?)(?:plugins|mu-plugins|themes)\/[^/]+$/.exec(path)?.[1])
+        .filter((base): base is string => base !== undefined),
+    ),
+  ];
+
+  const scanDirectories = contentBases
+    .flatMap((base) => wordpressCandidates(snapshot, base))
+    .filter(
+      (path) =>
+        !path.endsWith(".php") &&
+        !selections.packages.includes(path) &&
+        !selections.php.scanDirectories.remove.includes(path),
+    )
+    .sort();
 
   return {
     selections,
@@ -149,6 +173,10 @@ export function resolveSettings(
     formattingStandard: standard,
     extensions,
     exclusions,
+    scopeFiles,
+    phpPaths: project.usesPackages ? selections.packages : ["."],
+    phpTargetVersion: selections.php.targetVersion ?? defaultPhpTargetVersion,
+    scanDirectories,
     scopePrefixes,
     npmRange: (name, rangeStandard) => {
       const set: Record<string, string> = npmRanges[rangeStandard ?? standard];

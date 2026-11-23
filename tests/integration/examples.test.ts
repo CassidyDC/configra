@@ -5,15 +5,21 @@ import { describe, expect, it } from "vitest";
 import { parseCliArgs, type ParsedArgs } from "../../src/cli/args.js";
 import { planWorkflow } from "../../src/cli/commands/workflow.js";
 import { readVersion } from "../../src/cli/version.js";
-import { fakeRunner, tempProject } from "../helpers.js";
+import { fakeRunner, tempProject, writeFiles } from "../helpers.js";
 
 const examplesRoot = fileURLToPath(new URL("../../examples/", import.meta.url));
 const update = process.env.UPDATE_EXAMPLES === "1";
 
 /**
- * Representative selections. Each example's output is the plan for a fresh, empty project.
+ * Representative selections. Each example's output is the plan for a fresh project that holds only the
+ * example's seed files, which aren't part of the output.
  */
-const examples: Array<{ name: string; description: string; selections: Record<string, unknown> }> = [
+const examples: Array<{
+  name: string;
+  description: string;
+  selections: Record<string, unknown>;
+  files?: Record<string, string>;
+}> = [
   { name: "node", description: "The node preset defaults.", selections: { version: 1, project: "node" } },
   {
     name: "node-typescript-react",
@@ -31,6 +37,22 @@ const examples: Array<{ name: string; description: string; selections: Record<st
     description: "JavaScript with the WordPress standard and WordPress formatting.",
     selections: { version: 1, project: "node", standards: { javascript: "wordpress" } },
   },
+  {
+    name: "wordpress-site",
+    description: "A full WordPress site that checks one plugin and one theme beside an unselected plugin.",
+    selections: {
+      version: 1,
+      project: "wordpress-site",
+      packages: ["wp-content/plugins/example", "wp-content/themes/example"],
+    },
+    files: {
+      "wp-config.php": "<?php\n",
+      "wp-content/plugins/example/example.php":
+        "<?php\n/**\n * Plugin Name: Example\n * Requires PHP: 8.1\n * Requires at least: 6.6\n * Text Domain: example\n */\n",
+      "wp-content/plugins/unselected/unselected.php": "<?php\n/**\n * Plugin Name: Unselected\n */\n",
+      "wp-content/themes/example/style.css": "/*\nTheme Name: Example\nRequires PHP: 8.1\nText Domain: example\n*/\n",
+    },
+  },
 ];
 
 /**
@@ -41,6 +63,7 @@ function renderExample(example: (typeof examples)[number]): Map<string, string> 
   const target = join(caller, "project");
 
   mkdirSync(target);
+  writeFiles(target, example.files ?? {});
 
   const parsed = parseCliArgs(["init", "--dry-run", "--config", "selections.json", "--cwd", "project"]);
   const result = planWorkflow("init", parsed.args as ParsedArgs, {

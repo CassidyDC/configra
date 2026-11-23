@@ -276,6 +276,7 @@ const conflictSchema = Type.Object(
 const commandSchema = Type.Object(
   {
     phase: literals(["install", "activate-hooks"]),
+    manager: Type.Optional(literals(["npm", "composer"])),
     executable: Type.String(),
     args: Type.Array(Type.String()),
     cwd: Type.String({ description: "The working directory, relative to the project root." }),
@@ -310,6 +311,7 @@ export const outputSchema = Type.Object(
     conflicts: Type.Array(conflictSchema),
     dependencies: Type.Object({
       npm: Type.Object({ add: Type.Record(Type.String(), Type.String()), remove: Type.Array(Type.String()) }),
+      composer: Type.Object({ add: Type.Record(Type.String(), Type.String()), remove: Type.Array(Type.String()) }),
     }),
     scripts: Type.Array(
       Type.Object(
@@ -326,6 +328,7 @@ export const outputSchema = Type.Object(
         Type.Object(
           {
             phase: literals(["apply", "install", "activate-hooks"]),
+            manager: Type.Optional(literals(["npm", "composer"])),
             status: literals(["done", "skipped", "failed"]),
             message: Type.Optional(Type.String()),
           },

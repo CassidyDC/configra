@@ -1,0 +1,134 @@
+{
+  "configraVersion": "0.0.0",
+  "files": {
+    ".configra/eslint.mjs": {
+      "hash": "85ce237c4d94738d98aca5f0236143456177bad90a3733bd23b8e2a18b6a0fd5",
+      "kind": "file"
+    },
+    ".configra/markdownlint.mjs": {
+      "hash": "e03c2f944f1161cb0794a693509ab7c85d3f2e7f80990488459c780a99c4a857",
+      "kind": "file"
+    },
+    ".configra/phpcs.xml": {
+      "hash": "22a459e798eb4025d3c50bfcee32c0e2ac7a740c82c4627e38fac4b2232461b6",
+      "kind": "file"
+    },
+    ".configra/phpstan.neon": {
+      "hash": "9a6b65a112c53ce3bd707ed13179e442fc5003f862ade2aec58a93be41a4608d",
+      "kind": "file"
+    },
+    ".configra/prettier.mjs": {
+      "hash": "ccb506ca8c51633f8943471b9712ee63312a15fc604b1b76c11ed80932f17a5c",
+      "kind": "file"
+    },
+    ".configra/scripts/commit-msg.mjs": {
+      "hash": "6f4a93a3f09b9ac8a72aa681c149bc4b85d7b363705797de7793b8f2e2633b2d",
+      "kind": "file"
+    },
+    ".configra/scripts/php-lint.mjs": {
+      "hash": "549a2c7367cfb5e36879f1a24055640cc100f16e452c9839736f5b298bc0d026",
+      "kind": "file"
+    },
+    ".configra/scripts/php-tool.mjs": {
+      "hash": "8300cd68dd9cedf503515ad062e86809d57a85ac72d3d54b5cbd178d961b3640",
+      "kind": "file"
+    },
+    ".configra/stylelint.mjs": {
+      "hash": "f0bdf2e4bf0db0db02496a9cac595e10ef9b3bd8269a8a96ff25763cc5cb24bf",
+      "kind": "file"
+    },
+    ".editorconfig": {
+      "hash": "7a8b8c34834af78d8490bbbed11c86adc70c0384893abd47d04401bd6b7c1807",
+      "kind": "file"
+    },
+    ".gitignore": {
+      "kind": "lines",
+      "lines": [
+        "node_modules/",
+        ".configra/tmp/",
+        ".cache/",
+        "vendor/",
+        "lefthook-local.yml",
+        "phpcs.xml",
+        "phpstan.neon"
+      ]
+    },
+    ".markdownlint-cli2.mjs": {
+      "kind": "entry"
+    },
+    ".prettierignore": {
+      "kind": "lines",
+      "lines": [
+        "node_modules/",
+        "vendor/",
+        "build/",
+        "dist/",
+        ".configra/",
+        ".cache/",
+        "*.min.js",
+        "*.min.css",
+        "package-lock.json",
+        "composer.lock",
+        "lefthook.yml"
+      ]
+    },
+    "composer.json": {
+      "fields": {
+        "/config/allow-plugins/dealerdirect~1phpcodesniffer-composer-installer": true,
+        "/require-dev/dealerdirect~1phpcodesniffer-composer-installer": "^1.2.1",
+        "/require-dev/phpstan~1phpstan": "^2.3.7",
+        "/require-dev/squizlabs~1php_codesniffer": "^3.13.5",
+        "/require-dev/szepeviktor~1phpstan-wordpress": "^2.0.4",
+        "/require-dev/wp-coding-standards~1wpcs": "^3.4.1"
+      },
+      "kind": "fields"
+    },
+    "eslint.config.js": {
+      "kind": "entry"
+    },
+    "lefthook-project.yml": {
+      "kind": "entry"
+    },
+    "lefthook.yml": {
+      "hash": "ed86e4d415b1b50a0a2214d1b4bffd51ec51aa3abf6e6c061c0d83649c625162",
+      "kind": "file"
+    },
+    "package.json": {
+      "fields": {
+        "/devDependencies/@wordpress~1eslint-plugin": "^28.2.0",
+        "/devDependencies/@wordpress~1prettier-config": "^5.2.0",
+        "/devDependencies/@wordpress~1stylelint-config": "^27.2.0",
+        "/devDependencies/eslint": "^10.15.0",
+        "/devDependencies/lefthook": "^2.2.2",
+        "/devDependencies/markdownlint-cli2": "^0.24.2",
+        "/devDependencies/prettier": "^3.10.1",
+        "/devDependencies/stylelint": "^17.16.0",
+        "/devDependencies/stylelint-scss": "^7.5.0",
+        "/scripts/format": "prettier --write --ignore-unknown --no-error-on-unmatched-pattern \"*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}\" \"wp-content/plugins/example/**/*\" \"wp-content/themes/example/**/*\"",
+        "/scripts/format:check": "prettier --check --ignore-unknown --no-error-on-unmatched-pattern \"*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}\" \"wp-content/plugins/example/**/*\" \"wp-content/themes/example/**/*\"",
+        "/scripts/lint": "npm run lint:md && npm run lint:js && npm run lint:css && npm run lint:php-syntax && npm run lint:phpcs && npm run lint:phpstan",
+        "/scripts/lint:css": "stylelint --allow-empty-input \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\"",
+        "/scripts/lint:fix": "markdownlint-cli2 --fix \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\" && stylelint --allow-empty-input --fix \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\" && node .configra/scripts/php-tool.mjs phpcbf",
+        "/scripts/lint:js": "eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\"",
+        "/scripts/lint:md": "markdownlint-cli2 \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\"",
+        "/scripts/lint:php-syntax": "node .configra/scripts/php-lint.mjs",
+        "/scripts/lint:phpcs": "node .configra/scripts/php-tool.mjs phpcs",
+        "/scripts/lint:phpstan": "node .configra/scripts/php-tool.mjs phpstan analyse --memory-limit=1G --no-progress"
+      },
+      "kind": "fields"
+    },
+    "phpcs.xml.dist": {
+      "kind": "entry"
+    },
+    "phpstan.neon.dist": {
+      "kind": "entry"
+    },
+    "prettier.config.js": {
+      "kind": "entry"
+    },
+    "stylelint.config.js": {
+      "kind": "entry"
+    }
+  },
+  "version": 1
+}

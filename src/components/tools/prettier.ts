@@ -1,5 +1,5 @@
 import type { FormatSettings, ResolvedSettings } from "../../contracts.js";
-import { emptyContribution, managedHeader, npmDependency, styleJs } from "./shared.js";
+import { emptyContribution, isScoped, managedHeader, npmDependency, styleJs } from "./shared.js";
 import type { ToolDefinition } from "./types.js";
 
 const competingFiles = [
@@ -39,6 +39,23 @@ function prettierOptions(formatting: Partial<FormatSettings>): Record<string, un
   if (formatting.bracketSpacing !== undefined) options.bracketSpacing = formatting.bracketSpacing;
 
   return options;
+}
+
+/**
+ * In a WordPress site, lists what Prettier checks: the site's own root files, without core's
+ * `readme.html` or PHP, and everything in the selected directories. Elsewhere, Prettier checks the whole
+ * project, so this returns undefined.
+ */
+function formatTargets(settings: ResolvedSettings): string[] | undefined {
+  if (!isScoped(settings)) {
+    return undefined;
+  }
+
+  return [
+    "*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}",
+    ...settings.scopePrefixes.filter((prefix) => prefix !== "").map((prefix) => `${prefix}*`),
+    ...settings.scopeFiles,
+  ];
 }
 
 /**
@@ -100,20 +117,28 @@ export const prettierTool: ToolDefinition = {
   description: "Formats JavaScript, TypeScript, CSS, JSON, Markdown, YAML, and the other file types it supports.",
   languages: [],
   available: true,
-  checks: () => [
-    {
-      id: "prettier",
-      tool: "prettier",
-      script: "format:check",
-      command: { executable: "prettier", args: ["--check", "--no-error-on-unmatched-pattern", "."] },
-      fixCommand: { executable: "prettier", args: ["--write", "--no-error-on-unmatched-pattern", "."] },
-      hook: "pre-commit",
-      extensions: [],
-      stagedArgs: ["--check", "--ignore-unknown", "--no-error-on-unmatched-pattern"],
-      usesStagedFiles: true,
-      aggregate: "format",
-    },
-  ],
+  checks: (settings) => {
+    const targets = formatTargets(settings);
+    const options = targets
+      ? ["--ignore-unknown", "--no-error-on-unmatched-pattern"]
+      : ["--no-error-on-unmatched-pattern"];
+
+    return [
+      {
+        id: "prettier",
+        tool: "prettier",
+        script: "format:check",
+        command: { executable: "prettier", args: ["--check", ...options, ...(targets ?? ["."])] },
+        fixCommand: { executable: "prettier", args: ["--write", ...options, ...(targets ?? ["."])] },
+        hook: "pre-commit",
+        extensions: [],
+        ...(targets ? { globs: targets } : {}),
+        stagedArgs: ["--check", "--ignore-unknown", "--no-error-on-unmatched-pattern"],
+        usesStagedFiles: true,
+        aggregate: "format",
+      },
+    ];
+  },
   render: (settings) => {
     const contribution = emptyContribution();
     const entryFile = `prettier.config${settings.configExtension}`;
