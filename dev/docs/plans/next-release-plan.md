@@ -4,7 +4,14 @@ This plan covers the presets, layouts, and integrations deferred from the first 
 
 ## Repository layouts
 
-- Extend opt-in nesting to projects beyond WordPress sites and support existing npm workspaces. Let users discover and select packages, override inherited settings, and run checks from the root or an individual package.
+- Add the opt-in `nested` layout, chosen with `--layout <id>` and saved as `layout` in selections. Start with WordPress sites, extend it to other projects, and support existing npm workspaces. Fresh setups keep defaulting to `single`. Let users discover and select packages, override inherited settings, and run checks from the root or an individual package.
+- In a nested WordPress site, configure selected plugins and themes as child projects with a path and optional settings overrides. Each child inherits applicable site settings and owns its entry files, `.configra/` folder, local tooling, dependencies, and `package.json` scripts, including children whose tools all come from Composer.
+- Make each child's checks runnable from the root through the aggregate `lint` script and from the child directory through its own scripts, so they work whether the editor workspace is the site or a single plugin or theme. Add `lint:local` for root-only checks. Have aggregate checks delegate to each child once by path, and route staged checks to each selected child through the shared Git hooks.
+- Let `--config` set standards and formatting per package. Children inherit applicable settings from their nearest selected parent. Explicit child standards merge by language, and explicit child tool and UI lists replace the inherited lists. A WordPress site can use WordPress defaults while a selected plugin or theme uses community JavaScript rules.
+- Use a package graph to track selected package roots, relationships, workspace membership, and Git boundaries. Track configuration ownership, check working directories, and installer roots explicitly so a package can own checks in multiple directories while sharing a lockfile with its peers. Exclude selected child directories from parent-local checks.
+- Have each child's PHPStan files analyse that child and scan the site's other plugins and themes. When directories in a single layout declare different minimum PHP or WordPress versions, suggest the nested layout.
+- Switching back to the single layout keeps the selections and moves their checks to root tooling. Preview removing unchanged owned child tooling under the normal conflict rules.
+- Child `.configra/` folders, entry files, and manifests sit inside distributable plugins and themes. Document how to exclude them from release archives, such as with `.distignore`.
 - Use paths for independent nested packages and exact registered names for npm workspaces. Validate duplicate names across all registered workspaces, including unselected ones.
 
 ## Project presets
@@ -37,6 +44,7 @@ This plan covers the presets, layouts, and integrations deferred from the first 
 - **Vue.** Add Vue as a UI choice. Cover `.vue` files and support JavaScript and TypeScript script blocks through `eslint-plugin-vue`. Include Vue components in formatting when Prettier is selected.
 - **SCSS.** Add SCSS as a language choice that reuses CSS standards. Format selected SCSS files with Prettier. Offer SCSS linting as a separate opt-in that adds the necessary Stylelint configuration and dependencies for `.scss` files.
 - **TypeScript.** Offer an opt-in `typecheck` script that runs `tsc --noEmit` using the project's `tsconfig.json`, along with type-aware lint rules. Offer to generate a starter `tsconfig.json` when the project lacks one. Use the existing config when present.
+- **commitlint.** Offer commitlint as a tool for Conventional Commits in place of the generated `commit-msg` script. Declare `@commitlint/cli` and `@commitlint/config-conventional`, generate `commitlint.config.js` or `.mjs` importing `.configra/commitlint.mjs`, and override its header length limit to 72 characters. Reject commitlint with other commit-message modes, and run the same merge, revert, fixup, and squash cases against both checkers.
 - **PHP compatibility.** Offer PHPCompatibility, or PHPCompatibilityWP for WordPress projects, checked against the minimum PHP version recorded in saved selections.
 - **WordPress builds.** Offer `@wordpress/build` as the default when WordPress build setup is selected and the project meets its layout and WordPress version requirements. Offer `@wordpress/scripts` as a selectable option and as the default for projects that require its Webpack-based block build. Preserve an existing builder selection on update unless the user chooses to switch. Keep standalone Webpack setup available as an independent option. [WordPress build](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-wp-build/) · [WordPress scripts](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-scripts/)
 - **WordPress Webpack configuration.** For `@wordpress/scripts`, generate an editable `webpack.config.js` or `webpack.config.mjs` based on the target package's module type. Import the default export from `@wordpress/scripts/config/webpack.config.js` and add the selected project overrides. Preserve upstream block entry discovery, dependency extraction, and asset metadata. Apply each override to its intended config whether WordPress exports one config or separate script and module configs. Pass the generated filename explicitly with `--config` to both `wp-scripts build` and `wp-scripts start`. [Extending the WordPress Webpack config](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-scripts/#extending-the-webpack-config)
@@ -51,6 +59,11 @@ This plan covers the presets, layouts, and integrations deferred from the first 
 - **Dockerfiles.** Offer Hadolint for existing Dockerfiles and generate `.hadolint.yaml` for project-specific rules.
 - **PowerShell.** Offer PSScriptAnalyzer for PowerShell scripts and generate `PSScriptAnalyzerSettings.psd1` for project-specific rules.
 
+### CLI and recovery
+
+- Add a standalone, read-only `configra discover` command if the report in `--dry-run` output proves too limited for scripts and editors.
+- Add resume and rollback through a recovery journal if the pending-run marker leaves too many interrupted runs to resolve by hand.
+
 ### Agent instructions
 
 - Offer a root `AGENTS.md` as an opt-in for projects that want to document their development workflow and commit policy.
@@ -61,7 +74,7 @@ This plan covers the presets, layouts, and integrations deferred from the first 
 
 ## Milestones and verification
 
-1. **General nested projects and npm workspaces.** Exercise a mixed nested project and a mixed npm workspace. Verify inheritance, per-package overrides, explicit selection and replay, duplicate workspace names, one aggregate visit per selected package, and staged routing.
+1. **Nested projects and npm workspaces.** Exercise a nested WordPress site, a mixed nested project, and a mixed npm workspace. Verify inheritance, per-package overrides such as a child using community rules, explicit selection and replay, duplicate workspace names, one aggregate visit per selected package, and staged routing. Verify that child checks run from both the root and the child directory, and safe cleanup when switching layouts or deselecting a directory.
 2. **Additional presets and integrations.** Implement the remaining scope and verify it with consumer fixtures.
    - Exercise Pint and Larastan, Next.js flat config, Django checks and optional mypy, Tauri and Wails routing, and both Python install workflows. Verify Go and Rust formatting and analysis, Vue and SCSS coverage, and generated CI using the same checks as local scripts.
    - Exercise both WordPress builders, including both upstream Webpack config shapes. Build Vite and `wp-scripts` in both orders in a mixed fixture and verify that both builders keep their assets and metadata.

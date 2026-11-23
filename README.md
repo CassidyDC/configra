@@ -11,9 +11,9 @@ Configra generates editable linting, formatting, and Git hook configuration for 
 - **Tools:** EditorConfig, Prettier, markdownlint, ESLint, Stylelint, `php -l`, PHP_CodeSniffer, and PHPStan.
 - **Git hooks:** Lefthook runs read-only checks on staged files and validates commit messages.
 - **Safe updates:** previews, ownership tracking, and conflict handling, so rerunning Configra never overwrites your changes.
-- **Setup wizard:** `configra init` walks through the choices, previews the result, and saves them in `.configra.json`.
+- **Setup wizard:** `configra init` walks through the choices, previews the result, and saves them in `.configra/config.json`.
 
-Requirements for generated checks: Node.js 24 and npm 11 or later, plus PHP 8.3 and Composer 2.7 or later for WordPress PHP tools.
+Requirements for generated checks: Node.js 24 and npm 11 or later, plus PHP and Composer 2.7 or later for WordPress PHP tools.
 
 See [refactor-plan.md](dev/docs/plans/refactor-plan.md) for the full first-release plan and [next-release-plan.md](dev/docs/plans/next-release-plan.md) for what follows.
 
