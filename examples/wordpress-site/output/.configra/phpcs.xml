@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!-- Managed by Configra. Put your changes in phpcs.xml.dist. -->
+<ruleset name="Configra">
+	<description>PHP_CodeSniffer settings Configra manages for the wordpress standard.</description>
+
+	<file>../wp-content/plugins/example</file>
+	<file>../wp-content/themes/example</file>
+
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/build/*</exclude-pattern>
+	<exclude-pattern>*/dist/*</exclude-pattern>
+	<exclude-pattern>*/.configra/*</exclude-pattern>
+	<exclude-pattern>*/.cache/*</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg value="s"/>
+
+	<config name="minimum_wp_version" value="6.6"/>
+
+	<rule ref="WordPress"/>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="example"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="example"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

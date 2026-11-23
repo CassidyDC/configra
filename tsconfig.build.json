@@ -1,0 +1,20 @@
+// TypeScript Build Configuration
+// Compiles the published source to per-file ESM in dist/.
+
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": "src",
+    "outDir": "dist",
+    "declaration": false,
+    "sourceMap": false,
+    "removeComments": false,
+    "newLine": "lf"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": []
+}

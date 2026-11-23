@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/@cassidydc/configra@0.1.0/dist/schemas/config.v1.json",
+  "version": 1,
+  "project": "node",
+  "languages": [
+    "typescript"
+  ],
+  "ui": [
+    "react"
+  ],
+  "standards": {
+    "typescript": "community"
+  },
+  "tools": [
+    "editorconfig",
+    "gitignore",
+    "prettier",
+    "markdownlint",
+    "eslint",
+    "lefthook"
+  ],
+  "commitMessages": "conventional"
+}

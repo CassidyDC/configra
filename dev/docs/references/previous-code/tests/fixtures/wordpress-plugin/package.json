@@ -1,0 +1,14 @@
+{
+  "name": "example-plugin",
+  "version": "1.2.3",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo keep-test"
+  },
+  "dependencies": {
+    "existing-package": "^1.0.0"
+  },
+  "custom": {
+    "keep": true
+  }
+}

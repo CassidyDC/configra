@@ -1,0 +1,7 @@
+# Git Attributes
+# Check out text files with LF endings on every platform, matching EditorConfig and Prettier.
+# Generated examples and dependency ranges are compared byte for byte in tests.
+#
+# Reference: https://git-scm.com/docs/gitattributes
+
+* text=auto eol=lf

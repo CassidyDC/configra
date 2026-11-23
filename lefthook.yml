@@ -1,25 +1,66 @@
+# Managed by Configra. Put your changes in lefthook-project.yml, which overrides this file.
+# Put personal overrides in lefthook-local.yml, which overrides both.
+# Activate the hooks with `npx lefthook install`. See https://lefthook.dev/configuration/
+
+glob_matcher: doublestar
+
+extends:
+  - lefthook-project.yml
+
 pre-commit:
-  parallel: false
+  parallel: true
   commands:
-    eslint:
-      priority: 1
-      glob: "**/*.js"
-      run: npx eslint {staged_files} --fix
-      stage_fixed: true
-    markdownlint:
-      priority: 2
-      glob: "**/*.md"
-      run: npx markdownlint-cli2 {staged_files} --fix
-      stage_fixed: true
     prettier:
-      priority: 3
+      exclude:
+        - "**/node_modules/**"
+        - "**/vendor/**"
+        - "**/build/**"
+        - "**/dist/**"
+        - "**/.configra/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+        - "**/dev/docs/references/previous-code/**"
+        - "**/examples/**"
+        - "**/.build/**"
+        - "**/coverage/**"
+      run: npx --no -- prettier --check --ignore-unknown --no-error-on-unmatched-pattern {staged_files}
+    markdownlint:
       glob:
-        - "**/*.{astro,elm,hbs,svelte,vue}"
-        - "**/*.css"
-        - "**/*.html"
-        - "**/*.js"
-        - "**/*.{json,jsonc}"
         - "**/*.md"
-        - "**/*.{yaml,yml}"
-      run: npx prettier {staged_files} --write
-      stage_fixed: true
+      exclude:
+        - "**/node_modules/**"
+        - "**/vendor/**"
+        - "**/build/**"
+        - "**/dist/**"
+        - "**/.configra/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+        - "**/dev/docs/references/previous-code/**"
+        - "**/examples/**"
+        - "**/.build/**"
+        - "**/coverage/**"
+      run: npx --no -- markdownlint-cli2 {staged_files}
+    eslint:
+      glob:
+        - "**/*.{js,mjs,cjs,ts,mts,cts}"
+      exclude:
+        - "**/node_modules/**"
+        - "**/vendor/**"
+        - "**/build/**"
+        - "**/dist/**"
+        - "**/.configra/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+        - "**/dev/docs/references/previous-code/**"
+        - "**/examples/**"
+        - "**/.build/**"
+        - "**/coverage/**"
+      run: npx --no -- eslint --cache --cache-location .cache/eslint/ --no-warn-ignored {staged_files}
+
+commit-msg:
+  commands:
+    commit-message:
+      run: node .configra/scripts/commit-msg.js --mode plain {1}

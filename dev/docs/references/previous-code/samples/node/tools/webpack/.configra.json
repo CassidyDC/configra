@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "project": "node",
+  "layout": "single",
+  "capabilities": ["react", "typescript"],
+  "tools": [
+    "editorconfig",
+    "eslint",
+    "gitignore",
+    "lefthook",
+    "markdownlint",
+    "prettier",
+    "vscode",
+    "webpack"
+  ],
+  "packages": []
+}

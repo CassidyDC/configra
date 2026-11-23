@@ -1,0 +1,457 @@
+{
+  "glob_matcher": "doublestar",
+  "pre-commit":
+    {
+      "parallel": false,
+      "commands":
+        {
+          ".:eslint":
+            {
+              "glob": ["**/*.{js,mjs,cjs}"],
+              "exclude":
+                [
+                  "**/node_modules/**",
+                  "**/vendor/**",
+                  "**/.git/**",
+                  "**/dist/**",
+                  "**/build/**",
+                  "**/.phpstan-cache/**",
+                  "packages/node/**",
+                  "packages/php/**",
+                  "packages/wordpress-plugin/**",
+                  "packages/wordpress-site/**",
+                  "packages/wordpress-theme/**",
+                ],
+              "run": "npx --no-install eslint {staged_files}",
+            },
+          ".:markdownlint":
+            {
+              "glob": ["**/*.md"],
+              "exclude":
+                [
+                  "**/node_modules/**",
+                  "**/vendor/**",
+                  "**/.git/**",
+                  "**/dist/**",
+                  "**/build/**",
+                  "**/.phpstan-cache/**",
+                  "packages/node/**",
+                  "packages/php/**",
+                  "packages/wordpress-plugin/**",
+                  "packages/wordpress-site/**",
+                  "packages/wordpress-theme/**",
+                ],
+              "run": "npx --no-install markdownlint-cli2 {staged_files}",
+            },
+          ".:prettier":
+            {
+              "glob": ["**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css,html,json,jsonc,md,yml,yaml}"],
+              "exclude":
+                [
+                  "**/node_modules/**",
+                  "**/vendor/**",
+                  "**/.git/**",
+                  "**/dist/**",
+                  "**/build/**",
+                  "**/.phpstan-cache/**",
+                  "packages/node/**",
+                  "packages/php/**",
+                  "packages/wordpress-plugin/**",
+                  "packages/wordpress-site/**",
+                  "packages/wordpress-theme/**",
+                ],
+              "run": "npx --no-install prettier --check {staged_files}",
+            },
+          "packages/node:eslint":
+            {
+              "glob": ["packages/node/**/*.{js,mjs,cjs}"],
+              "root": "packages/node/",
+              "exclude":
+                [
+                  "packages/node/**/node_modules/**",
+                  "packages/node/**/vendor/**",
+                  "packages/node/**/.git/**",
+                  "packages/node/**/dist/**",
+                  "packages/node/**/build/**",
+                  "packages/node/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install eslint {staged_files}",
+            },
+          "packages/node:markdownlint":
+            {
+              "glob": ["packages/node/**/*.md"],
+              "root": "packages/node/",
+              "exclude":
+                [
+                  "packages/node/**/node_modules/**",
+                  "packages/node/**/vendor/**",
+                  "packages/node/**/.git/**",
+                  "packages/node/**/dist/**",
+                  "packages/node/**/build/**",
+                  "packages/node/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install markdownlint-cli2 {staged_files}",
+            },
+          "packages/node:prettier":
+            {
+              "glob":
+                [
+                  "packages/node/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css,html,json,jsonc,md,yml,yaml}",
+                ],
+              "root": "packages/node/",
+              "exclude":
+                [
+                  "packages/node/**/node_modules/**",
+                  "packages/node/**/vendor/**",
+                  "packages/node/**/.git/**",
+                  "packages/node/**/dist/**",
+                  "packages/node/**/build/**",
+                  "packages/node/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install prettier --check {staged_files}",
+            },
+          "packages/php:markdownlint":
+            {
+              "glob": ["packages/php/**/*.md"],
+              "root": "packages/php/",
+              "exclude":
+                [
+                  "packages/php/**/node_modules/**",
+                  "packages/php/**/vendor/**",
+                  "packages/php/**/.git/**",
+                  "packages/php/**/dist/**",
+                  "packages/php/**/build/**",
+                  "packages/php/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install markdownlint-cli2 {staged_files}",
+            },
+          "packages/php:parallel-lint":
+            {
+              "glob": ["packages/php/**/*.php"],
+              "root": "packages/php/",
+              "exclude":
+                [
+                  "packages/php/**/node_modules/**",
+                  "packages/php/**/vendor/**",
+                  "packages/php/**/.git/**",
+                  "packages/php/**/dist/**",
+                  "packages/php/**/build/**",
+                  "packages/php/**/.phpstan-cache/**",
+                ],
+              "run": "vendor/bin/parallel-lint {staged_files}",
+            },
+          "packages/php:phpcs":
+            {
+              "glob": ["packages/php/**/*.php"],
+              "root": "packages/php/",
+              "exclude":
+                [
+                  "packages/php/**/node_modules/**",
+                  "packages/php/**/vendor/**",
+                  "packages/php/**/.git/**",
+                  "packages/php/**/dist/**",
+                  "packages/php/**/build/**",
+                  "packages/php/**/.phpstan-cache/**",
+                ],
+              "run": "vendor/bin/phpcs {staged_files}",
+            },
+          "packages/php:prettier":
+            {
+              "glob":
+                [
+                  "packages/php/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css,html,json,jsonc,md,yml,yaml}",
+                ],
+              "root": "packages/php/",
+              "exclude":
+                [
+                  "packages/php/**/node_modules/**",
+                  "packages/php/**/vendor/**",
+                  "packages/php/**/.git/**",
+                  "packages/php/**/dist/**",
+                  "packages/php/**/build/**",
+                  "packages/php/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install prettier --check {staged_files}",
+            },
+          "packages/wordpress-plugin:eslint":
+            {
+              "glob": ["packages/wordpress-plugin/**/*.{js,mjs,cjs}"],
+              "root": "packages/wordpress-plugin/",
+              "exclude":
+                [
+                  "packages/wordpress-plugin/**/node_modules/**",
+                  "packages/wordpress-plugin/**/vendor/**",
+                  "packages/wordpress-plugin/**/.git/**",
+                  "packages/wordpress-plugin/**/dist/**",
+                  "packages/wordpress-plugin/**/build/**",
+                  "packages/wordpress-plugin/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install eslint {staged_files}",
+            },
+          "packages/wordpress-plugin:markdownlint":
+            {
+              "glob": ["packages/wordpress-plugin/**/*.md"],
+              "root": "packages/wordpress-plugin/",
+              "exclude":
+                [
+                  "packages/wordpress-plugin/**/node_modules/**",
+                  "packages/wordpress-plugin/**/vendor/**",
+                  "packages/wordpress-plugin/**/.git/**",
+                  "packages/wordpress-plugin/**/dist/**",
+                  "packages/wordpress-plugin/**/build/**",
+                  "packages/wordpress-plugin/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install markdownlint-cli2 {staged_files}",
+            },
+          "packages/wordpress-plugin:parallel-lint":
+            {
+              "glob": ["packages/wordpress-plugin/**/*.php"],
+              "root": "packages/wordpress-plugin/",
+              "exclude":
+                [
+                  "packages/wordpress-plugin/**/node_modules/**",
+                  "packages/wordpress-plugin/**/vendor/**",
+                  "packages/wordpress-plugin/**/.git/**",
+                  "packages/wordpress-plugin/**/dist/**",
+                  "packages/wordpress-plugin/**/build/**",
+                  "packages/wordpress-plugin/**/.phpstan-cache/**",
+                ],
+              "run": "vendor/bin/parallel-lint {staged_files}",
+            },
+          "packages/wordpress-plugin:phpcs":
+            {
+              "glob": ["packages/wordpress-plugin/**/*.php"],
+              "root": "packages/wordpress-plugin/",
+              "exclude":
+                [
+                  "packages/wordpress-plugin/**/node_modules/**",
+                  "packages/wordpress-plugin/**/vendor/**",
+                  "packages/wordpress-plugin/**/.git/**",
+                  "packages/wordpress-plugin/**/dist/**",
+                  "packages/wordpress-plugin/**/build/**",
+                  "packages/wordpress-plugin/**/.phpstan-cache/**",
+                ],
+              "run": "vendor/bin/phpcs {staged_files}",
+            },
+          "packages/wordpress-plugin:prettier":
+            {
+              "glob":
+                [
+                  "packages/wordpress-plugin/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css,html,json,jsonc,md,yml,yaml}",
+                ],
+              "root": "packages/wordpress-plugin/",
+              "exclude":
+                [
+                  "packages/wordpress-plugin/**/node_modules/**",
+                  "packages/wordpress-plugin/**/vendor/**",
+                  "packages/wordpress-plugin/**/.git/**",
+                  "packages/wordpress-plugin/**/dist/**",
+                  "packages/wordpress-plugin/**/build/**",
+                  "packages/wordpress-plugin/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install prettier --check {staged_files}",
+            },
+          "packages/wordpress-plugin:stylelint":
+            {
+              "glob": ["packages/wordpress-plugin/**/*.css"],
+              "root": "packages/wordpress-plugin/",
+              "exclude":
+                [
+                  "packages/wordpress-plugin/**/node_modules/**",
+                  "packages/wordpress-plugin/**/vendor/**",
+                  "packages/wordpress-plugin/**/.git/**",
+                  "packages/wordpress-plugin/**/dist/**",
+                  "packages/wordpress-plugin/**/build/**",
+                  "packages/wordpress-plugin/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install stylelint {staged_files}",
+            },
+          "packages/wordpress-site:eslint":
+            {
+              "glob": ["packages/wordpress-site/**/*.{js,mjs,cjs}"],
+              "root": "packages/wordpress-site/",
+              "exclude":
+                [
+                  "packages/wordpress-site/**/node_modules/**",
+                  "packages/wordpress-site/**/vendor/**",
+                  "packages/wordpress-site/**/.git/**",
+                  "packages/wordpress-site/**/dist/**",
+                  "packages/wordpress-site/**/build/**",
+                  "packages/wordpress-site/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install eslint {staged_files}",
+            },
+          "packages/wordpress-site:markdownlint":
+            {
+              "glob": ["packages/wordpress-site/**/*.md"],
+              "root": "packages/wordpress-site/",
+              "exclude":
+                [
+                  "packages/wordpress-site/**/node_modules/**",
+                  "packages/wordpress-site/**/vendor/**",
+                  "packages/wordpress-site/**/.git/**",
+                  "packages/wordpress-site/**/dist/**",
+                  "packages/wordpress-site/**/build/**",
+                  "packages/wordpress-site/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install markdownlint-cli2 {staged_files}",
+            },
+          "packages/wordpress-site:parallel-lint":
+            {
+              "glob": ["packages/wordpress-site/**/*.php"],
+              "root": "packages/wordpress-site/",
+              "exclude":
+                [
+                  "packages/wordpress-site/**/node_modules/**",
+                  "packages/wordpress-site/**/vendor/**",
+                  "packages/wordpress-site/**/.git/**",
+                  "packages/wordpress-site/**/dist/**",
+                  "packages/wordpress-site/**/build/**",
+                  "packages/wordpress-site/**/.phpstan-cache/**",
+                ],
+              "run": "vendor/bin/parallel-lint {staged_files}",
+            },
+          "packages/wordpress-site:phpcs":
+            {
+              "glob": ["packages/wordpress-site/**/*.php"],
+              "root": "packages/wordpress-site/",
+              "exclude":
+                [
+                  "packages/wordpress-site/**/node_modules/**",
+                  "packages/wordpress-site/**/vendor/**",
+                  "packages/wordpress-site/**/.git/**",
+                  "packages/wordpress-site/**/dist/**",
+                  "packages/wordpress-site/**/build/**",
+                  "packages/wordpress-site/**/.phpstan-cache/**",
+                ],
+              "run": "vendor/bin/phpcs {staged_files}",
+            },
+          "packages/wordpress-site:prettier":
+            {
+              "glob":
+                [
+                  "packages/wordpress-site/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css,html,json,jsonc,md,yml,yaml}",
+                ],
+              "root": "packages/wordpress-site/",
+              "exclude":
+                [
+                  "packages/wordpress-site/**/node_modules/**",
+                  "packages/wordpress-site/**/vendor/**",
+                  "packages/wordpress-site/**/.git/**",
+                  "packages/wordpress-site/**/dist/**",
+                  "packages/wordpress-site/**/build/**",
+                  "packages/wordpress-site/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install prettier --check {staged_files}",
+            },
+          "packages/wordpress-site:stylelint":
+            {
+              "glob": ["packages/wordpress-site/**/*.css"],
+              "root": "packages/wordpress-site/",
+              "exclude":
+                [
+                  "packages/wordpress-site/**/node_modules/**",
+                  "packages/wordpress-site/**/vendor/**",
+                  "packages/wordpress-site/**/.git/**",
+                  "packages/wordpress-site/**/dist/**",
+                  "packages/wordpress-site/**/build/**",
+                  "packages/wordpress-site/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install stylelint {staged_files}",
+            },
+          "packages/wordpress-theme:eslint":
+            {
+              "glob": ["packages/wordpress-theme/**/*.{js,mjs,cjs}"],
+              "root": "packages/wordpress-theme/",
+              "exclude":
+                [
+                  "packages/wordpress-theme/**/node_modules/**",
+                  "packages/wordpress-theme/**/vendor/**",
+                  "packages/wordpress-theme/**/.git/**",
+                  "packages/wordpress-theme/**/dist/**",
+                  "packages/wordpress-theme/**/build/**",
+                  "packages/wordpress-theme/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install eslint {staged_files}",
+            },
+          "packages/wordpress-theme:markdownlint":
+            {
+              "glob": ["packages/wordpress-theme/**/*.md"],
+              "root": "packages/wordpress-theme/",
+              "exclude":
+                [
+                  "packages/wordpress-theme/**/node_modules/**",
+                  "packages/wordpress-theme/**/vendor/**",
+                  "packages/wordpress-theme/**/.git/**",
+                  "packages/wordpress-theme/**/dist/**",
+                  "packages/wordpress-theme/**/build/**",
+                  "packages/wordpress-theme/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install markdownlint-cli2 {staged_files}",
+            },
+          "packages/wordpress-theme:parallel-lint":
+            {
+              "glob": ["packages/wordpress-theme/**/*.php"],
+              "root": "packages/wordpress-theme/",
+              "exclude":
+                [
+                  "packages/wordpress-theme/**/node_modules/**",
+                  "packages/wordpress-theme/**/vendor/**",
+                  "packages/wordpress-theme/**/.git/**",
+                  "packages/wordpress-theme/**/dist/**",
+                  "packages/wordpress-theme/**/build/**",
+                  "packages/wordpress-theme/**/.phpstan-cache/**",
+                ],
+              "run": "vendor/bin/parallel-lint {staged_files}",
+            },
+          "packages/wordpress-theme:phpcs":
+            {
+              "glob": ["packages/wordpress-theme/**/*.php"],
+              "root": "packages/wordpress-theme/",
+              "exclude":
+                [
+                  "packages/wordpress-theme/**/node_modules/**",
+                  "packages/wordpress-theme/**/vendor/**",
+                  "packages/wordpress-theme/**/.git/**",
+                  "packages/wordpress-theme/**/dist/**",
+                  "packages/wordpress-theme/**/build/**",
+                  "packages/wordpress-theme/**/.phpstan-cache/**",
+                ],
+              "run": "vendor/bin/phpcs {staged_files}",
+            },
+          "packages/wordpress-theme:prettier":
+            {
+              "glob":
+                [
+                  "packages/wordpress-theme/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css,html,json,jsonc,md,yml,yaml}",
+                ],
+              "root": "packages/wordpress-theme/",
+              "exclude":
+                [
+                  "packages/wordpress-theme/**/node_modules/**",
+                  "packages/wordpress-theme/**/vendor/**",
+                  "packages/wordpress-theme/**/.git/**",
+                  "packages/wordpress-theme/**/dist/**",
+                  "packages/wordpress-theme/**/build/**",
+                  "packages/wordpress-theme/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install prettier --check {staged_files}",
+            },
+          "packages/wordpress-theme:stylelint":
+            {
+              "glob": ["packages/wordpress-theme/**/*.css"],
+              "root": "packages/wordpress-theme/",
+              "exclude":
+                [
+                  "packages/wordpress-theme/**/node_modules/**",
+                  "packages/wordpress-theme/**/vendor/**",
+                  "packages/wordpress-theme/**/.git/**",
+                  "packages/wordpress-theme/**/dist/**",
+                  "packages/wordpress-theme/**/build/**",
+                  "packages/wordpress-theme/**/.phpstan-cache/**",
+                ],
+              "run": "npx --no-install stylelint {staged_files}",
+            },
+        },
+    },
+}

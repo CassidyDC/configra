@@ -1,0 +1,13 @@
+parameters:
+    level: 5
+    paths:
+        - .
+    tmpDir: .phpstan-cache
+    excludePaths:
+        analyseAndScan:
+            - "*/node_modules/*"
+            - "*/vendor/*"
+            - "*/.git/*"
+            - "*/dist/*"
+            - "*/build/*"
+            - "*/.phpstan-cache/*"

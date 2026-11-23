@@ -1,0 +1,11 @@
+# Git Ignore Patterns
+# Repository ignore patterns for dependencies and local development artifacts.
+
+# Ignore development directories
+/node_modules
+/vendor
+/~test-server
+
+# Ignore development files
+docs/TODO.md
+docs/reference/previous

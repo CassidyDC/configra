@@ -1,32 +1,31 @@
-# Prettier Notes
+# Prettier Ignore Patterns
+# Prettier also skips files matched by .gitignore. Configra manages the lines at the end.
 #
-# Reference: https://prettier.io/docs/en/ignore.html
+# Reference: https://prettier.io/docs/ignore
 #
-# Run `prettier --write` to format all files in a directory, except those ignored in this file,
-#
-# Prettier follow rules specified in the ".gitignore" file if it exists in the same directory from which it is run.
-#
-# By default, Prettier ignores the following files
-# **/.git
-# **/.svn
-# **/.hg
-# **/node_modules
-#
-# To ignore specific lines in a file, add the following comments directly above the line:
-# JavaScript              = // prettier-ignore
-# JSX                     = {/* prettier-ignore */}
-# MARKDOWN                = <!-- prettier-ignore -->
-# HTML                    = <!-- prettier-ignore -->
-# HTML ATTRIBUTE          = <!-- prettier-ignore-attribute -->
-# HTML SPECIFIC ATTRIBUTE = <!-- prettier-ignore-attribute (mouseup) -->
-# CSS                     = /* prettier-ignore */
-# YAML                    = # prettier-ignore
+# To ignore specific lines, add a comment directly above them:
+# JavaScript and TypeScript = // prettier-ignore
+# Markdown and HTML         = <!-- prettier-ignore -->
+# CSS                       = /* prettier-ignore */
+# YAML                      = # prettier-ignore
 
-# IGNORE BUILD FILES
-**/dist
+# Generated from dev/dependency-sets/
+/src/components/dependency-ranges.ts
 
-# IGNORE LOCK FILES
-**/package-lock.json
+# Managed by Configra
+node_modules/
+vendor/
+build/
+dist/
+.configra/
+.cache/
+*.min.js
+*.min.css
+dev/docs/references/previous-code/
+examples/
+package-lock.json
+composer.lock
+lefthook.yml
 
-# IGNORE MINIFIED FILES
-**/**.min.js
+.build/
+coverage/

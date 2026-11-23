@@ -1,7 +1,21 @@
-# Ignore development directories
-/node_modules
-/vendor
+# Git Ignore Patterns
+# Repository ignore patterns for dependencies, build output, and local artifacts.
 
-# Ignore development files
-docs/TODO.md
-docs/reference/previous
+# Build and package output
+/dist
+*.tgz
+
+# Caches and reports
+/.build
+/coverage
+
+# Personal overrides
+lefthook-local.yml
+
+# Operating system files
+.DS_Store
+
+# Managed by Configra
+node_modules/
+.configra/tmp/
+.cache/

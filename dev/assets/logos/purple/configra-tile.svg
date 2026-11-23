@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-68 -68 136 136" role="img">
+<title>Configra clipped tile in Purple</title>
+<path fill="#6900B8" d="M-51 -62H51L62 -51V51L51 62H-51L-62 51V-51Z"/>
+<g transform="scale(.79)">
+<g fill="#FFFFFF">
+<path d="M-20 -48H-37L-48 -37V-11L-59 0L-48 11V37L-37 48H-20V34H-29L-32 31V9L-41 0L-32 -9V-31L-29 -34H-20Z"/>
+<path transform="scale(-1 1)" d="M-20 -48H-37L-48 -37V-11L-59 0L-48 11V37L-37 48H-20V34H-29L-32 31V9L-41 0L-32 -9V-31L-29 -34H-20Z"/>
+<path d="M0 -17.28L17.28 0L0 17.28L-17.28 0Z"/>
+</g>
+</g>
+</svg>

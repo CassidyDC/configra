@@ -1,0 +1,95 @@
+<!--
+Configra
+
+Configra overview, installation, usage, and development guidance.
+-->
+
+# Configra
+
+Generate editable development configuration for Node.js, PHP, and WordPress
+sites, plugins, and themes. Requires Node.js 24 or newer. PHP tools additionally
+require PHP and Composer when installed or run.
+
+## Installation and usage
+
+```sh
+npm install --global @cassidydc/configra
+configra init --project wordpress-plugin --dry-run
+configra init --project wordpress-plugin
+npm run lint
+```
+
+Generation writes configuration files and dependency declarations. Use `--install`
+to install dependencies after generation, or run npm and Composer yourself before
+running the generated checks. Webpack is enabled only when explicitly selected.
+
+```sh
+configra init --project wordpress-theme --capabilities react,typescript
+configra init --project wordpress-plugin --standard javascript=community --standard php=community
+configra init --interactive
+configra discover
+configra update --dry-run
+configra update
+configra --help
+```
+
+Selections are saved in `.configra.json`; generation ownership is tracked
+separately in `.configra-state.json`. Keep both under version control.
+Edited generated files and conflicting manifest entries stop application until
+resolved. `--force` explicitly replaces the reported conflicting generated content.
+Competing configuration filenames are also reported for explicit replacement.
+Unrelated manifest fields and scripts are preserved. `--dry-run` never writes files
+or installs dependencies; add `--json` for the complete machine-readable plan.
+
+## Package layouts
+
+Use `single` for one package, `nested` for independent child packages, or
+`workspaces` for packages already registered in the root npm workspace declaration.
+Only explicitly selected children are configured.
+
+```sh
+configra init --project wordpress-site --layout nested --package plugins/example --package themes/example
+configra init --project node --layout workspaces --package packages/example
+```
+
+Use `--config selections.json` for per-package project, language, capability,
+standard, tool, and formatting overrides. `--tools` replaces the default tool list.
+Generated `lint:local` scripts check one package; `lint` also delegates to selected
+children. Root checks exclude selected child directories.
+
+## Development and reference
+
+Browse the [configuration sample catalog](samples/README.md) for generated files
+covering every registered project, alternative standards, compatible capabilities,
+optional tools, and package layouts. Regenerate it after changing components:
+
+```sh
+npm run samples:generate
+```
+
+The script discovers components through the registry, generates into a temporary
+catalog, then replaces `samples/` after all setups succeed. Dependencies and hooks
+are not installed. Samples are generated artifacts; regeneration replaces manual
+edits and removes obsolete setups.
+
+```sh
+npm ci
+npm test
+npm run lint:scripts
+npm run lint:docs
+npm run check
+```
+
+File documentation headers include a descriptive title directly above the `@file`
+tag, or above the description in other comment formats.
+
+Component definitions, named functions, and reusable helpers use JSDoc. Shared
+internal structures are documented in `src/contracts.js`; imported types use local
+aliases declared once per file.
+
+- [How configuration generation works](docs/how-it-works.md)
+- [Architecture](docs/architecture.md)
+- [Adding a tool](docs/adding-a-tool.md)
+- [Generated projects and update behavior](docs/generated-projects.md)
+- [Project issues and proposed fixes](docs/issues.md)
+- [Architecture plan](docs/plans/architecture-plan.md)

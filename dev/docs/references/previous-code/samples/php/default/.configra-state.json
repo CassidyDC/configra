@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "files": {
+    ".editorconfig": {
+      "kind": "file",
+      "hash": "ca08da881a0f0ff49668bbcecbcbd1c4995c18acce3a6c2aaaf29f00d7979b4a"
+    },
+    ".gitignore": {
+      "kind": "lines",
+      "entries": [
+        "node_modules/",
+        ".DS_Store",
+        "vendor/",
+        ".phpstan-cache/"
+      ]
+    },
+    ".markdownlint-cli2.jsonc": {
+      "kind": "file",
+      "hash": "0ff474fcaf2d7314dbd24e24197ac49f73ea836cedfcde481b683d604ea86ead"
+    },
+    ".prettierignore": {
+      "kind": "file",
+      "hash": "094abe77e86655293e085835e1d7f3b0a16ab5829fd2f9229ed827e912124a18"
+    },
+    ".vscode/extensions.json": {
+      "kind": "json",
+      "entries": {
+        "[\"recommendations\"]": [
+          "editorconfig.editorconfig",
+          "esbenp.prettier-vscode",
+          "bmewburn.vscode-intelephense-client"
+        ]
+      }
+    },
+    ".vscode/settings.json": {
+      "kind": "json",
+      "entries": {
+        "[\"editor.insertSpaces\"]": true,
+        "[\"editor.tabSize\"]": 4,
+        "[\"[php]\",\"editor.insertSpaces\"]": true,
+        "[\"[php]\",\"editor.tabSize\"]": 4
+      }
+    },
+    "composer.json": {
+      "kind": "json",
+      "entries": {
+        "[\"require-dev\",\"php-parallel-lint/php-parallel-lint\"]": "^1.4",
+        "[\"require-dev\",\"squizlabs/php_codesniffer\"]": "^3.13",
+        "[\"require-dev\",\"phpstan/phpstan\"]": "^2.0"
+      }
+    },
+    "lefthook.yml": {
+      "kind": "file",
+      "hash": "80dadfe5a1c03c40c439fd1efbbc057e7fd136720e9f1ec4ad8d330770002416"
+    },
+    "package.json": {
+      "kind": "json",
+      "entries": {
+        "[\"scripts\",\"lint:markdown\"]": "markdownlint-cli2 \"**/*.md\"",
+        "[\"scripts\",\"lint:php:syntax\"]": "vendor/bin/parallel-lint --exclude 'node_modules' --exclude 'vendor' --exclude '.git' --exclude 'dist' --exclude 'build' --exclude '.phpstan-cache' .",
+        "[\"scripts\",\"lint:php:style\"]": "vendor/bin/phpcs",
+        "[\"scripts\",\"lint:php:types\"]": "vendor/bin/phpstan analyse --no-progress",
+        "[\"scripts\",\"format:check\"]": "prettier . --check",
+        "[\"scripts\",\"format\"]": "prettier . --write",
+        "[\"scripts\",\"hooks:install\"]": "lefthook install",
+        "[\"scripts\",\"lint:local\"]": "npm run format:check && npm run lint:markdown && npm run lint:php:style && npm run lint:php:syntax && npm run lint:php:types",
+        "[\"scripts\",\"lint\"]": "npm run lint:local",
+        "[\"devDependencies\",\"markdownlint-cli2\"]": "^0.23.0",
+        "[\"devDependencies\",\"prettier\"]": "^3.0.0",
+        "[\"devDependencies\",\"lefthook\"]": "^2.2.0"
+      }
+    },
+    "phpcs.xml.dist": {
+      "kind": "file",
+      "hash": "74b24209bdd6ec6f6777efaee244f8879176d102a2b02d3c7b6b8a2ce1ad04c9"
+    },
+    "phpstan.neon.dist": {
+      "kind": "file",
+      "hash": "dad17eaf0f2dc078717b421cb103d3fe77434876adf3698b826608e25efb47c1"
+    },
+    "prettier.config.cjs": {
+      "kind": "file",
+      "hash": "fa1d8158d8e0011bf3c04954c95e1f9d3ea80892a517555914c523e7e05597c4"
+    }
+  }
+}

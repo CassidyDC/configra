@@ -1,0 +1,49 @@
+{
+  "$schema": "https://unpkg.com/@cassidydc/configra@0.1.0/dist/schemas/config.v1.json",
+  "version": 1,
+  "project": "wordpress-site",
+  "packages": [
+    "wp-content/plugins/example",
+    "wp-content/themes/example"
+  ],
+  "languages": [
+    "javascript",
+    "css",
+    "php"
+  ],
+  "ui": [],
+  "standards": {
+    "javascript": "wordpress",
+    "css": "wordpress",
+    "php": "wordpress"
+  },
+  "tools": [
+    "editorconfig",
+    "gitignore",
+    "prettier",
+    "markdownlint",
+    "eslint",
+    "stylelint",
+    "php-lint",
+    "phpcs",
+    "phpstan",
+    "lefthook"
+  ],
+  "commitMessages": "plain",
+  "php": {
+    "targetVersion": "8.1"
+  },
+  "wordpress": {
+    "minimumVersion": "6.6",
+    "packages": {
+      "wp-content/plugins/example": {
+        "textDomain": "example",
+        "prefix": "example"
+      },
+      "wp-content/themes/example": {
+        "textDomain": "example",
+        "prefix": "example"
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+# Managed by Configra. Put your changes in phpstan.neon.dist.
+
+includes:
+	- ../vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+	level: 5
+	phpVersion: 80100
+	tmpDir: ../.cache/phpstan
+	paths:
+		- ../wp-content/plugins/example
+		- ../wp-content/themes/example
+	excludePaths:
+		analyse:
+			- '*/node_modules/*'
+			- '*/vendor/*'
+			- '*/build/*'
+			- '*/dist/*'
+			- '*/.configra/*'
+			- '*/.cache/*'
+	scanDirectories:
+		- ../wp-content/plugins/unselected

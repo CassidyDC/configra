@@ -1,0 +1,57 @@
+# Clean Consumer Installs
+# Installs each generated setup from the npm registry and runs its checks when a preset or dependency set
+# changes, every week, and on demand.
+#
+# Reference: https://docs.github.com/actions/reference/workflows-and-actions/workflow-syntax
+
+name: Consumer installs
+
+on:
+  pull_request:
+    paths:
+      - "src/components/**"
+      - "src/generator/**"
+      - "dev/dependency-sets/**"
+      - "tests/consumer/**"
+      - ".github/workflows/consumer.yml"
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: consumer-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  consumer:
+    name: Consumer installs (${{ matrix.os }}, Node.js ${{ matrix.versions.node }}, PHP ${{ matrix.versions.php }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+        # Pair the minimum supported Node.js, npm, PHP, and Composer, and then the latest of each.
+        # The minimum Node.js ships the minimum supported npm.
+        versions:
+          - { node: 24.15.0, php: "7.4", composer: "composer:2.7.0" }
+          - { node: latest, php: "8.5", composer: "composer:v2" }
+    env:
+      CONFIGRA_EXPECT_PHP: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.versions.node }}
+          cache: npm
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.versions.php }}
+          tools: ${{ matrix.versions.composer }}
+          coverage: none
+      - run: npm ci --ignore-scripts
+      - run: npm run test:consumer

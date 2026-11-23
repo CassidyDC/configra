@@ -1,0 +1,9 @@
+{
+	"version": 1,
+	"project": "wordpress-site",
+	"layout": "single",
+	"standards": {
+		"php": "community"
+	},
+	"packages": []
+}

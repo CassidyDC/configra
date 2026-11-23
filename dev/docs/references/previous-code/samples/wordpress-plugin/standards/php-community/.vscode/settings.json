@@ -1,0 +1,16 @@
+{
+	"editor.insertSpaces": false,
+	"editor.tabSize": 4,
+	"[css]": {
+		"editor.insertSpaces": false,
+		"editor.tabSize": 4
+	},
+	"[javascript]": {
+		"editor.insertSpaces": false,
+		"editor.tabSize": 4
+	},
+	"[php]": {
+		"editor.insertSpaces": true,
+		"editor.tabSize": 4
+	}
+}

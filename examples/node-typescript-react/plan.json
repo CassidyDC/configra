@@ -1,0 +1,399 @@
+{
+  "version": 1,
+  "configra": "0.1.0",
+  "command": "init",
+  "status": "changes",
+  "exitCode": 0,
+  "dryRun": true,
+  "changes": [
+    {
+      "path": ".configra/config.json",
+      "action": "create",
+      "ownership": "selections",
+      "reason": "Saved selections",
+      "details": []
+    },
+    {
+      "path": ".configra/eslint.js",
+      "action": "create",
+      "ownership": "file",
+      "reason": "ESLint rules for the community standard",
+      "details": []
+    },
+    {
+      "path": ".configra/markdownlint-cli2.js",
+      "action": "create",
+      "ownership": "file",
+      "reason": "markdownlint rules and exclusions",
+      "details": []
+    },
+    {
+      "path": ".configra/prettier.js",
+      "action": "create",
+      "ownership": "file",
+      "reason": "Prettier options derived from the formatting settings",
+      "details": []
+    },
+    {
+      "path": ".configra/scripts/commit-msg.js",
+      "action": "create",
+      "ownership": "file",
+      "reason": "Commit-message check for conventional subjects",
+      "details": []
+    },
+    {
+      "path": ".configra/state.json",
+      "action": "create",
+      "ownership": "state",
+      "reason": "Ownership state for Configra's files, lines, and fields",
+      "details": []
+    },
+    {
+      "path": ".editorconfig",
+      "action": "create",
+      "ownership": "file",
+      "reason": "EditorConfig settings derived from the formatting settings",
+      "details": []
+    },
+    {
+      "path": ".gitignore",
+      "action": "create",
+      "ownership": "lines",
+      "reason": "Ignore dependencies, tool caches, and personal override files",
+      "details": [
+        {
+          "kind": "add-line",
+          "target": "node_modules/"
+        },
+        {
+          "kind": "add-line",
+          "target": ".configra/tmp/"
+        },
+        {
+          "kind": "add-line",
+          "target": ".cache/"
+        },
+        {
+          "kind": "add-line",
+          "target": "lefthook-local.yml"
+        }
+      ]
+    },
+    {
+      "path": ".markdownlint-cli2.mjs",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project markdownlint-cli2 entry file that loads .configra/markdownlint-cli2.js",
+      "details": []
+    },
+    {
+      "path": ".prettierignore",
+      "action": "create",
+      "ownership": "lines",
+      "reason": "Keep excluded directories, minified files, and lockfiles out of formatting",
+      "details": [
+        {
+          "kind": "add-line",
+          "target": "node_modules/"
+        },
+        {
+          "kind": "add-line",
+          "target": "vendor/"
+        },
+        {
+          "kind": "add-line",
+          "target": "build/"
+        },
+        {
+          "kind": "add-line",
+          "target": "dist/"
+        },
+        {
+          "kind": "add-line",
+          "target": ".configra/"
+        },
+        {
+          "kind": "add-line",
+          "target": ".cache/"
+        },
+        {
+          "kind": "add-line",
+          "target": "*.min.js"
+        },
+        {
+          "kind": "add-line",
+          "target": "*.min.css"
+        },
+        {
+          "kind": "add-line",
+          "target": "package-lock.json"
+        },
+        {
+          "kind": "add-line",
+          "target": "composer.lock"
+        },
+        {
+          "kind": "add-line",
+          "target": "lefthook.yml"
+        }
+      ]
+    },
+    {
+      "path": "eslint.config.js",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project ESLint entry file that loads .configra/eslint.js",
+      "details": []
+    },
+    {
+      "path": "lefthook-project.yml",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project hook settings that override lefthook.yml",
+      "details": []
+    },
+    {
+      "path": "lefthook.yml",
+      "action": "create",
+      "ownership": "file",
+      "reason": "Git hooks for the selected checks",
+      "details": []
+    },
+    {
+      "path": "package.json",
+      "action": "create",
+      "ownership": "fields",
+      "reason": "Update 10 dependency declarations and 6 scripts",
+      "details": [
+        {
+          "kind": "set-field",
+          "target": "/private",
+          "value": true
+        },
+        {
+          "kind": "set-field",
+          "target": "/type",
+          "value": "module"
+        },
+        {
+          "kind": "set-field",
+          "target": "/engines/node",
+          "value": ">=24.15"
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint:md",
+          "value": "markdownlint-cli2 \"**/*.md\""
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint:js",
+          "value": "eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern ."
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint",
+          "value": "npm run lint:md && npm run lint:js"
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/lint:fix",
+          "value": "markdownlint-cli2 --fix \"**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix ."
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/format:check",
+          "value": "prettier --check --no-error-on-unmatched-pattern ."
+        },
+        {
+          "kind": "set-field",
+          "target": "/scripts/format",
+          "value": "prettier --write --no-error-on-unmatched-pattern ."
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/prettier",
+          "value": "^3.10.1"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/markdownlint-cli2",
+          "value": "^0.24.2"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/eslint",
+          "value": "^10.15.0"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/@eslint~1js",
+          "value": "^10.0.1"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/globals",
+          "value": "^17.14.0"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/typescript-eslint",
+          "value": "^8.73.0"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/@eslint-react~1eslint-plugin",
+          "value": "^5.30.6"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/eslint-plugin-react-hooks",
+          "value": "^7.1.1"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/typescript",
+          "value": "~6.0.3"
+        },
+        {
+          "kind": "set-field",
+          "target": "/devDependencies/lefthook",
+          "value": "^2.2.2"
+        }
+      ]
+    },
+    {
+      "path": "prettier.config.js",
+      "action": "create",
+      "ownership": "entry",
+      "reason": "Project Prettier entry file that loads .configra/prettier.js",
+      "details": []
+    }
+  ],
+  "conflicts": [],
+  "dependencies": {
+    "npm": {
+      "add": {
+        "prettier": "^3.10.1",
+        "markdownlint-cli2": "^0.24.2",
+        "eslint": "^10.15.0",
+        "@eslint/js": "^10.0.1",
+        "globals": "^17.14.0",
+        "typescript-eslint": "^8.73.0",
+        "@eslint-react/eslint-plugin": "^5.30.6",
+        "eslint-plugin-react-hooks": "^7.1.1",
+        "typescript": "~6.0.3",
+        "lefthook": "^2.2.2"
+      },
+      "remove": []
+    },
+    "composer": {
+      "add": {},
+      "remove": []
+    }
+  },
+  "scripts": [
+    {
+      "name": "lint:md",
+      "command": "markdownlint-cli2 \"**/*.md\"",
+      "writes": false
+    },
+    {
+      "name": "lint:js",
+      "command": "eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern .",
+      "writes": false
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint:md && npm run lint:js",
+      "writes": false
+    },
+    {
+      "name": "lint:fix",
+      "command": "markdownlint-cli2 --fix \"**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix .",
+      "writes": true
+    },
+    {
+      "name": "format:check",
+      "command": "prettier --check --no-error-on-unmatched-pattern .",
+      "writes": false
+    },
+    {
+      "name": "format",
+      "command": "prettier --write --no-error-on-unmatched-pattern .",
+      "writes": true
+    }
+  ],
+  "hooks": [
+    {
+      "hook": "pre-commit",
+      "name": "prettier",
+      "run": "npx --no -- prettier --check --ignore-unknown --no-error-on-unmatched-pattern {staged_files}"
+    },
+    {
+      "hook": "pre-commit",
+      "name": "markdownlint",
+      "run": "npx --no -- markdownlint-cli2 {staged_files}"
+    },
+    {
+      "hook": "pre-commit",
+      "name": "eslint",
+      "run": "npx --no -- eslint --cache --cache-location .cache/eslint/ --no-warn-ignored {staged_files}"
+    },
+    {
+      "hook": "commit-msg",
+      "name": "commit-message",
+      "run": "node .configra/scripts/commit-msg.js --mode conventional {1}"
+    }
+  ],
+  "commands": [
+    {
+      "phase": "install",
+      "manager": "npm",
+      "executable": "npm",
+      "args": [
+        "install",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": ".",
+      "approved": false
+    },
+    {
+      "phase": "activate-hooks",
+      "executable": "npx",
+      "args": [
+        "--no",
+        "--",
+        "lefthook",
+        "install"
+      ],
+      "cwd": ".",
+      "approved": false
+    }
+  ],
+  "diagnostics": [],
+  "selections": {
+    "version": 1,
+    "project": "node",
+    "languages": [
+      "typescript"
+    ],
+    "ui": [
+      "react"
+    ],
+    "standards": {
+      "typescript": "community"
+    },
+    "tools": [
+      "editorconfig",
+      "gitignore",
+      "prettier",
+      "markdownlint",
+      "eslint",
+      "lefthook"
+    ],
+    "commitMessages": "conventional"
+  }
+}

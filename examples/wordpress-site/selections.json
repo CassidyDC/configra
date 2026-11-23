@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "project": "wordpress-site",
+  "packages": [
+    "wp-content/plugins/example",
+    "wp-content/themes/example"
+  ]
+}

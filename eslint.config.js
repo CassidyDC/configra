@@ -1,38 +1,55 @@
 /**
  * ESLint configuration.
  *
- * @author CassidyDC <info@cassidydc.com>
+ * Configra manages .configra/eslint.js and loads it first. The repository adds import checks and its
+ * own rules after it; later entries override earlier ones.
+ *
  * @see https://eslint.org/docs/latest/use/configure/configuration-files
- * @type {import("eslint").Linter.Config[]}
- * @version 1.0.0
+ * @see https://typescript-eslint.io/getting-started
+ * @see https://github.com/un-ts/eslint-plugin-import-x
  */
 
-import js from "@eslint/js";
-import { defineConfig, globalIgnores, includeIgnoreFile } from "eslint/config";
-import { fileURLToPath, URL } from "node:url";
+import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
 import { importX } from "eslint-plugin-import-x";
-
-const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url));
+import { defineConfig } from "eslint/config";
+import configra from "./.configra/eslint.js";
 
 export default defineConfig([
-  includeIgnoreFile(gitignorePath, "Imported .gitignore patterns"),
-  globalIgnores(["**/*.min.js", "docs"]),
+  configra,
   {
-    plugins: {
-      "import-x": importX,
-      js,
-    },
-    extends: [
-      "import-x/recommended",
-      "js/recommended",
-    ],
-    files: ["**/*.js"],
+    files: ["**/*.{js,mjs,ts,mts}"],
+    extends: [importX.flatConfigs.recommended, importX.flatConfigs.typescript],
     linterOptions: {
       reportUnusedInlineConfigs: "warn",
     },
+    settings: {
+      "import-x/resolver-next": [createTypeScriptImportResolver({ alwaysTryTypes: true })],
+    },
     rules: {
-      "no-unused-vars": "warn",
+      "import-x/first": "warn",
+      "import-x/newline-after-import": "warn",
+      "import-x/no-cycle": "error",
+      "import-x/no-extraneous-dependencies": "error",
+      // Flags documented default imports, such as `tseslint.configs`.
+      "import-x/no-named-as-default-member": "off",
       yoda: ["warn", "never"],
+    },
+  },
+  {
+    // The TypeScript compiler already reports the import-x rules turned off here.
+    files: ["**/*.{ts,mts}"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true, varsIgnorePattern: "^_" }],
+      "import-x/default": "off",
+      "import-x/namespace": "off",
+      "import-x/no-unresolved": "off",
+    },
+  },
+  {
+    // Published code runs without devDependencies installed.
+    files: ["src/**/*.{ts,mts}"],
+    rules: {
+      "import-x/no-extraneous-dependencies": ["error", { devDependencies: false }],
     },
   },
 ]);

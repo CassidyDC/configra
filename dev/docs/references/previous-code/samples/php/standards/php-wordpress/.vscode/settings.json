@@ -1,0 +1,8 @@
+{
+	"editor.insertSpaces": false,
+	"editor.tabSize": 4,
+	"[php]": {
+		"editor.insertSpaces": false,
+		"editor.tabSize": 4
+	}
+}
