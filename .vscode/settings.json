@@ -1,0 +1,19 @@
+// VS Code Settings
+// Repository editor, formatting, and search settings.
+
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "prettier.configPath": "prettier.config.js",
+  "search.exclude": {
+    "**/*.min.js": true,
+    "**/dist/**": true,
+    "**/package-lock.json": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
+}

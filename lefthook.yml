@@ -1,0 +1,23 @@
+# Git Hook Configuration
+# Read-only checks on staged files. Fix problems with `npm run lint:fix` and `npm run format`.
+#
+# Reference: https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      glob: "*.{js,mjs,ts,mts}"
+      exclude:
+        - "previous-code/**"
+      run: npx eslint --no-warn-ignored {staged_files}
+    markdownlint:
+      glob: "*.md"
+      exclude:
+        - "previous-code/**"
+      run: npx markdownlint-cli2 {staged_files}
+    prettier:
+      glob: "*.{js,mjs,ts,mts,json,jsonc,md,yml,yaml}"
+      exclude:
+        - "previous-code/**"
+      run: npx prettier --check --ignore-unknown {staged_files}

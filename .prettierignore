@@ -1,0 +1,22 @@
+# Prettier Ignore Patterns
+# Prettier also skips files matched by .gitignore and ignores node_modules by default.
+#
+# Reference: https://prettier.io/docs/ignore
+#
+# To ignore specific lines, add a comment directly above them:
+# JavaScript and TypeScript = // prettier-ignore
+# Markdown and HTML         = <!-- prettier-ignore -->
+# CSS                       = /* prettier-ignore */
+# YAML                      = # prettier-ignore
+
+# Archived implementation kept for reference
+/previous-code
+
+# Build output
+**/dist
+
+# Lock files
+**/package-lock.json
+
+# Minified files
+**/*.min.js
