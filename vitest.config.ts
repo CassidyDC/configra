@@ -21,7 +21,9 @@ export default defineConfig({
         test: {
           name: "consumer",
           include: ["tests/consumer/**/*.test.ts"],
-          testTimeout: 600_000,
+          // Registry installs are slow on Windows, and removing each consumer's dependencies takes time too.
+          testTimeout: 1_200_000,
+          hookTimeout: 300_000,
           maxConcurrency: 4,
         },
       },

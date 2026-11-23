@@ -75,78 +75,72 @@ function npm(root: string, ...args: string[]): { status: number | null; output: 
 }
 
 describe.concurrent("clean consumer installs", () => {
-  it.each(combinations)(
-    "$standard standard with $languages and React $react",
-    async (combination) => {
-      // Configra keeps a manifest's indentation, so start from the style the standard formats with.
-      const indent = combination.standard === "wordpress" ? "\t" : 2;
-      const root = tempProject({
-        "package.json": `${JSON.stringify({ name: "consumer", private: true, type: "module" }, null, indent)}\n`,
-        ...sources(combination),
-      });
+  it.each(combinations)("$standard standard with $languages and React $react", async (combination) => {
+    // Configra keeps a manifest's indentation, so start from the style the standard formats with.
+    const indent = combination.standard === "wordpress" ? "\t" : 2;
+    const root = tempProject({
+      "package.json": `${JSON.stringify({ name: "consumer", private: true, type: "module" }, null, indent)}\n`,
+      ...sources(combination),
+    });
 
-      spawnSync("git", ["init", "-q"], { cwd: root });
+    spawnSync("git", ["init", "-q"], { cwd: root });
 
-      const argv = [
-        "init",
-        "--json",
-        "--install",
-        "--languages",
-        combination.languages.join(","),
-        "--ui",
-        combination.react ? "react" : "",
-        ...combination.languages.map((language) => `--standard=${language}=${combination.standard}`),
-      ];
-      let stdout = "";
+    const argv = [
+      "init",
+      "--json",
+      "--install",
+      "--languages",
+      combination.languages.join(","),
+      "--ui",
+      combination.react ? "react" : "",
+      ...combination.languages.map((language) => `--standard=${language}=${combination.standard}`),
+    ];
+    let stdout = "";
 
-      const code = await run(argv, {
-        stdout: (text) => (stdout += text),
-        stderr: () => undefined,
-        cwd: root,
-        stdinIsTTY: false,
-        stdoutIsTTY: false,
-        env: {},
-        runner: systemRunner,
-      });
-      const document = JSON.parse(stdout) as OutputDocument;
+    const code = await run(argv, {
+      stdout: (text) => (stdout += text),
+      stderr: () => undefined,
+      cwd: root,
+      stdinIsTTY: false,
+      stdoutIsTTY: false,
+      env: {},
+      runner: systemRunner,
+    });
+    const document = JSON.parse(stdout) as OutputDocument;
 
-      expect(code, JSON.stringify(document.diagnostics)).toBe(0);
+    expect(code, JSON.stringify(document.diagnostics)).toBe(0);
 
-      // Lifecycle scripts stay off, so installing doesn't activate hooks.
-      expect(existsSync(join(root, ".git/hooks/pre-commit"))).toBe(false);
+    // Lifecycle scripts stay off, so installing doesn't activate hooks.
+    expect(existsSync(join(root, ".git/hooks/pre-commit"))).toBe(false);
 
-      for (const script of ["lint", "format:check"]) {
-        const result = npm(root, "run", script);
+    for (const script of ["lint", "format:check"]) {
+      const result = npm(root, "run", script);
 
-        expect(result.status, `${script}: ${result.output}`).toBe(0);
-      }
+      expect(result.status, `${script}: ${result.output}`).toBe(0);
+    }
 
-      const listing = npm(root, "ls", "--all");
+    const listing = npm(root, "ls", "--all");
 
-      // Match npm's `invalid:` markers, not package names such as `character-reference-invalid`.
-      const invalid = listing.output.split("\n").filter((line) => /(^|\s)invalid:/.test(line));
-      const dependents = invalid.flatMap((line) =>
-        [...line.matchAll(/from (\S+?),?(?=\s|$)/g)].map(
-          (match) => (match[1] ?? "").split("node_modules/").at(-1) ?? "",
-        ),
-      );
+    // Match npm's `invalid:` markers, not package names such as `character-reference-invalid`.
+    const invalid = listing.output.split("\n").filter((line) => /(^|\s)invalid:/.test(line));
+    const dependents = invalid.flatMap((line) =>
+      [...line.matchAll(/from (\S+?),?(?=\s|$)/g)].map((match) => (match[1] ?? "").split("node_modules/").at(-1) ?? ""),
+    );
 
-      if (combination.standard === "community") {
-        expect(listing.status, listing.output).toBe(0);
-      } else {
-        expect(invalid.length).toBeGreaterThan(0);
-        expect(
-          invalid.every((line) => line.includes("eslint@")),
-          invalid.join("\n"),
-        ).toBe(true);
-        expect(new Set(dependents), invalid.join("\n")).toEqual(new Set(knownPeerWarnings));
-      }
+    if (combination.standard === "community") {
+      expect(listing.status, listing.output).toBe(0);
+    } else {
+      expect(invalid.length).toBeGreaterThan(0);
+      expect(
+        invalid.every((line) => line.includes("eslint@")),
+        invalid.join("\n"),
+      ).toBe(true);
+      expect(new Set(dependents), invalid.join("\n")).toEqual(new Set(knownPeerWarnings));
+    }
 
-      const failing = combination.languages.includes("typescript") ? "src/bad.ts" : "src/bad.js";
+    const failing = combination.languages.includes("typescript") ? "src/bad.ts" : "src/bad.js";
 
-      writeFileSync(join(root, failing), "const unused = 1;\n");
-      expect(npm(root, "run", "lint").status).not.toBe(0);
-    },
-    600_000,
-  );
+    writeFileSync(join(root, failing), "const unused = 1;\n");
+    expect(npm(root, "run", "lint").status).not.toBe(0);
+  });
 });
