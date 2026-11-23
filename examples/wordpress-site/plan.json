@@ -118,11 +118,11 @@
         },
         {
           "kind": "add-line",
-          "target": "phpcs.xml"
+          "target": "/phpcs.xml"
         },
         {
           "kind": "add-line",
-          "target": "phpstan.neon"
+          "target": "/phpstan.neon"
         }
       ]
     },

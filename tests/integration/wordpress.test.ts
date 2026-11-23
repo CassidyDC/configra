@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process";
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -72,6 +73,17 @@ describe("WordPress site checks", () => {
     expect(lefthook).toContain('- "wp-content/plugins/shop/**/*.php"');
     expect(lefthook).toMatch(/pre-push:\n {2}commands:\n {4}phpstan:/);
     expect(lefthook).not.toContain("wp-includes");
+
+    // The personal override files are ignored, but the managed configs they share a name with are not.
+    spawnSync("git", ["init", "-q"], { cwd: root });
+
+    const ignored = spawnSync(
+      "git",
+      ["check-ignore", "phpcs.xml", "phpstan.neon", ".configra/phpcs.xml", ".configra/phpstan.neon"],
+      { cwd: root, encoding: "utf8" },
+    );
+
+    expect(ignored.stdout.split(/\r?\n/).filter(Boolean)).toEqual(["phpcs.xml", "phpstan.neon"]);
   });
 
   it("finds plugins and themes at the root of a wp-content project", async () => {

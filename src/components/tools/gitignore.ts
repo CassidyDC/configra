@@ -21,12 +21,14 @@ function ignoreLines(settings: ResolvedSettings): string[] {
     lines.push("lefthook-local.yml");
   }
 
+  // Anchor the personal override files to the root, so `.configra/phpcs.xml` and `.configra/phpstan.neon`
+  // stay tracked.
   if (tools.includes("phpcs")) {
-    lines.push("phpcs.xml");
+    lines.push("/phpcs.xml");
   }
 
   if (tools.includes("phpstan")) {
-    lines.push("phpstan.neon");
+    lines.push("/phpstan.neon");
   }
 
   return lines;

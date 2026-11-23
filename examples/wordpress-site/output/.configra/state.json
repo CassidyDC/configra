@@ -49,8 +49,8 @@
         ".cache/",
         "vendor/",
         "lefthook-local.yml",
-        "phpcs.xml",
-        "phpstan.neon"
+        "/phpcs.xml",
+        "/phpstan.neon"
       ]
     },
     ".markdownlint-cli2.mjs": {

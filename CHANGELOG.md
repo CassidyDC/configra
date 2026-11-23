@@ -37,4 +37,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Anchor the generated `/phpcs.xml` and `/phpstan.neon` ignore lines to the root, so they no longer ignore the managed `.configra/phpcs.xml` and `.configra/phpstan.neon`.
 - Record owned ignore lines in their planned order, so an update that appends lines doesn't change the ownership state again on the next run.

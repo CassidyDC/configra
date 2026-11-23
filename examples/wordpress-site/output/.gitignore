@@ -3,5 +3,5 @@ node_modules/
 .cache/
 vendor/
 lefthook-local.yml
-phpcs.xml
-phpstan.neon
+/phpcs.xml
+/phpstan.neon
