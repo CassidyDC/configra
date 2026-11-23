@@ -3,13 +3,26 @@
  * PHPStan, and a generated helper runs them the same way on every platform.
  */
 
-import { readFileSync } from "node:fs";
 import type { ManifestFieldContribution, ResolvedCheck, ResolvedSettings, StandardId } from "../../contracts.js";
-import { composerDependency, emptyContribution, indentUnit, phpExclusionPatterns } from "./shared.js";
+import {
+  composerDependency,
+  configraFile,
+  emptyContribution,
+  indentUnit,
+  phpExclusionPatterns,
+  scriptAsset,
+} from "./shared.js";
 import type { ToolDefinition } from "./types.js";
 
-const phpLintScript = ".configra/scripts/php-lint.mjs";
-const phpToolScript = ".configra/scripts/php-tool.mjs";
+/**
+ * The generated batched `php -l` helper.
+ */
+const phpLintScript = (settings: ResolvedSettings) => configraFile(settings, "scripts/php-lint");
+
+/**
+ * The generated helper that runs Composer-installed tools.
+ */
+const phpToolScript = (settings: ResolvedSettings) => configraFile(settings, "scripts/php-tool");
 const installerPlugin = "dealerdirect/phpcodesniffer-composer-installer";
 
 /**
@@ -45,12 +58,12 @@ function phpVersionId(version: string): number {
 /**
  * The generated helper that runs a Composer-installed tool.
  */
-function phpToolFile(): ReturnType<typeof emptyContribution>["files"][number] {
+function phpToolFile(settings: ResolvedSettings): ReturnType<typeof emptyContribution>["files"][number] {
   return {
     tool: "phpcs",
-    path: phpToolScript,
+    path: phpToolScript(settings),
     ownership: "file",
-    content: readFileSync(new URL("./assets/php-tool.mjs", import.meta.url), "utf8"),
+    content: scriptAsset("php-tool.mjs", phpToolScript(settings)),
     reason: "Runs Composer-installed PHP tools the same way on every platform",
     executable: true,
   };
@@ -60,7 +73,7 @@ function phpToolFile(): ReturnType<typeof emptyContribution>["files"][number] {
  * Renders the batched `php -l` helper with the selected paths and exclusions.
  */
 function renderPhpLintScript(settings: ResolvedSettings): string {
-  const template = readFileSync(new URL("./assets/php-lint.mjs", import.meta.url), "utf8");
+  const template = scriptAsset("php-lint.mjs", phpLintScript(settings));
   const values = `const settings = { paths: ${JSON.stringify(settings.phpPaths)}, excluded: ${JSON.stringify(settings.exclusions)} };`;
 
   return template.replace(/(\/\/ configra:settings\n)[^\n]*\n/, `$1${values}\n`);
@@ -218,15 +231,15 @@ export const phpLintTool: ToolDefinition = {
   description: "Checks PHP syntax with the native linter.",
   languages: ["php"],
   available: true,
-  checks: (): ResolvedCheck[] => [
+  checks: (settings): ResolvedCheck[] => [
     {
       id: "php-lint",
       tool: "php-lint",
       script: "lint:php-syntax",
-      command: { executable: "node", args: [phpLintScript] },
+      command: { executable: "node", args: [phpLintScript(settings)] },
       hook: "pre-commit",
       extensions: ["php"],
-      stagedArgs: [phpLintScript],
+      stagedArgs: [phpLintScript(settings)],
       usesStagedFiles: true,
       direct: true,
       aggregate: "lint",
@@ -237,7 +250,7 @@ export const phpLintTool: ToolDefinition = {
 
     contribution.files.push({
       tool: "php-lint",
-      path: phpLintScript,
+      path: phpLintScript(settings),
       ownership: "file",
       content: renderPhpLintScript(settings),
       reason: "Batched PHP syntax check for the selected paths",
@@ -254,16 +267,16 @@ export const phpcsTool: ToolDefinition = {
   description: "Checks and fixes PHP coding standards.",
   languages: ["php"],
   available: true,
-  checks: (): ResolvedCheck[] => [
+  checks: (settings): ResolvedCheck[] => [
     {
       id: "phpcs",
       tool: "phpcs",
       script: "lint:phpcs",
-      command: { executable: "node", args: [phpToolScript, "phpcs"] },
-      fixCommand: { executable: "node", args: [phpToolScript, "phpcbf"] },
+      command: { executable: "node", args: [phpToolScript(settings), "phpcs"] },
+      fixCommand: { executable: "node", args: [phpToolScript(settings), "phpcbf"] },
       hook: "pre-commit",
       extensions: ["php"],
-      stagedArgs: [phpToolScript, "phpcs"],
+      stagedArgs: [phpToolScript(settings), "phpcs"],
       usesStagedFiles: true,
       direct: true,
       aggregate: "lint",
@@ -289,7 +302,7 @@ export const phpcsTool: ToolDefinition = {
         reason: "Project PHP_CodeSniffer entry file that references .configra/phpcs.xml",
         reference: "./.configra/phpcs.xml",
       },
-      phpToolFile(),
+      phpToolFile(settings),
     );
 
     const packages =
@@ -326,14 +339,14 @@ export const phpstanTool: ToolDefinition = {
   description: "Analyses PHP code statically.",
   languages: ["php"],
   available: true,
-  checks: (): ResolvedCheck[] => [
+  checks: (settings): ResolvedCheck[] => [
     {
       id: "phpstan",
       tool: "phpstan",
       script: "lint:phpstan",
       command: {
         executable: "node",
-        args: [phpToolScript, "phpstan", "analyse", "--memory-limit=1G", "--no-progress"],
+        args: [phpToolScript(settings), "phpstan", "analyse", "--memory-limit=1G", "--no-progress"],
       },
       hook: "pre-push",
       extensions: ["php"],
@@ -362,7 +375,7 @@ export const phpstanTool: ToolDefinition = {
         reason: "Project PHPStan entry file that includes .configra/phpstan.neon",
         reference: ".configra/phpstan.neon",
       },
-      { ...phpToolFile(), tool: "phpstan" },
+      { ...phpToolFile(settings), tool: "phpstan" },
     );
 
     const packages =

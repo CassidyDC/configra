@@ -14,28 +14,28 @@
       "details": []
     },
     {
-      "path": ".configra/eslint.mjs",
+      "path": ".configra/eslint.js",
       "action": "create",
       "ownership": "file",
       "reason": "ESLint rules for the wordpress standard",
       "details": []
     },
     {
-      "path": ".configra/markdownlint.mjs",
+      "path": ".configra/markdownlint.js",
       "action": "create",
       "ownership": "file",
       "reason": "markdownlint rules and exclusions",
       "details": []
     },
     {
-      "path": ".configra/prettier.mjs",
+      "path": ".configra/prettier.js",
       "action": "create",
       "ownership": "file",
       "reason": "Prettier options derived from the formatting settings",
       "details": []
     },
     {
-      "path": ".configra/scripts/commit-msg.mjs",
+      "path": ".configra/scripts/commit-msg.js",
       "action": "create",
       "ownership": "file",
       "reason": "Commit-message check for plain subjects",
@@ -83,7 +83,7 @@
       "path": ".markdownlint-cli2.mjs",
       "action": "create",
       "ownership": "entry",
-      "reason": "Project markdownlint-cli2 entry file that loads .configra/markdownlint.mjs",
+      "reason": "Project markdownlint-cli2 entry file that loads .configra/markdownlint.js",
       "details": []
     },
     {
@@ -142,7 +142,7 @@
       "path": "eslint.config.js",
       "action": "create",
       "ownership": "entry",
-      "reason": "Project ESLint entry file that loads .configra/eslint.mjs",
+      "reason": "Project ESLint entry file that loads .configra/eslint.js",
       "details": []
     },
     {
@@ -246,7 +246,7 @@
       "path": "prettier.config.js",
       "action": "create",
       "ownership": "entry",
-      "reason": "Project Prettier entry file that loads .configra/prettier.mjs",
+      "reason": "Project Prettier entry file that loads .configra/prettier.js",
       "details": []
     }
   ],
@@ -319,7 +319,7 @@
     {
       "hook": "commit-msg",
       "name": "commit-message",
-      "run": "node .configra/scripts/commit-msg.mjs --mode plain {1}"
+      "run": "node .configra/scripts/commit-msg.js --mode plain {1}"
     }
   ],
   "commands": [

@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import type {
   CommandSpec,
   Contribution,
@@ -19,6 +20,24 @@ export function emptyContribution(): Contribution {
  */
 export function managedHeader(entryFile: string): string {
   return `Managed by Configra. Put your changes in ${entryFile}.`;
+}
+
+/**
+ * Returns the path of a JavaScript file Configra owns, such as `.configra/eslint.js`. It uses `.js` in
+ * ESM packages and `.mjs` elsewhere so the file always loads as ESM.
+ */
+export function configraFile(settings: ResolvedSettings, name: string): string {
+  return `.configra/${name}${settings.configExtension}`;
+}
+
+/**
+ * Reads a script asset and points its usage comment at the generated path.
+ */
+export function scriptAsset(asset: string, path: string): string {
+  return readFileSync(new URL(`./assets/${asset}`, import.meta.url), "utf8").replace(
+    /\.configra\/scripts\/[\w-]+\.mjs/,
+    path,
+  );
 }
 
 /**

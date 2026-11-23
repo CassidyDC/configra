@@ -2,7 +2,7 @@
 // Managed by Configra. Change the commit-message mode in .configra/config.json.
 //
 // Checks a commit message subject. Used by the `commit-msg` Git hook with:
-//   node .configra/scripts/commit-msg.mjs --mode <plain|conventional> <message-file>
+//   node .configra/scripts/commit-msg.js --mode <plain|conventional> <message-file>
 // Uses only Node.js built-ins, so it runs without Configra installed.
 
 import { readFileSync } from "node:fs";

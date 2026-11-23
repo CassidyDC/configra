@@ -130,7 +130,7 @@ describe("applying a plan", () => {
     const manifest = JSON.parse(read(root, "package.json")) as Record<string, Record<string, string>>;
 
     expect(code).toBe(0);
-    expect(existsSync(join(root, ".configra/prettier.mjs"))).toBe(false);
+    expect(existsSync(join(root, ".configra/prettier.js"))).toBe(false);
     expect(existsSync(join(root, ".prettierignore"))).toBe(false);
     expect(manifest.devDependencies?.prettier).toBeUndefined();
     expect(manifest.scripts?.["format:check"]).toBeUndefined();
@@ -233,7 +233,7 @@ describe("conflict decisions", () => {
       0,
     );
     expect(read(root, ".editorconfig")).toContain("[*.txt]");
-    expect(read(root, ".configra/scripts/commit-msg.mjs")).toBeDefined();
+    expect(read(root, ".configra/scripts/commit-msg.js")).toBeDefined();
     expect(read(root, "lefthook.yml")).toContain("--mode conventional");
   });
 });

@@ -3,6 +3,7 @@ import {
   emptyContribution,
   exclusionGlobs,
   jsArray,
+  configraFile,
   managedHeader,
   npmDependency,
   scopeGlobs,
@@ -54,7 +55,7 @@ const competingFiles = [
 ];
 
 /**
- * Renders `.configra/markdownlint.mjs`.
+ * Renders `.configra/markdownlint.js`, or `.mjs` outside ESM packages.
  */
 function renderConfigraFile(settings: ResolvedSettings): string {
   const rules = ["    default: true,\n"];
@@ -80,18 +81,18 @@ function renderConfigraFile(settings: ResolvedSettings): string {
 /**
  * Renders the project-owned entry file, created once.
  */
-function renderEntryFile(): string {
+function renderEntryFile(managed: string): string {
   return [
     "/**",
     " * markdownlint-cli2 configuration.",
     " *",
-    " * Configra manages .configra/markdownlint.mjs. Add your own rules inside `config` after the spread;",
+    ` * Configra manages ${managed}. Add your own rules inside \`config\` after the spread;`,
     " * they override Configra's.",
     " *",
     " * @see https://github.com/DavidAnson/markdownlint-cli2#configuration",
     " */",
     "",
-    'import configra from "./.configra/markdownlint.mjs";',
+    `import configra from "./${managed}";`,
     "",
     '/** @type {import("markdownlint-cli2").Options} */',
     "export default {",
@@ -130,11 +131,12 @@ export const markdownlintTool: ToolDefinition = {
   },
   render: (settings) => {
     const contribution = emptyContribution();
+    const managed = configraFile(settings, "markdownlint");
 
     contribution.files.push(
       {
         tool: "markdownlint",
-        path: ".configra/markdownlint.mjs",
+        path: managed,
         ownership: "file",
         content: renderConfigraFile(settings),
         reason: "markdownlint rules and exclusions",
@@ -143,9 +145,9 @@ export const markdownlintTool: ToolDefinition = {
         tool: "markdownlint",
         path: entryFile,
         ownership: "entry",
-        content: styleJs(renderEntryFile(), settings.formatting),
-        reason: "Project markdownlint-cli2 entry file that loads .configra/markdownlint.mjs",
-        reference: "./.configra/markdownlint.mjs",
+        content: styleJs(renderEntryFile(managed), settings.formatting),
+        reason: `Project markdownlint-cli2 entry file that loads ${managed}`,
+        reference: `./${managed}`,
       },
     );
 

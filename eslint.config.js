@@ -1,7 +1,7 @@
 /**
  * ESLint configuration.
  *
- * Configra manages .configra/eslint.mjs and loads it first. The repository adds import checks and its
+ * Configra manages .configra/eslint.js and loads it first. The repository adds import checks and its
  * own rules after it; later entries override earlier ones.
  *
  * @see https://eslint.org/docs/latest/use/configure/configuration-files
@@ -12,7 +12,7 @@
 import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
 import { importX } from "eslint-plugin-import-x";
 import { defineConfig } from "eslint/config";
-import configra from "./.configra/eslint.mjs";
+import configra from "./.configra/eslint.js";
 
 export default defineConfig([
   configra,

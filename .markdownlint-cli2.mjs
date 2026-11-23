@@ -1,13 +1,13 @@
 /**
  * markdownlint-cli2 configuration.
  *
- * Configra manages .configra/markdownlint.mjs. The repository's rules inside `config` follow the spread
+ * Configra manages .configra/markdownlint.js. The repository's rules inside `config` follow the spread
  * and override Configra's.
  *
  * @see https://github.com/DavidAnson/markdownlint-cli2#configuration
  */
 
-import configra from "./.configra/markdownlint.mjs";
+import configra from "./.configra/markdownlint.js";
 
 /** @type {import("markdownlint-cli2").Options} */
 export default {

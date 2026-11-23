@@ -74,10 +74,10 @@ describe("dry-run planning", () => {
     expect(document.status).toBe("changes");
     expect(document.changes.map((change) => change.path)).toEqual([
       ".configra/config.json",
-      ".configra/eslint.mjs",
-      ".configra/markdownlint.mjs",
-      ".configra/prettier.mjs",
-      ".configra/scripts/commit-msg.mjs",
+      ".configra/eslint.js",
+      ".configra/markdownlint.js",
+      ".configra/prettier.js",
+      ".configra/scripts/commit-msg.js",
       ".configra/state.json",
       ".editorconfig",
       ".gitignore",
@@ -101,7 +101,7 @@ describe("dry-run planning", () => {
     { languages: "javascript,typescript", ui: "react", ts: true, react: true },
   ])("covers $languages with ui=$ui", ({ languages, ui, ts, react }) => {
     const plan = planFor(["init", "--dry-run", `--languages=${languages}`, `--ui=${ui}`], tempProject());
-    const eslint = contentOf(plan, ".configra/eslint.mjs");
+    const eslint = contentOf(plan, ".configra/eslint.js");
     const dependencies = Object.keys(plan.dependencies.npm.add);
 
     expect(eslint.includes('import tseslint from "typescript-eslint";')).toBe(ts);
@@ -123,9 +123,9 @@ describe("dry-run planning", () => {
   it("uses the WordPress JavaScript standard with WordPress formatting and no Prettier rule", () => {
     const plan = planFor(["init", "--dry-run", "--standard", "javascript=wordpress"], tempProject());
 
-    expect(contentOf(plan, ".configra/eslint.mjs")).toContain("wordpress.configs.recommended");
-    expect(contentOf(plan, ".configra/eslint.mjs")).toContain('"prettier/prettier": "off"');
-    expect(contentOf(plan, ".configra/prettier.mjs")).toContain("...wordpress");
+    expect(contentOf(plan, ".configra/eslint.js")).toContain("wordpress.configs.recommended");
+    expect(contentOf(plan, ".configra/eslint.js")).toContain('"prettier/prettier": "off"');
+    expect(contentOf(plan, ".configra/prettier.js")).toContain("...wordpress");
     expect(contentOf(plan, ".editorconfig")).toContain("indent_style = tab");
     expect(plan.dependencies.npm.add).toMatchObject({
       "@wordpress/eslint-plugin": expect.any(String),
@@ -241,11 +241,15 @@ describe("module types", () => {
     expect(plan.writes.some((write) => write.path === "eslint.config.js")).toBe(true);
   });
 
-  it("uses .mjs entry files and leaves the type unset when adding a manifest to existing scripts", () => {
+  it("uses .mjs JavaScript files and leaves the type unset when adding a manifest to existing scripts", () => {
     const plan = planFor(["init", "--dry-run"], tempProject({ "index.js": "module.exports = 1;\n" }));
 
     expect(JSON.parse(contentOf(plan, "package.json")) as object).not.toHaveProperty("type");
-    expect(plan.writes.some((write) => write.path === "eslint.config.mjs")).toBe(true);
+    expect(plan.writes.map((write) => write.path)).toEqual(
+      expect.arrayContaining(["eslint.config.mjs", ".configra/eslint.mjs", ".configra/scripts/commit-msg.mjs"]),
+    );
+    expect(contentOf(plan, "eslint.config.mjs")).toContain('import configra from "./.configra/eslint.mjs";');
+    expect(contentOf(plan, "lefthook.yml")).toContain("node .configra/scripts/commit-msg.mjs");
   });
 
   it("keeps an existing CommonJS manifest's type and publishable engines", () => {
@@ -256,7 +260,9 @@ describe("module types", () => {
     expect(planned.type).toBe("commonjs");
     expect(planned.engines).toEqual({ node: ">=20" });
     expect(result.diagnostics.map((diagnostic) => diagnostic.code)).toContain("PLAN_ENGINES_BELOW_MINIMUM");
-    expect(result.writes.some((write) => write.path === "prettier.config.mjs")).toBe(true);
+    expect(result.writes.map((write) => write.path)).toEqual(
+      expect.arrayContaining(["prettier.config.mjs", ".configra/prettier.mjs"]),
+    );
   });
 });
 

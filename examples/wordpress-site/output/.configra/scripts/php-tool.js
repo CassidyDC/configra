@@ -2,7 +2,7 @@
 // Managed by Configra.
 //
 // Runs a Composer-installed PHP tool the same way on every platform. Used by package scripts and Git hooks:
-//   node .configra/scripts/php-tool.mjs <phpcs|phpcbf|phpstan> [args...]
+//   node .configra/scripts/php-tool.js <phpcs|phpcbf|phpstan> [args...]
 // Composer's bin proxies are PHP scripts, so this runs them with `php` instead of a shell. Uses only
 // Node.js built-ins, so it runs without Configra.
 

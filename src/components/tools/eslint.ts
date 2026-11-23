@@ -4,6 +4,7 @@ import {
   exclusionGlobs,
   isScoped,
   jsArray,
+  configraFile,
   managedHeader,
   npmDependency,
   scopeGlobs,
@@ -176,19 +177,19 @@ function renderWordPress(settings: ResolvedSettings, entryFile: string): string 
 /**
  * Renders the project-owned entry file, created once.
  */
-function renderEntryFile(): string {
+function renderEntryFile(managed: string): string {
   return [
     "/**",
     " * ESLint configuration.",
     " *",
-    " * Configra manages .configra/eslint.mjs and loads it first. Add your own settings after it; later",
+    ` * Configra manages ${managed} and loads it first. Add your own settings after it; later`,
     " * entries override earlier ones.",
     " *",
     " * @see https://eslint.org/docs/latest/use/configure/configuration-files",
     " */",
     "",
     'import { defineConfig } from "eslint/config";',
-    'import configra from "./.configra/eslint.mjs";',
+    `import configra from "./${managed}";`,
     "",
     "export default defineConfig([",
     "  configra,",
@@ -230,6 +231,7 @@ export const eslintTool: ToolDefinition = {
   },
   render: (settings) => {
     const contribution = emptyContribution();
+    const managed = configraFile(settings, "eslint");
     const entryFile = `eslint.config${settings.configExtension}`;
     const standard = scriptStandard(settings);
     const typescript = (settings.extensions.typescript ?? []).length > 0;
@@ -238,7 +240,7 @@ export const eslintTool: ToolDefinition = {
     contribution.files.push(
       {
         tool: "eslint",
-        path: ".configra/eslint.mjs",
+        path: managed,
         ownership: "file",
         content: standard === "wordpress" ? renderWordPress(settings, entryFile) : renderCommunity(settings, entryFile),
         reason: `ESLint rules for the ${standard} standard`,
@@ -247,9 +249,9 @@ export const eslintTool: ToolDefinition = {
         tool: "eslint",
         path: entryFile,
         ownership: "entry",
-        content: styleJs(renderEntryFile(), settings.formatting),
-        reason: "Project ESLint entry file that loads .configra/eslint.mjs",
-        reference: "./.configra/eslint.mjs",
+        content: styleJs(renderEntryFile(managed), settings.formatting),
+        reason: `Project ESLint entry file that loads ${managed}`,
+        reference: `./${managed}`,
       },
     );
 

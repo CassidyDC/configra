@@ -1,5 +1,5 @@
 import type { FormatSettings, ResolvedSettings } from "../../contracts.js";
-import { emptyContribution, isScoped, managedHeader, npmDependency, styleJs } from "./shared.js";
+import { emptyContribution, isScoped, configraFile, managedHeader, npmDependency, styleJs } from "./shared.js";
 import type { ToolDefinition } from "./types.js";
 
 const competingFiles = [
@@ -59,7 +59,7 @@ function formatTargets(settings: ResolvedSettings): string[] | undefined {
 }
 
 /**
- * Renders `.configra/prettier.mjs`.
+ * Renders `.configra/prettier.js`, or `.mjs` outside ESM packages.
  */
 function renderConfigraFile(settings: ResolvedSettings, entryFile: string): string {
   const header = `// ${managedHeader(entryFile)}\n`;
@@ -89,18 +89,18 @@ function renderConfigraFile(settings: ResolvedSettings, entryFile: string): stri
 /**
  * Renders the project-owned entry file, created once.
  */
-function renderEntryFile(): string {
+function renderEntryFile(managed: string): string {
   return [
     "/**",
     " * Prettier configuration.",
     " *",
-    " * Configra manages .configra/prettier.mjs and keeps it in sync with .editorconfig. Add your own",
+    ` * Configra manages ${managed} and keeps it in sync with .editorconfig. Add your own`,
     " * options after the spread; they override Configra's.",
     " *",
     " * @see https://prettier.io/docs/configuration",
     " */",
     "",
-    'import configra from "./.configra/prettier.mjs";',
+    `import configra from "./${managed}";`,
     "",
     '/** @type {import("prettier").Config} */',
     "export default {",
@@ -141,12 +141,13 @@ export const prettierTool: ToolDefinition = {
   },
   render: (settings) => {
     const contribution = emptyContribution();
+    const managed = configraFile(settings, "prettier");
     const entryFile = `prettier.config${settings.configExtension}`;
 
     contribution.files.push(
       {
         tool: "prettier",
-        path: ".configra/prettier.mjs",
+        path: managed,
         ownership: "file",
         content: renderConfigraFile(settings, entryFile),
         reason: "Prettier options derived from the formatting settings",
@@ -155,9 +156,9 @@ export const prettierTool: ToolDefinition = {
         tool: "prettier",
         path: entryFile,
         ownership: "entry",
-        content: styleJs(renderEntryFile(), settings.formatting),
-        reason: "Project Prettier entry file that loads .configra/prettier.mjs",
-        reference: "./.configra/prettier.mjs",
+        content: styleJs(renderEntryFile(managed), settings.formatting),
+        reason: `Project Prettier entry file that loads ${managed}`,
+        reference: `./${managed}`,
       },
     );
 

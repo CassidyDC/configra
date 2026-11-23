@@ -1,10 +1,20 @@
-import { readFileSync } from "node:fs";
 import type { ResolvedCheck, ResolvedSettings } from "../../contracts.js";
-import { emptyContribution, exclusionGlobs, npmDependency, quoteArg, scopeGlobs } from "./shared.js";
+import {
+  configraFile,
+  emptyContribution,
+  exclusionGlobs,
+  npmDependency,
+  quoteArg,
+  scopeGlobs,
+  scriptAsset,
+} from "./shared.js";
 import type { ToolDefinition } from "./types.js";
 
 const projectFile = "lefthook-project.yml";
-const commitMessageScript = ".configra/scripts/commit-msg.mjs";
+/**
+ * The generated commit-message check.
+ */
+const commitMessageScript = (settings: ResolvedSettings) => configraFile(settings, "scripts/commit-msg");
 
 const competingFiles = [
   "lefthook.yaml",
@@ -64,7 +74,7 @@ export function hookSummary(
     hooks.push({
       hook: "commit-msg",
       name: "commit-message",
-      run: `node ${commitMessageScript} --mode ${settings.selections.commitMessages} {1}`,
+      run: `node ${commitMessageScript(settings)} --mode ${settings.selections.commitMessages} {1}`,
     });
   }
 
@@ -114,7 +124,7 @@ function renderLefthookFile(settings: ResolvedSettings, checks: ResolvedCheck[])
       "commit-msg:",
       "  commands:",
       "    commit-message:",
-      `      run: node ${commitMessageScript} --mode ${mode} {1}`,
+      `      run: node ${commitMessageScript(settings)} --mode ${mode} {1}`,
     );
   }
 
@@ -167,9 +177,9 @@ export const lefthookTool: ToolDefinition = {
     if (settings.selections.commitMessages !== "off") {
       contribution.files.push({
         tool: "lefthook",
-        path: commitMessageScript,
+        path: commitMessageScript(settings),
         ownership: "file",
-        content: readFileSync(new URL("./assets/commit-msg.mjs", import.meta.url), "utf8"),
+        content: scriptAsset("commit-msg.mjs", commitMessageScript(settings)),
         reason: `Commit-message check for ${settings.selections.commitMessages} subjects`,
         executable: true,
       });

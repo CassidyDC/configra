@@ -14,14 +14,14 @@
       "details": []
     },
     {
-      "path": ".configra/eslint.mjs",
+      "path": ".configra/eslint.js",
       "action": "create",
       "ownership": "file",
       "reason": "ESLint rules for the wordpress standard",
       "details": []
     },
     {
-      "path": ".configra/markdownlint.mjs",
+      "path": ".configra/markdownlint.js",
       "action": "create",
       "ownership": "file",
       "reason": "markdownlint rules and exclusions",
@@ -42,28 +42,28 @@
       "details": []
     },
     {
-      "path": ".configra/prettier.mjs",
+      "path": ".configra/prettier.js",
       "action": "create",
       "ownership": "file",
       "reason": "Prettier options derived from the formatting settings",
       "details": []
     },
     {
-      "path": ".configra/scripts/commit-msg.mjs",
+      "path": ".configra/scripts/commit-msg.js",
       "action": "create",
       "ownership": "file",
       "reason": "Commit-message check for plain subjects",
       "details": []
     },
     {
-      "path": ".configra/scripts/php-lint.mjs",
+      "path": ".configra/scripts/php-lint.js",
       "action": "create",
       "ownership": "file",
       "reason": "Batched PHP syntax check for the selected paths",
       "details": []
     },
     {
-      "path": ".configra/scripts/php-tool.mjs",
+      "path": ".configra/scripts/php-tool.js",
       "action": "create",
       "ownership": "file",
       "reason": "Runs Composer-installed PHP tools the same way on every platform",
@@ -77,7 +77,7 @@
       "details": []
     },
     {
-      "path": ".configra/stylelint.mjs",
+      "path": ".configra/stylelint.js",
       "action": "create",
       "ownership": "file",
       "reason": "Stylelint rules for the wordpress standard",
@@ -130,7 +130,7 @@
       "path": ".markdownlint-cli2.mjs",
       "action": "create",
       "ownership": "entry",
-      "reason": "Project markdownlint-cli2 entry file that loads .configra/markdownlint.mjs",
+      "reason": "Project markdownlint-cli2 entry file that loads .configra/markdownlint.js",
       "details": []
     },
     {
@@ -227,7 +227,7 @@
       "path": "eslint.config.js",
       "action": "create",
       "ownership": "entry",
-      "reason": "Project ESLint entry file that loads .configra/eslint.mjs",
+      "reason": "Project ESLint entry file that loads .configra/eslint.js",
       "details": []
     },
     {
@@ -283,17 +283,17 @@
         {
           "kind": "set-field",
           "target": "/scripts/lint:php-syntax",
-          "value": "node .configra/scripts/php-lint.mjs"
+          "value": "node .configra/scripts/php-lint.js"
         },
         {
           "kind": "set-field",
           "target": "/scripts/lint:phpcs",
-          "value": "node .configra/scripts/php-tool.mjs phpcs"
+          "value": "node .configra/scripts/php-tool.js phpcs"
         },
         {
           "kind": "set-field",
           "target": "/scripts/lint:phpstan",
-          "value": "node .configra/scripts/php-tool.mjs phpstan analyse --memory-limit=1G --no-progress"
+          "value": "node .configra/scripts/php-tool.js phpstan analyse --memory-limit=1G --no-progress"
         },
         {
           "kind": "set-field",
@@ -303,7 +303,7 @@
         {
           "kind": "set-field",
           "target": "/scripts/lint:fix",
-          "value": "markdownlint-cli2 --fix \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\" && stylelint --allow-empty-input --fix \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\" && node .configra/scripts/php-tool.mjs phpcbf"
+          "value": "markdownlint-cli2 --fix \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\" && stylelint --allow-empty-input --fix \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\" && node .configra/scripts/php-tool.js phpcbf"
         },
         {
           "kind": "set-field",
@@ -380,14 +380,14 @@
       "path": "prettier.config.js",
       "action": "create",
       "ownership": "entry",
-      "reason": "Project Prettier entry file that loads .configra/prettier.mjs",
+      "reason": "Project Prettier entry file that loads .configra/prettier.js",
       "details": []
     },
     {
       "path": "stylelint.config.js",
       "action": "create",
       "ownership": "entry",
-      "reason": "Project Stylelint entry file that loads .configra/stylelint.mjs",
+      "reason": "Project Stylelint entry file that loads .configra/stylelint.js",
       "details": []
     }
   ],
@@ -436,17 +436,17 @@
     },
     {
       "name": "lint:php-syntax",
-      "command": "node .configra/scripts/php-lint.mjs",
+      "command": "node .configra/scripts/php-lint.js",
       "writes": false
     },
     {
       "name": "lint:phpcs",
-      "command": "node .configra/scripts/php-tool.mjs phpcs",
+      "command": "node .configra/scripts/php-tool.js phpcs",
       "writes": false
     },
     {
       "name": "lint:phpstan",
-      "command": "node .configra/scripts/php-tool.mjs phpstan analyse --memory-limit=1G --no-progress",
+      "command": "node .configra/scripts/php-tool.js phpstan analyse --memory-limit=1G --no-progress",
       "writes": false
     },
     {
@@ -456,7 +456,7 @@
     },
     {
       "name": "lint:fix",
-      "command": "markdownlint-cli2 --fix \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\" && stylelint --allow-empty-input --fix \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\" && node .configra/scripts/php-tool.mjs phpcbf",
+      "command": "markdownlint-cli2 --fix \"wp-content/plugins/example/**/*.md\" \"wp-content/themes/example/**/*.md\" && eslint --cache --cache-location .cache/eslint/ --no-error-on-unmatched-pattern --fix \"wp-content/plugins/example/**/*.{js,mjs,cjs}\" \"wp-content/themes/example/**/*.{js,mjs,cjs}\" && stylelint --allow-empty-input --fix \"wp-content/plugins/example/**/*.css\" \"wp-content/themes/example/**/*.css\" && node .configra/scripts/php-tool.js phpcbf",
       "writes": true
     },
     {
@@ -494,22 +494,22 @@
     {
       "hook": "pre-commit",
       "name": "php-lint",
-      "run": "node .configra/scripts/php-lint.mjs {staged_files}"
+      "run": "node .configra/scripts/php-lint.js {staged_files}"
     },
     {
       "hook": "pre-commit",
       "name": "phpcs",
-      "run": "node .configra/scripts/php-tool.mjs phpcs {staged_files}"
+      "run": "node .configra/scripts/php-tool.js phpcs {staged_files}"
     },
     {
       "hook": "pre-push",
       "name": "phpstan",
-      "run": "node .configra/scripts/php-tool.mjs phpstan analyse --memory-limit=1G --no-progress"
+      "run": "node .configra/scripts/php-tool.js phpstan analyse --memory-limit=1G --no-progress"
     },
     {
       "hook": "commit-msg",
       "name": "commit-message",
-      "run": "node .configra/scripts/commit-msg.mjs --mode plain {1}"
+      "run": "node .configra/scripts/commit-msg.js --mode plain {1}"
     }
   ],
   "commands": [

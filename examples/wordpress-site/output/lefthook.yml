@@ -80,7 +80,7 @@ pre-commit:
         - "**/.cache/**"
         - "**/*.min.js"
         - "**/*.min.css"
-      run: node .configra/scripts/php-lint.mjs {staged_files}
+      run: node .configra/scripts/php-lint.js {staged_files}
     phpcs:
       glob:
         - "wp-content/plugins/example/**/*.php"
@@ -94,14 +94,14 @@ pre-commit:
         - "**/.cache/**"
         - "**/*.min.js"
         - "**/*.min.css"
-      run: node .configra/scripts/php-tool.mjs phpcs {staged_files}
+      run: node .configra/scripts/php-tool.js phpcs {staged_files}
 
 pre-push:
   commands:
     phpstan:
-      run: node .configra/scripts/php-tool.mjs phpstan analyse --memory-limit=1G --no-progress
+      run: node .configra/scripts/php-tool.js phpstan analyse --memory-limit=1G --no-progress
 
 commit-msg:
   commands:
     commit-message:
-      run: node .configra/scripts/commit-msg.mjs --mode plain {1}
+      run: node .configra/scripts/commit-msg.js --mode plain {1}

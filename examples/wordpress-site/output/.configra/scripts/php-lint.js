@@ -2,7 +2,7 @@
 // Managed by Configra. Change the checked paths and exclusions in .configra/config.json.
 //
 // Checks PHP syntax with the native linter. Used by the `lint:php-syntax` script and the `pre-commit` hook:
-//   node .configra/scripts/php-lint.mjs [paths...]
+//   node .configra/scripts/php-lint.js [paths...]
 // Without paths, it checks the selected paths below. Uses only Node.js built-ins, so it runs without Configra.
 
 import { spawnSync } from "node:child_process";

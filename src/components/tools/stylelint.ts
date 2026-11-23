@@ -3,6 +3,7 @@ import {
   emptyContribution,
   exclusionGlobs,
   jsArray,
+  configraFile,
   managedHeader,
   npmDependency,
   scopeGlobs,
@@ -56,18 +57,18 @@ function renderConfig(settings: ResolvedSettings, entryFile: string): string {
 /**
  * Renders the project-owned entry file, created once.
  */
-function renderEntryFile(): string {
+function renderEntryFile(managed: string): string {
   return [
     "/**",
     " * Stylelint configuration.",
     " *",
-    " * Configra manages .configra/stylelint.mjs. Add your own rules inside `rules` after the spread; they",
+    ` * Configra manages ${managed}. Add your own rules inside \`rules\` after the spread; they`,
     " * override Configra's. Spreading the file, instead of extending it, keeps its `ignoreFiles` in effect.",
     " *",
     " * @see https://stylelint.io/user-guide/configure",
     " */",
     "",
-    'import configra from "./.configra/stylelint.mjs";',
+    `import configra from "./${managed}";`,
     "",
     '/** @type {import("stylelint").Config} */',
     "export default {",
@@ -107,13 +108,14 @@ export const stylelintTool: ToolDefinition = {
   },
   render: (settings) => {
     const contribution = emptyContribution();
+    const managed = configraFile(settings, "stylelint");
     const entryFile = `stylelint.config${settings.configExtension}`;
     const standard = settings.selections.standards.css ?? "community";
 
     contribution.files.push(
       {
         tool: "stylelint",
-        path: ".configra/stylelint.mjs",
+        path: managed,
         ownership: "file",
         content: styleJs(renderConfig(settings, entryFile), settings.formatting),
         reason: `Stylelint rules for the ${standard} standard`,
@@ -122,9 +124,9 @@ export const stylelintTool: ToolDefinition = {
         tool: "stylelint",
         path: entryFile,
         ownership: "entry",
-        content: styleJs(renderEntryFile(), settings.formatting),
-        reason: "Project Stylelint entry file that loads .configra/stylelint.mjs",
-        reference: "./.configra/stylelint.mjs",
+        content: styleJs(renderEntryFile(managed), settings.formatting),
+        reason: `Project Stylelint entry file that loads ${managed}`,
+        reference: `./${managed}`,
       },
     );
 

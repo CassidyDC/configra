@@ -100,7 +100,7 @@ describe("packed CLI", () => {
 
     expect(result.status, result.stderr).toBe(0);
     expect(document.status).toBe("changes");
-    expect(document.changes.map((change) => change.path)).toContain(".configra/scripts/commit-msg.mjs");
+    expect(document.changes.map((change) => change.path)).toContain(".configra/scripts/commit-msg.js");
     expect(readdirSync(target)).toEqual([]);
   });
 

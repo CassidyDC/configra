@@ -51,4 +51,4 @@ pre-commit:
 commit-msg:
   commands:
     commit-message:
-      run: node .configra/scripts/commit-msg.mjs --mode conventional {1}
+      run: node .configra/scripts/commit-msg.js --mode conventional {1}

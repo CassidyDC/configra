@@ -272,7 +272,7 @@ export interface ResolvedSettings {
   /** The `type` the root `package.json` declares after the plan, if any. */
   moduleType: ModuleType | undefined;
 
-  /** The extension for generated JavaScript entry files: `.js` in ESM packages, `.mjs` otherwise. */
+  /** The extension for generated JavaScript files: `.js` in ESM packages, `.mjs` otherwise. */
   configExtension: ".js" | ".mjs";
   formatting: FormatSettings;
   formattingStandard: StandardId;

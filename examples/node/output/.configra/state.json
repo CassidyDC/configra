@@ -1,20 +1,20 @@
 {
   "configraVersion": "0.1.0",
   "files": {
-    ".configra/eslint.mjs": {
+    ".configra/eslint.js": {
       "hash": "61a45913f151ae6a65c3478d364baeb05fb6c711d7bb5d0084b11fccf0787dd5",
       "kind": "file"
     },
-    ".configra/markdownlint.mjs": {
+    ".configra/markdownlint.js": {
       "hash": "e03c2f944f1161cb0794a693509ab7c85d3f2e7f80990488459c780a99c4a857",
       "kind": "file"
     },
-    ".configra/prettier.mjs": {
+    ".configra/prettier.js": {
       "hash": "f8330f2daaec15f527522aeca5d6299c43c3c5daa445f28a0293e297b05266d6",
       "kind": "file"
     },
-    ".configra/scripts/commit-msg.mjs": {
-      "hash": "6f4a93a3f09b9ac8a72aa681c149bc4b85d7b363705797de7793b8f2e2633b2d",
+    ".configra/scripts/commit-msg.js": {
+      "hash": "17b35825895cd59a56a6b00b602b6b428068dfec6162452fa2ac63c100fa9a33",
       "kind": "file"
     },
     ".editorconfig": {
@@ -56,7 +56,7 @@
       "kind": "entry"
     },
     "lefthook.yml": {
-      "hash": "8a68e245eb58e3e02b0a3ede9ae7a6bccf3402412c3f7a285f170a83f3cafc02",
+      "hash": "9388504c5a66aad978040c2acd683908ffa29b9709aacde5d32001d7cb3c5be1",
       "kind": "file"
     },
     "package.json": {
