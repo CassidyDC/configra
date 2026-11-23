@@ -201,6 +201,19 @@ describe("setup wizard", () => {
     expect(savedConfig(root)).toMatchObject({ languages: ["javascript", "typescript"] });
   });
 
+  it("returns to the preview without changing an answer", async () => {
+    const root = tempProject();
+    const run = await runTerminal(["init"], root, [accept, accept, "change", "back", "generate"]);
+
+    expect(run.code, run.stdout + run.stderr).toBe(0);
+    expect(run.asked.slice(-3)).toEqual([
+      "What should Configra do?",
+      "Which answer do you want to change?",
+      "What should Configra do?",
+    ]);
+    expect(existsSync(join(root, ".configra/state.json"))).toBe(true);
+  });
+
   it("asks about conflicts for the chosen outcome and approves the updated preview", async () => {
     const root = tempProject(existing);
     const run = await runTerminal(["init"], root, [accept, accept, "generate", "replace", true]);

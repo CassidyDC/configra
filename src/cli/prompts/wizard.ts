@@ -496,12 +496,14 @@ async function askStep(
 
 /**
  * Asks which answer to change and asks that step again, along with the steps that depend on it.
+ * With `canGoBack`, the menu also offers to return to the review with the answers unchanged.
  */
 async function reviseAnswer(
   answers: Answers,
   discovery: Discovery,
   prompter: Prompter,
   message: string,
+  canGoBack: boolean,
 ): Promise<Answers | Canceled> {
   const steps: StepId[] = [
     "project",
@@ -514,16 +516,21 @@ async function reviseAnswer(
     "commitMessages",
   ];
 
-  const step = await prompter.select<StepId | "cancel">({
+  const step = await prompter.select<StepId | "back" | "cancel">({
     message,
     choices: [
       ...steps.map((id) => ({ value: id, label: stepLabels[id] })),
+      ...(canGoBack ? [{ value: "back" as const, label: "Back to the review", hint: "keep these answers" }] : []),
       { value: "cancel" as const, label: "Cancel", hint: "leave the project untouched" },
     ],
   });
 
   if (step === canceled || step === "cancel") {
     return canceled;
+  }
+
+  if (step === "back") {
+    return answers;
   }
 
   // A new preset resets the selections it provides, and new languages change the standards and tools.
@@ -642,7 +649,13 @@ export async function runWizard(context: WizardContext): Promise<WizardResult> {
           .join("\n"),
       );
 
-      const revised = await reviseAnswer(answers, discovery, prompter, "Which answer do you want to change?");
+      const revised = await reviseAnswer(
+        answers,
+        discovery,
+        prompter,
+        "Configra can't continue with these answers. Which answer do you want to change?",
+        false,
+      );
 
       if (revised === canceled) {
         return { kind: "canceled" };
@@ -673,7 +686,7 @@ export async function runWizard(context: WizardContext): Promise<WizardResult> {
     }
 
     if (outcome === "change") {
-      const revised = await reviseAnswer(answers, discovery, prompter, "Which answer do you want to change?");
+      const revised = await reviseAnswer(answers, discovery, prompter, "Which answer do you want to change?", true);
 
       if (revised === canceled) {
         return { kind: "canceled" };
